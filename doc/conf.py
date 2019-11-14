@@ -22,7 +22,7 @@ copyright = '2019, Marco Dal Molin'
 author = 'Marco Dal Molin'
 
 # The full version, including alpha/beta/rc tags
-release = '0.0.0'
+release = '0.2.0-alpha'
 
 
 # -- General configuration ---------------------------------------------------
