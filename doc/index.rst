@@ -8,11 +8,16 @@ SuperflexPy
 This the landing page for the hydrological modelling framework **SuperflexPy**.
 
 This page will be updated with the documentation of the software, once
-available. 
+available.
 
 If you want to get e-mails about future developments of the framework, please
-subscribe to our mailing list `clicking here 
+subscribe to our mailing list `clicking here
 <https://forms.gle/utLbF6KWqvqS7LHZ7>`_.
 
-The source code can be accessed at the `repository 
+The source code can be accessed at the `repository
 <https://github.com/dalmo1991/superflexPy/>`_.
+
+To install and start using SuperflexPy
+
+::
+   pip3 install superflexpy
