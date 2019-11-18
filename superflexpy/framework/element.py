@@ -570,7 +570,7 @@ class LagElement(StateParameterizedElement):
     fluxes according to a weight array
 
     Parameters must be called:
-    - 'lag_time': characteristic time of the lag. Its definition depends on the
+    - 'lag-time': characteristic time of the lag. Its definition depends on the
                   specific implementations of the element. It can be a scalar
                   (it will be applied to all the fluxes) of a list (with length
                   equal to the number of fluxes).
@@ -629,12 +629,12 @@ class LagElement(StateParameterizedElement):
         if solve:
 
             # Create lists if we are dealing with scalars
-            if isinstance(self._parameters[self._prefix_parameters + 'lag_time'], float):
-                lag_time = [self._parameters[self._prefix_parameters + 'lag_time']] * len(self.input)
-            elif isinstance(self._parameters[self._prefix_parameters + 'lag_time'], list):
-                lag_time = self._parameters[self._prefix_parameters + 'lag_time']
+            if isinstance(self._parameters[self._prefix_parameters + 'lag-time'], float):
+                lag_time = [self._parameters[self._prefix_parameters + 'lag-time']] * len(self.input)
+            elif isinstance(self._parameters[self._prefix_parameters + 'lag-time'], list):
+                lag_time = self._parameters[self._prefix_parameters + 'lag-time']
             else:
-                par_type = type(self._parameters[self._prefix_parameters + 'lag_time'])
+                par_type = type(self._parameters[self._prefix_parameters + 'lag-time'])
                 message = '{}lag_time parameter of type {}'.format(self._error_message, par_type)
                 raise TypeError(message)
 
