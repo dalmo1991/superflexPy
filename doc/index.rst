@@ -19,5 +19,6 @@ The source code can be accessed at the `repository
 
 To install and start using SuperflexPy
 
-::
+.. code-block:: bash
+
    pip3 install superflexpy
