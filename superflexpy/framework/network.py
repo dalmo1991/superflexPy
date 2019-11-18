@@ -104,7 +104,7 @@ class Network(CommonClass):
                             loc_out[i] *= self._content[self._content_pointer[cat]].area
 
                         for cat_up in self._upstream[cat]:
-                            routed_out = self._content[self._content_pointer[cat_up]].external_routing(output[cat_up])  # TODO: double check
+                            routed_out = self._content[self._content_pointer[cat_up]].external_routing(output[cat_up])
                             if len(loc_out) != len(routed_out):
                                 message = '{}Upstream and downstream catchment have '.format(self._error_message)
                                 message += 'different number of fluxed. '

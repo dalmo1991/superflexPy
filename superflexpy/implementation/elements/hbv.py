@@ -237,7 +237,7 @@ class UnsaturatedReservoir(ODEsElement):
 
     @staticmethod
     def _differential_equation_python(S, S0, P, Smax, Ce, m, beta, PET, dt):
-        # TODO: handle time variable parameters (Smax)
+        # TODO: handle time variable parameters (Smax) -> overflow
         if S is None:
             S = 0
         return ((S - S0) / dt - P + Ce * PET * ((S / Smax) * (1 + m))

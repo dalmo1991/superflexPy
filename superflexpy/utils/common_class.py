@@ -107,7 +107,7 @@ class CommonClass(object):
             if class_id in splitted_name:
                 ind = splitted_name.index(class_id)
             else:
-                ind = -1  # TODO: check
+                ind = -1
 
             position = self._content_pointer[splitted_name[ind + 1]]
         else:
@@ -256,7 +256,6 @@ class CommonClass(object):
             for i in id:
                 position = self._find_content_from_name(i)
 
-                # TODO: With states we do not have the case position = None
                 self._content[position].reset_states()
 
     def get_timestep(self):

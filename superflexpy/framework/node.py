@@ -107,7 +107,7 @@ class Node(CommonClass):
 
         # Set the inputs
         for h in self._content:
-            h.set_input(deepcopy(self.input))  # TODO: not entirely sure that we need to copy
+            h.set_input(deepcopy(self.input))
 
         # Calculate output
         if isinstance(self._weights[0], float):

@@ -132,7 +132,7 @@ class Unit(CommonClass):
         # Return the output of the last element
         return self._layers[-1][0].get_output(solve)
 
-    def append_layer(self, layer):  # TODO: maybe I don't want the deepcopy
+    def append_layer(self, layer):
         """
         This method appends a layer to the structure.
 
