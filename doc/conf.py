@@ -18,7 +18,7 @@ sys.path.insert(0, os.path.abspath('../../'))
 # -- Project information -----------------------------------------------------
 
 project = 'SuperflexPy'
-copyright = '2019, Marco Dal Molin'
+copyright = '2019, Marco Dal Molin et al.'
 author = 'Marco Dal Molin'
 
 # The full version, including alpha/beta/rc tags
