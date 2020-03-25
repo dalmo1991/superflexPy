@@ -1,1 +1,1 @@
-from . import common_class, root_finder
+from . import generic_component, root_finder

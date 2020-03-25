@@ -344,10 +344,10 @@ class PegasusNumba(RootFinder):
             # Check if a or b are already the solution
             need_solve = True
 
-            if np.abs(fa) < self._tol_F:
+            if np.abs(fa) < tol_F:
                 output[i] = a
                 need_solve = False
-            elif np.abs(fb) < self._tol_F:
+            elif np.abs(fb) < tol_F:
                 output[i] = b
                 need_solve = False
 

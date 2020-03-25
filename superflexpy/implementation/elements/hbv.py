@@ -146,8 +146,6 @@ class UnsaturatedReservoir(ODEsElement):
         states : dict
             Initial state of the element. The keys must be:
             - 'S0' : initial storage of the reservoir.
-            - 'PET' : time series (or single value, if constant) of potential
-                      evapotranspiration
         solver : superflexpy.utils.root_finder.RootFinder
             Solver used to find the root(s) of the differential equation(s).
             Child classes may implement their own solver, therefore the tipe
@@ -177,12 +175,14 @@ class UnsaturatedReservoir(ODEsElement):
         Parameters
         ----------
         input : list(numpy.ndarray)
-            List containing the input fluxes of the element. It contains 1
-            flux:
+            List containing the input fluxes of the element. It contains 2
+            fluxes:
             1. Rainfall
+            2. PET
         """
 
-        self.input = {'P': input[0]}
+        self.input = {'P': input[0],
+                      'PET': input[1]}
 
     def get_output(self, solve=True):
         """
@@ -199,9 +199,7 @@ class UnsaturatedReservoir(ODEsElement):
         if solve:
             self._solver_states = [self._states[self._prefix_states + 'S0']]
 
-            PET = self._states[self._prefix_states + 'PET']
-
-            self._solve_differential_equation(PET=PET)
+            self._solve_differential_equation()
 
             # Update the state
             self.set_states({self._prefix_states + 'S0': self.state_array[-1, 0]})
@@ -227,7 +225,7 @@ class UnsaturatedReservoir(ODEsElement):
             message += 'the model using the method get_output'
             raise AttributeError(message)
         Ce = self._parameters[self._prefix_parameters + 'Ce']
-        PET = self._states[self._prefix_states + 'PET']
+        PET = self.input['PET']
         Smax = self._parameters[self._prefix_parameters + 'Smax']
         m = self._parameters[self._prefix_parameters + 'm']
 

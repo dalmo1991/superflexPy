@@ -22,10 +22,10 @@ DESIGNED BY: Marco Dal Molin, Fabrizio Fenicia
 This file contains the implementation of the Network class.
 """
 
-from ..utils.common_class import CommonClass
+from ..utils.generic_component import GenericComponent
 
 
-class Network(CommonClass):
+class Network(GenericComponent):
     """
     This class defines a Network. A network is a collection of Nodes and it is
     used to route the fluxes from upstream to downstream. A network must be a
@@ -65,11 +65,11 @@ class Network(CommonClass):
         Parameters
         ----------
         solve : bool
-            True if the elements have to be solved (i.e. calcualte the states).
+            True if the elements have to be solved (i.e. calculate the states).
 
         Returns
         -------
-        dict(str : list(numpy.ndarray))
+        :dict(str : list(numpy.ndarray))
             Dictionary containig the output fluxes of all the nodes.
         """
 
@@ -139,7 +139,8 @@ class Network(CommonClass):
             Name of the attribute to expose.
         Returns
         -------
-        Attribute exposed
+        Unknown
+            Attribute exposed
         """
 
         cat_num, ele = self._find_attribute_from_name(id)
@@ -170,7 +171,8 @@ class Network(CommonClass):
 
         Returns
         -------
-        Output of the called method.
+        Unknown
+            Output of the called method.
         """
 
         cat_num, ele = self._find_attribute_from_name(id)
@@ -188,6 +190,9 @@ class Network(CommonClass):
     # PROTECTED METHODS
 
     def _build_network(self):
+        """
+        This method constructs all the structures needed to solve the network
+        """
 
         # Find the upstream catchments
         self._upstream = {k: [] for k in self._downstream.keys()}
@@ -241,6 +246,21 @@ class Network(CommonClass):
                             completed = True
 
     def _find_attribute_from_name(self, id):
+        """
+        This method is used to find the attributes or methods of the components
+        contained for post-run inspection.
+
+        Parameters
+        ----------
+        id : str
+            Identifier of the component
+
+        Returns
+        -------
+        int, bool
+            Index of the component to look for and indication if it is an
+            element or a unit (True) or not.
+        """
 
         splitted = id.split('_')
 

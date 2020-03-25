@@ -23,10 +23,10 @@ This file contains the implementation of the Node class.
 """
 
 from copy import copy, deepcopy
-from ..utils.common_class import CommonClass
+from ..utils.generic_component import GenericComponent
 
 
-class Node(CommonClass):
+class Node(GenericComponent):
     """
     This class defines a Node. A node can be part of a network and it is a
     collection of Units. It's task is to sum the outputs of the Units,
@@ -49,8 +49,8 @@ class Node(CommonClass):
             Influence area of the node. It is the net value: if a node has
             other nodes upstream, their area is not counted.
         id : str
-            Itentifier of the node. All the nodes of the framework must have an
-            id.
+            Identifier of the node. All the nodes of the framework must have an
+            identifier.
         shared_parameters : bool
             True if the parameters of the Units are shared among the different
             Nodes.
@@ -97,7 +97,7 @@ class Node(CommonClass):
         Parameters
         ----------
         solve : bool
-            True if the elements have to be solved (i.e. calcualte the states).
+            True if the elements have to be solved (i.e. calculate the states).
 
         Returns
         -------
@@ -158,7 +158,8 @@ class Node(CommonClass):
 
         Returns
         -------
-        Attribute exposed
+        Unknown
+            Attribute exposed
         """
 
         hru_num, ele = self._find_attribute_from_name(id)
@@ -189,7 +190,8 @@ class Node(CommonClass):
 
         Returns
         -------
-        Output of the called method.
+        Unknown
+            Output of the called method.
         """
         hru_num, ele = self._find_attribute_from_name(id)
 
@@ -252,6 +254,21 @@ class Node(CommonClass):
     # PROTECTED METHODS
 
     def _find_attribute_from_name(self, id):
+        """
+        This method is used to find the attributes or methods of the components
+        contained for post-run inspection.
+
+        Parameters
+        ----------
+        id : str
+            Identifier of the component
+
+        Returns
+        -------
+        int, bool
+            Index of the component to look for and indication if it is an
+            element (True) or not.
+        """
 
         splitted = id.split('_')
 
@@ -264,9 +281,9 @@ class Node(CommonClass):
 
     def _internal_routing(self, flux):
         """
-        Internal routing is the one that affects the flux coming to the HRUs
-        and reaching the outflow of the catchment. This function is internally
-        used by the Catchment.
+        Internal routing is the one that affects the flux coming to the Units
+        and reaching the outflow of the node. This function is internally
+        used by the node.
         """
 
         # No routing

@@ -26,12 +26,15 @@ case of elements governed by ODEs
 
 class RootFinder():
     """
-    This is the abstract class for the cration of a RootFinder. It defines how
+    This is the abstract class for the creation of a RootFinder. It defines how
     the solver of the differential equation must be implemented.
     """
 
     architecture = None
-
+    """
+    Implementation required to increase the performance (e.g. numba)
+    """
+    
     def __init__(self, tol_F=1e-8, tol_x=1e-8, iter_max=10):
         """
         The constructor of the subclass must accept the parameters of the
@@ -40,9 +43,9 @@ class RootFinder():
         Parameters
         ----------
         tol_F : float
-            Tollerance on the y axis (distance from 0) that stops the solver
+            Tolerance on the y axis (distance from 0) that stops the solver
         tol_x : float
-            Tollerance on the x axis (distance between two roots) that stops
+            Tolerance on the x axis (distance between two roots) that stops
             the solver
         iter_max : int
             Maximum number of iteration of the solver. After this value it

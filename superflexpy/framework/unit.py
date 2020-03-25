@@ -23,13 +23,13 @@ This file contains the implementation of the Unit class.
 """
 
 from copy import copy, deepcopy
-from ..utils.common_class import CommonClass
+from ..utils.generic_component import GenericComponent
 
 
-class Unit(CommonClass):
+class Unit(GenericComponent):
     """
     This class defines a Unit. A unit can be part of a node and it is a
-    collection of elements. It's task is to build the basic sructure,
+    collection of elements. It's task is to build the basic structure,
     connecting different elements. Mathematically, it is a directed acyclic
     graph.
     """
@@ -42,11 +42,11 @@ class Unit(CommonClass):
         ----------
         layers : list(list(superflexpy.framework.element.BaseElement))
             This list defines the structure of the unit. The elements are
-            arranged in layers (upstream to downstram) and each layer can
+            arranged in layers (upstream to downstream) and each layer can
             contain multiple elements.
         id : str
-            Itentifier of the unit. All the units of the framework must have an
-            id.
+            Identifier of the unit. All the units of the framework must have an
+            identifier.
         copy_pars : bool
             True if the parameters of the elements are copied instead of being
             shared among the different Units.
@@ -94,12 +94,12 @@ class Unit(CommonClass):
         Parameters
         ----------
         solve : bool
-            True if the elements have to be solved (i.e. calcualte the states).
+            True if the elements have to be solved (i.e. calculate the states).
 
         Returns
         -------
         list(numpy.ndarray)
-            List containig the output fluxes of the unit.
+            List containing the output fluxes of the unit.
         """
 
         # Set the first layer (it must have 1 element)
@@ -164,8 +164,8 @@ class Unit(CommonClass):
         self._construct_dictionary()
         self._check_layers()
 
-    def parse_structure(self, structure):
-        raise NotImplementedError('Functionality in the TODO list')
+    # def parse_structure(self, structure):
+    #     raise NotImplementedError('Functionality in the TODO list')
 
     def get_internal(self, id, attribute):
         """
@@ -181,7 +181,8 @@ class Unit(CommonClass):
 
         Returns
         -------
-        Attribute exposed
+        Unknown
+            Attribute exposed
         """
 
         return self._find_attribute_from_name(id, attribute)
@@ -200,7 +201,8 @@ class Unit(CommonClass):
 
         Returns
         -------
-        Output of the called method.
+        Unknown
+            Output of the called method.
         """
 
         method = self._find_attribute_from_name(id, method)
@@ -210,7 +212,7 @@ class Unit(CommonClass):
 
     def add_prefix_parameters(self, id):
         """
-        This method adds the prefix to the states of the elements that are
+        This method adds the prefix to the parameters of the elements that are
         contained in the unit.
 
         Parameters
@@ -248,6 +250,9 @@ class Unit(CommonClass):
     # PROTECTED METHODS
 
     def _construct_dictionary(self):
+        """
+        This method populates the self._content_pointer dictionary.
+        """
 
         self._content_pointer = {}
 
@@ -264,6 +269,23 @@ class Unit(CommonClass):
             self._content[(l, el)] = self._layers[l][el]
 
     def _find_attribute_from_name(self, id, function):
+        """
+        This method is used to find the attributes or methods of the components
+        contained for post-run inspection.
+
+        Parameters
+        ----------
+        id : str
+            Identifier of the component
+        function : str
+            Name of the attribute or method
+
+        Returns
+        -------
+        Unknown
+            Attribute or method to inspect
+        """
+
         # Search the element
         (l, el) = self._find_content_from_name(id)
         element = self._layers[l][el]
@@ -278,6 +300,10 @@ class Unit(CommonClass):
         return method
 
     def _check_layers(self):
+        """
+        This method controls if the layers respect all the rules in terms of
+        number of upstream/downstream elements.
+        """
 
         # Check layer 0
         if len(self._layers[0]) != 1:

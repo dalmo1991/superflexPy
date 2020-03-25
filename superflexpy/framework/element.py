@@ -29,13 +29,24 @@ import numpy as np
 
 class BaseElement():
     """
-    This is the abstract class for the cration of a BaseElement. A BaseElement
+    This is the abstract class for the creation of a BaseElement. A BaseElement
     does not have parameters or states.
     """
 
     _num_downstream = None
+    """
+    Number of downstream elements
+    """
+    
     _num_upstream = None
+    """
+    Number of upstream elements
+    """
+
     input = {}
+    """
+    Dictionary of input fluxes
+    """
 
     def __init__(self, id):
         """
@@ -44,8 +55,8 @@ class BaseElement():
         Parameters
         ----------
         id : str
-            Itentifier of the element. All the elements of the framework must
-            have an id.
+            Identifier of the element. All the elements of the framework must
+            have an identifier.
         """
 
         self.id = id
@@ -54,8 +65,8 @@ class BaseElement():
 
     def set_input(self, input):
         """
-        To be implemented by any child class. It should transform a list of
-        numpy arrays in a dictionary.
+        To be implemented by any child class. It populates the self.input
+        dictionary.
 
         Parameters
         ----------
@@ -73,7 +84,7 @@ class BaseElement():
         Parameters
         ----------
         solve : bool
-            True if the element has to be solved (i.e. calcualte the states).
+            True if the element has to be solved (i.e. calculate the states).
 
         Returns
         -------
@@ -115,11 +126,14 @@ class BaseElement():
 
 class ParameterizedElement(BaseElement):
     """
-    This is the abstract class for the cration of a ParameterizedElement. A
+    This is the abstract class for the creation of a ParameterizedElement. A
     ParameterizedElement has parameters but not states.
     """
 
     _prefix_parameters = ''
+    """
+    Prefix applied to the original names of the parameters
+    """
 
     def __init__(self, parameters, id):
         """
@@ -132,8 +146,8 @@ class ParameterizedElement(BaseElement):
             a float (constant in time) or a numpy.ndarray of the same length
             of the input fluxes (time variant parameters).
         id : str
-            Itentifier of the element. All the elements of the framework must
-            have an id.
+            Identifier of the element. All the elements of the framework must
+            have an identifier.
         """
 
         BaseElement.__init__(self, id)
@@ -149,7 +163,7 @@ class ParameterizedElement(BaseElement):
         ----------
         names : list(str)
             Names of the parameters to return. The names must be the ones
-            returned by the mehod get_parameters_name. If None, all the
+            returned by the method get_parameters_name. If None, all the
             parameters are returned.
 
         Returns
@@ -245,11 +259,14 @@ class ParameterizedElement(BaseElement):
 
 class StateElement(BaseElement):
     """
-    This is the abstract class for the cration of a StateElement. A
+    This is the abstract class for the creation of a StateElement. A
     StateElement has states but not parameters.
     """
 
     _prefix_states = ''
+    """
+    Prefix applied to the original names of the parameters
+    """
 
     def __init__(self, states, id):
         """
@@ -261,7 +278,7 @@ class StateElement(BaseElement):
             Initial states of the element. Depending on the element the states
             can be either a float or a numpy.ndarray.
         id : str
-            Itentifier of the element. All the elements of the framework must
+            Identifier of the element. All the elements of the framework must
             have an id.
         """
         BaseElement.__init__(self, id)
@@ -278,7 +295,7 @@ class StateElement(BaseElement):
         ----------
         names : list(str)
             Names of the states to return. The names must be the ones
-            returned by the mehod get_states_name. If None, all the
+            returned by the method get_states_name. If None, all the
             states are returned.
 
         Returns
@@ -385,7 +402,7 @@ class StateElement(BaseElement):
 
 class StateParameterizedElement(StateElement, ParameterizedElement):
     """
-    This is the abstract class for the cration of a StateParameterizedElement.
+    This is the abstract class for the creation of a StateParameterizedElement.
     A StateParameterizedElement has parameters and states.
     """
 
@@ -404,7 +421,7 @@ class StateParameterizedElement(StateElement, ParameterizedElement):
             Initial states of the element. Depending on the element the states
             can be either a float or a numpy.ndarray.
         id : str
-            Itentifier of the element. All the elements of the framework must
+            Identifier of the element. All the elements of the framework must
             have an id.
         """
 
@@ -446,15 +463,27 @@ class StateParameterizedElement(StateElement, ParameterizedElement):
 
 class ODEsElement(StateParameterizedElement):
     """
-    This is the abstract class for the cration of a ODEsElement. An ODEsElement
+    This is the abstract class for the creation of a ODEsElement. An ODEsElement
     is an element with states and parameters that is controlled by an ordinary
     differential equation, of the form:
 
     dS/dt = input - output
     """
+    
     _num_upstream = 1
+    """
+    Number of upstream elements
+    """
+
     _num_downstream = 1
+    """
+    Number of downstream elements
+    """
+
     _solver_states = []
+    """
+    List of states used by the solver of the differential equation
+    """
 
     def __init__(self, parameters, states, solver, id):
         """
@@ -471,10 +500,10 @@ class ODEsElement(StateParameterizedElement):
             can be either a float or a numpy.ndarray.
         solver : superflexpy.utils.root_finder.RootFinder
             Solver used to find the root(s) of the differential equation(s).
-            Child classes may implement their own solver, therefore the tipe
+            Child classes may implement their own solver, therefore the type
             of the solver is not enforced.
         id : str
-            Itentifier of the element. All the elements of the framework must
+            Identifier of the element. All the elements of the framework must
             have an id.
         """
 
@@ -513,13 +542,19 @@ class ODEsElement(StateParameterizedElement):
         ----------
         solver : superflexpy.utils.root_finder.RootFinder
             Solver used to find the root(s) of the differential equation(s).
-            Child classes may implement their own solver, therefore the tipe
+            Child classes may implement their own solver, therefore the type
             of the solver is not enforced.
         """
 
         self._solver = solver
 
     def _solve_differential_equation(self, **kwargs):
+        """
+        This method calls the solver of the differential equation(s). When
+        called, it solves the differential equation(s) for all the timesteps
+        and populates self.state_array.
+        """
+
         if len(self._solver_states) == 0:
             message = '{}the attribute _solver_states must be filled'.format(self._error_message)
             raise ValueError(message)
@@ -565,30 +600,43 @@ class ODEsElement(StateParameterizedElement):
 
 class LagElement(StateParameterizedElement):
     """
-    This is the abstract class for the cration of a LagElement. An LagElement
+    This is the abstract class for the creation of a LagElement. An LagElement
     is an element with states and parameters that distributes the incoming
     fluxes according to a weight array
 
     Parameters must be called:
+
     - 'lag-time': characteristic time of the lag. Its definition depends on the
-                  specific implementations of the element. It can be a scalar
-                  (it will be applied to all the fluxes) of a list (with length
-                  equal to the number of fluxes).
+      specific implementations of the element. It can be a scalar (it will be
+      applied to all the fluxes) or a list (with length equal to the number of
+      fluxes).
 
     States must be called:
+
     - lag: initial state of the lag function. If None it will be initialized
-           to zeros. It can be a numpy.ndarray (it will be applied to all the
-           fluxes) of a list on numpy.ndarray (with length equal to the number
-           of fluxes).
+      to zeros. It can be a numpy.ndarray (it will be applied to all the fluxes)
+      of a list on numpy.ndarray (with length equal to the number of fluxes).
     """
 
     _num_upstream = 1
+    """
+    Number of upstream elements
+    """
+
     _num_downstream = 1
+    """
+    Number of downstream elements
+    """
 
     def _build_weight(self, lag_time):
         """
         This method must be implemented by any child class. It calculates the
-        weight array(s) based on th lag_time.
+        weight array(s) based on the lag_time.
+
+        Parameters
+        ----------
+        lag_time : float
+            Characteristic time of the lag function.
 
         Returns
         -------
@@ -604,6 +652,7 @@ class LagElement(StateParameterizedElement):
         inputs is not important, the fluxes are stored as list.
 
         Parameters
+        ----------
         input : list(numpy.ndarray)
             List of input fluxes.
         """
@@ -618,7 +667,7 @@ class LagElement(StateParameterizedElement):
         Parameters
         ----------
         solve : bool
-            True if the element has to be solved (i.e. calcualte the states).
+            True if the element has to be solved (i.e. calculate the states).
 
         Returns
         -------
@@ -663,8 +712,38 @@ class LagElement(StateParameterizedElement):
 
         return [self.state_array[:, i, 0] for i in range(len(self.input))]
 
+    def reset_states(self):
+        """
+        This method sets the states to the values provided to the __init__
+        method. In this case, if a state was initialized as None, it will be
+        set back to None.
+        """
+
+        for k in self._init_states.keys():
+            k_no_prefix = k.split('_')[-1]
+            self._states[self._prefix_states + k_no_prefix] = deepcopy(self._init_states[k])  # I have to isolate
+
     @staticmethod
     def _solve_lag(weight, lag_state, input):
+        """
+        This method distributes the input fluxes according to the weight array
+        and the initial state.
+        
+        Parameters
+        ----------
+        weight : list(numpy.ndarray)
+            List of weights to use
+        lag_state : list(numpy.ndarray)
+            List of the initial states of the lag.
+        input : list(numpy.ndarray)
+            List of fluxes
+        
+        Returns
+        -------
+        numpy.ndarray
+            3D array (dimensions: number of timesteps, number of fluxes, max
+            lag length) that stores all the states of the lag in time
+        """
 
         max_length = max([len(w) for w in weight])
 
@@ -679,6 +758,20 @@ class LagElement(StateParameterizedElement):
         return output
 
     def _init_lag_state(self, lag_time):
+        """
+        This method sets the initial state of the lag to arrays of proper
+        length.
+        
+        Parameters
+        ----------
+        lag_time : list(float)
+            List of lag times
+        
+        Returns
+        -------
+        list(numpy.ndarray)
+            List of the initial states of the lag.
+        """
 
         ini_state = []
         for i in range(len(self.input)):
