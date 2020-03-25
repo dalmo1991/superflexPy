@@ -1,26 +1,26 @@
-..  _index_page:
-.. FINAL STATUS
-
-=======================================
-SuperflexPy
-=======================================
-
 .. warning:: This guide is still work in progress. New pages are being written
              and existing ones modified. Once the guide will reach its final
              version, this box will disappear.
 
+.. image:: pics/logo_transparent.PNG
+   :align: center
+
+===========
+SuperflexPy
+===========
+
 SuperflexPy is an open-source framework written in Python for constructing
-flexible conceptual hydrological models.
+flexible, conceptual, distributed hydrological models.
 
 SuperflexPy builds on our 10-years-experience with the development and
 application of `Superflex <https://doi.org/10.1029/2010WR010174>`_. The
-new framework is a completely new implementation of Superflex and it 
+new framework is a completely new implementation of Superflex and 
 expands the possibility offered by the old version, allowing you to 
-build completely customized spatially-distributed hydrological models.
+build completely customized, spatially-distributed hydrological models.
 
 Thanks to its object-oriented architecture, SuperflexPy can be easily
 extended to satisfy your own needs, creating new elements with a 
-completely customized logic, just in a few lines of pure Python code.
+completely customized logic, just with a few lines of pure Python code.
 
 Constructing a semi-distributed conceptual hydrological model will be
 straightforward with SuperflexPy, with a user experience similar to any
@@ -28,10 +28,11 @@ other Python framework:
 
 - inputs and outputs are handled directly by the modeler using common Python
   libraries (e.g. Numpy or Pandas for reading from text files) without the need
-  of customized input files and long pre- and post-processing;
+  of customized input files and long pre- and post-processing to adapt the data
+  to the model;
 
 - the elements of the framework are declared and initialized through a Python
-  script without the need of long and complicated setup text files;
+  script, without the need of long and complicated setup text files;
 
 - all the elements of the framework are objects with built-in functionalities
   for handling parameters and states, routing the fluxes, and solving common
@@ -76,3 +77,11 @@ The source code can be accessed at the `repository
 
 A demo, implementing GR4J, is available in a `Colab Notebook
 <https://colab.research.google.com/drive/1XBmkTY_1KsP1l8extzhomOOC-vH8PN9j>`_.
+
+
+
+.. toctree::
+   :maxdepth: 1
+   :hidden:
+
+   case_studies
