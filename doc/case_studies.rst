@@ -98,3 +98,36 @@ previously declared.
    :language: python
    :lines: 199-224
    :linenos:
+
+Running the model
+.................
+
+Now that all the components have been initialized, we can run the model.
+
+The first step is to assign the input fluxes to the single elements. For this
+we assume that the data is available as a pandas DataFrame and that the
+columns are named 'P_name_of_the_catchment', 'T_name_of_the_catchment',
+and 'PET_name_of_the_catchment'.
+
+The inputs can be set using a for loop
+
+.. literalinclude:: model_thur_hess2020.py
+   :language: python
+   :lines: 256-261
+   :linenos:
+
+After this, the last thing to be done before actually running the model is
+setting the time step used in the simulations. This can be done directly at
+the network level and it will be set to all the components.
+
+.. literalinclude:: model_thur_hess2020.py
+   :language: python
+   :lines: 263
+   :linenos:
+
+The only thing left to do is running the model!
+
+.. literalinclude:: model_thur_hess2020.py
+   :language: python
+   :lines: 265
+   :linenos:

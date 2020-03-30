@@ -223,4 +223,43 @@ thur_catchment = Network(
     }
 )
 
-print('Done')
+thur_catchment.set_timestep(1.0)
+
+catchments = [
+    andelfingen,
+    appenzell,
+    frauenfeld,
+    halden,
+    herisau,
+    jonschwil,
+    mogelsberg,
+    mosnang,
+    stgallen,
+    waengi,
+    ]
+
+catchments_names = [
+    'andelfingen',
+    'appenzell',
+    'frauenfeld',
+    'halden',
+    'herisau',
+    'jonschwil',
+    'mogelsberg',
+    'mosnang',
+    'stgallen',
+    'waengi',
+    ]
+
+df = {}
+
+for cat, cat_name in zip(catchments, catchments_names):
+    cat.set_input([
+        df['P_{}'.format(cat_name)].values,
+        df['T_{}'.format(cat_name)].values,
+        df['PET_{}'.format(cat_name)].values,
+    ])
+
+thur_catchment.set_timestep(1.0)
+
+thur_catchment.get_output()
