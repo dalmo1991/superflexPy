@@ -2,6 +2,12 @@
              and existing ones modified. Once the guide will reach its final
              version, this box will disappear.
 
+.. caution:: We are currently working on a new release that changes the
+             way of implementing the numerical solver. It will be soon
+             released and make previous implementations not compatible. If
+             you need to use the framework right now, please contact the 
+             authors to get more info about the new release.
+
 .. image:: pics/logo_transparent.PNG
    :align: center
 
