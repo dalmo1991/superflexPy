@@ -1,0 +1,4 @@
+superflexpy==1.0.0
+matplotlib==3.3.*
+numba==0.50.*
+numpy==1.19.*
