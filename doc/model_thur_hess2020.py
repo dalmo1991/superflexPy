@@ -8,10 +8,10 @@ from superflexpy.framework.unit import Unit
 from superflexpy.framework.node import Node
 from superflexpy.framework.network import Network
 from superflexpy.implementation.computation.pegasus_root_finding import PegasusPython
+from superflexpy.implementation.computation.implicit_euler import ImplicitEulerPython
 
-
-# Declare the elements
 solver = PegasusPython()
+approximator = ImplicitEulerPython(root_finder=solver)
 
 # Fluxes in the order P, T, PET
 upper_splitter = Splitter(
@@ -29,7 +29,7 @@ upper_splitter = Splitter(
 snow = SnowReservoir(
     parameters={'t0': 0.0, 'k': 0.01, 'm': 2.0},
     states={'S0': 0.0},
-    solver=solver,
+    approximation=approximator,
     id='snow'
 )
 
@@ -48,7 +48,7 @@ upper_junction = Junction(
 unsaturated = UnsaturatedReservoir(
     parameters={'Smax': 50.0, 'Ce': 1.0, 'm': 0.01, 'beta': 2.0},
     states={'S0': 10.0},
-    solver=solver,
+    approximation=approximator,
     id='unsaturated'
 )
 
@@ -73,14 +73,14 @@ lag_fun = HalfTriangularLag(
 fast = FastReservoir(
     parameters={'k': 0.01, 'alpha': 3.0},
     states={'S0': 0.0},
-    solver=solver,
+    approximation=approximator,
     id='fast'
 )
 
 slow = FastReservoir(
     parameters={'k': 1e-4, 'alpha': 1.0},
     states={'S0': 0.0},
-    solver=solver,
+    approximation=approximator,
     id='slow'
 )
 
@@ -95,7 +95,6 @@ lower_junction = Junction(
     id='lower-junction'
 )
 
-# Create the HRUs
 consolidated = Unit(
     layers=[
         [upper_splitter],
@@ -124,51 +123,50 @@ unconsolidated = Unit(
     id='unconsolidated'
 )
 
-# Create the catchments
 andelfingen = Node(
-    units=[consolidated, unsaturated],
+    units=[consolidated, unconsolidated],
     weights=[0.24, 0.76],
     area=403.3,
     id='andelfingen'
 )
 
 appenzell = Node(
-    units=[consolidated, unsaturated],
+    units=[consolidated, unconsolidated],
     weights=[0.92, 0.08],
     area=74.4,
     id='appenzell'
 )
 
 frauenfeld = Node(
-    units=[consolidated, unsaturated],
+    units=[consolidated, unconsolidated],
     weights=[0.49, 0.51],
     area=134.4,
     id='frauenfeld'
 )
 
 halden = Node(
-    units=[consolidated, unsaturated],
+    units=[consolidated, unconsolidated],
     weights=[0.34, 0.66],
     area=314.3,
     id='halden'
 )
 
 herisau = Node(
-    units=[consolidated, unsaturated],
+    units=[consolidated, unconsolidated],
     weights=[0.88, 0.12],
     area=16.7,
     id='herisau'
 )
 
 jonschwil = Node(
-    units=[consolidated, unsaturated],
+    units=[consolidated, unconsolidated],
     weights=[0.9, 0.1],
     area=401.6,
     id='jonschwil'
 )
 
 mogelsberg = Node(
-    units=[consolidated, unsaturated],
+    units=[consolidated, unconsolidated],
     weights=[0.92, 0.08],
     area=88.1,
     id='mogelsberg'
@@ -182,21 +180,20 @@ mosnang = Node(
 )
 
 stgallen = Node(
-    units=[consolidated, unsaturated],
+    units=[consolidated, unconsolidated],
     weights=[0.87, 0.13],
     area=186.6,
     id='stgallen'
 )
 
 waengi = Node(
-    units=[consolidated, unsaturated],
+    units=[consolidated, unconsolidated],
     weights=[0.63, 0.37],
     area=78.9,
     id='waengi'
 )
 
-# Create the network
-thur_catchment = Network(
+model = Network(
     nodes=[
         andelfingen,
         appenzell,

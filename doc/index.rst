@@ -1,12 +1,6 @@
-.. warning:: This guide is still work in progress. New pages are being written
-             and existing ones modified. Once the guide will reach its final
-             version, this box will disappear.
-
-.. caution:: We are currently working on a new release that changes the
-             way of implementing the numerical solver. It will be soon
-             released and make previous implementations not compatible. If
-             you need to use the framework right now, please contact the 
-             authors to get more info about the new release.
+.. .. warning:: This guide is still work in progress. New pages are being written
+..              and existing ones modified. Once the guide will reach its final
+..              version, this box will disappear.
 
 .. image:: pics/logo_transparent.PNG
    :align: center
@@ -20,13 +14,13 @@ flexible, conceptual, distributed hydrological models.
 
 SuperflexPy builds on our 10-years-experience with the development and
 application of `Superflex <https://doi.org/10.1029/2010WR010174>`_. The
-new framework is a completely new implementation of Superflex and 
-expands the possibility offered by the old version, allowing you to 
-build completely customized, spatially-distributed hydrological models.
+new framework is a completely new implementation of Superflex and
+expands the possibility offered by the old version, allowing to build completely
+customized, spatially-distributed hydrological models.
 
 Thanks to its object-oriented architecture, SuperflexPy can be easily
-extended to satisfy your own needs, creating new elements with a 
-completely customized logic, just with a few lines of pure Python code.
+extended to satisfy your own needs, creating new elements with a
+completely customized logic, just in a few lines of pure Python code.
 
 Constructing a semi-distributed conceptual hydrological model will be
 straightforward with SuperflexPy, with a user experience similar to any
@@ -45,6 +39,9 @@ other Python framework:
   structures present in conceptual models (e.g. reservoirs, lag functions,
   etc.);
 
+- the mathematical model is separated from the numerical model, allowing for
+  testing different numerical methods for solving differential equations;
+
 - the framework can be run at any level of complexity, from a single bucket
   to an entire river network;
 
@@ -55,18 +52,19 @@ Team
 ----
 
 SuperflexPy is actively developed at `Eawag <https://www.eawag.ch>`_,
-by researchers in the `Hydrological modelling group 
+by researchers in the `Hydrological modelling group
 <https://www.eawag.ch/en/department/siam/main-focus/hydrological-modelling/>`_,
 with the support of external people.
 
 The core team consists of:
 
-- `Marco Dal Molin <www.eawag.ch/~dalmolma>`_ (implementation and design)
+- `Marco Dal Molin <https://www.eawag.ch/~dalmolma>`_ (implementation and design)
 
 - `Dr. Fabrizio Fenicia <https://www.eawag.ch/en/aboutus/portrait/organisation/staff/profile/fabrizio-fenicia/show/>`_
   (design and supervision)
 
-- Prof. Dmitri Kavetski (design and supervision)
+- `Prof. Dmitri Kavetski <https://www.adelaide.edu.au/directory/dmitri.kavetski>`_
+  (design and supervision)
 
 Stay in touch
 -------------
@@ -84,10 +82,24 @@ The source code can be accessed at the `repository
 A demo, implementing GR4J, is available in a `Colab Notebook
 <https://colab.research.google.com/drive/1XBmkTY_1KsP1l8extzhomOOC-vH8PN9j>`_.
 
-
+.. TODO (review 26 Jun 2020):
+.. - Change demo GR4J because of new numerical implementation
 
 .. toctree::
    :maxdepth: 1
    :hidden:
 
+   installation
+   contribute
+   introduction
+   components
+   numerical_solver
+   demo
+   elements_list
+   build_element
+   customize_components
+   popular_models
    case_studies
+   examples
+   reference
+   changelog
