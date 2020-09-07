@@ -1,5 +1,5 @@
 """
-Copyright 2019 Marco Dal Molin et al.
+Copyright 2020 Marco Dal Molin et al.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -41,6 +41,32 @@ class GenericComponent(object):
     List (or dictionary) of the component contained
     """
 
+    _local_parameters = {}
+    """
+    Dictionary that contains the parameters that are specific to the component
+    """
+
+    _local_states = {}
+    """
+    Dictionary that contains the states that are specific to the component
+    """
+
+    _init_local_states = {}
+    """
+    Dictionary that contains the value of the states, which that are specific
+    to the component, at initialization.
+    """
+
+    _prefix_local_parameters = ''
+    """
+    Prefix applied to local parameters
+    """
+
+    _prefix_local_states = ''
+    """
+    Prefix applied to local states
+    """
+
     def get_parameters(self, names=None):
         """
         This method returns the parameters of the component and of the ones
@@ -62,6 +88,10 @@ class GenericComponent(object):
         parameters = {}
 
         if names is None:
+            # Add local parameters
+            for k in self._local_parameters.keys():
+                parameters[k] = self._local_parameters[k]
+
             for c in self._content_pointer.keys():
                 position = self._content_pointer[c]
                 try:
@@ -82,6 +112,8 @@ class GenericComponent(object):
                             break
                         except (AttributeError, KeyError):  # Attribute error because the content may not have the method, Key error because the parameter may not belong to the content
                             continue
+                elif position == -1:  # it means local
+                    cont_pars = {n: self._local_parameters[n]}
                 else:
                     cont_pars = self._content[position].get_parameters([n])
 
@@ -106,12 +138,12 @@ class GenericComponent(object):
         """
         This method finds a component using the name of the parameter or the
         state.
-        
+
         Parameters
         ----------
         name : str
             Name to use for the search
-        
+
         Returns
         -------
         int or tuple
@@ -126,15 +158,17 @@ class GenericComponent(object):
             class_id = None
 
         if class_id is not None:
-            # HRU or Catchment
             if class_id in splitted_name:
-                ind = splitted_name.index(class_id)
+                if (len(splitted_name) - splitted_name.index(class_id)) == 2:  # It is a local parameter
+                    position = -1
+                else:
+                    # HRU or Catchment
+                    ind = splitted_name.index(class_id)
+                    position = self._content_pointer[splitted_name[ind + 1]]
             else:
-                ind = -1
-
-            position = self._content_pointer[splitted_name[ind + 1]]
+                position = self._content_pointer[splitted_name[0]]
         else:
-            # Model
+            # Network. The network doesn't have local parameters
             for c in self._content_pointer.keys():
                 if c in splitted_name:
                     position = self._content_pointer[c]
@@ -167,6 +201,8 @@ class GenericComponent(object):
                         break
                     except (KeyError, ValueError):
                         continue
+            elif position == -1:
+                self._local_parameters[p] = parameters[p]
             else:
                 self._content[position].set_parameters({p: parameters[p]})
 
@@ -191,6 +227,9 @@ class GenericComponent(object):
         states = {}
 
         if names is None:
+            # Add local states
+            for k in self._local_states.keys():
+                states[k] = self._local_states[k]
             for c in self._content_pointer.keys():
                 position = self._content_pointer[c]
                 try:
@@ -211,6 +250,8 @@ class GenericComponent(object):
                             break
                         except (AttributeError, KeyError):  # Attribute error because the content may not have the method, Key error because the parameter may not belong to the content
                             continue
+                elif position == -1:
+                    cont_st = {n: self._local_states[n]}
                 else:
                     cont_st = self._content[position].get_states([n])
 
@@ -254,11 +295,13 @@ class GenericComponent(object):
                         break
                     except (KeyError, ValueError):
                         continue
+            elif position == -1:
+                self._local_states[s] = states[s]
             else:
                 self._content[position].set_states({s: states[s]})
 
     def reset_states(self, id=None):
-        """ 
+        """
         This method sets the states to the values provided to the __init__
         method. If a state was initialized as None, it will not be reset.
 
@@ -268,6 +311,11 @@ class GenericComponent(object):
             List of element's id where the method is applied.
         """
 
+        try:
+            local_id = self.id
+        except AttributeError:
+            local_id = None
+
         if id is None:
             for c in self._content_pointer.keys():
                 position = self._content_pointer[c]
@@ -275,13 +323,20 @@ class GenericComponent(object):
                     self._content[position].reset_states()
                 except AttributeError:
                     continue
+
+                if self._init_local_states:
+                    self.set_states(states=self._init_local_states)
         else:
             if isinstance(id, str):
                 id = [id]
             for i in id:
-                position = self._find_content_from_name(i)
+                if i == local_id and self._init_local_states:
+                    self.set_states(states=self._init_local_states)
+                elif i != local_id:
+                    i += '_X'  # Needed to work with find_content_from_name
+                    position = self._find_content_from_name(i)
 
-                self._content[position].reset_states()
+                    self._content[position].reset_states()
 
     def get_timestep(self):
         """

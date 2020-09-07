@@ -1,5 +1,5 @@
 """
-Copyright 2019 Marco Dal Molin et al.
+Copyright 2020 Marco Dal Molin et al.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ class RootFinder():
     """
     Implementation required to increase the performance (e.g. numba)
     """
-    
+
     def __init__(self, tol_F=1e-8, tol_x=1e-8, iter_max=10):
         """
         The constructor of the subclass must accept the parameters of the
@@ -56,6 +56,26 @@ class RootFinder():
         self._tol_x = tol_x
         self._iter_max = iter_max
         self._name = 'Solver'
+
+    def get_settings(self):
+        """
+        This method returns the settings of the root finder.
+
+        Returns
+        -------
+        float
+            Function tollerance (tol_F)
+        float
+            X tollerance (tol_x)
+        int
+            Maximum number of iterations (iter_max)
+        """
+
+        return (
+            self._tol_F,
+            self._tol_x,
+            self._iter_max,
+        )
 
     def __repr__(self):
         str = 'Module: superflexPy\nClass: {}\n'.format(self._name)

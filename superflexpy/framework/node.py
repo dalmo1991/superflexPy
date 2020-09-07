@@ -1,5 +1,5 @@
 """
-Copyright 2019 Marco Dal Molin et al.
+Copyright 2020 Marco Dal Molin et al.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ This file contains the implementation of the Node class.
 
 from copy import copy, deepcopy
 from ..utils.generic_component import GenericComponent
+from .unit import Unit
 
 
 class Node(GenericComponent):
@@ -32,7 +33,8 @@ class Node(GenericComponent):
     collection of Units. It's task is to sum the outputs of the Units,
     applying, if present, a routing.
     """
-    def __init__(self, units, weights, area, id, shared_parameters=True):
+
+    def __init__(self, units, weights, area, id, parameters=None, states=None, shared_parameters=True):
         """
         This is the initializer of the class Node.
 
@@ -61,18 +63,29 @@ class Node(GenericComponent):
         self._error_message = 'module : superflexPy, Node : {},'.format(id)
         self._error_message += ' Error message : '
 
+        # Handle local parameters and states
+        if parameters is not None:
+            self._local_parameters = parameters
+
+        if states is not None:
+            self._local_states = states
+            self._init_local_states = deepcopy(states)
+
         self._content = []
         for h in units:
+            if not isinstance(h, Unit):
+                message = '{}units must be instance of the Unit class'.format(self._error_message)
+                raise TypeError(message)
             if shared_parameters:
                 self._content.append(copy(h))
             else:
                 self._content.append(deepcopy(h))
-                self.add_prefix_parameters(id)
 
         self.area = area
         self._content_pointer = {hru.id: i
                                  for i, hru in enumerate(self._content)}
         self._weights = deepcopy(weights)
+        self.add_prefix_parameters(id, shared_parameters)
         self.add_prefix_states(id)
 
     # METHODS FOR THE USER
@@ -165,7 +178,8 @@ class Node(GenericComponent):
         hru_num, ele = self._find_attribute_from_name(id)
 
         if ele:
-            return self._content[hru_num].get_internal(id, attribute)
+            ele_id = id.split('_')[-1]
+            return self._content[hru_num].get_internal(ele_id, attribute)
         else:
             try:
                 method = getattr(self._content[hru_num], attribute)
@@ -196,7 +210,8 @@ class Node(GenericComponent):
         hru_num, ele = self._find_attribute_from_name(id)
 
         if ele:
-            return self._content[hru_num].call_internal(id, method, **kwargs)
+            ele_id = id.split('_')[-1]
+            return self._content[hru_num].call_internal(ele_id, method, **kwargs)
         else:
             try:
                 method = getattr(self._content[hru_num], method)
@@ -207,7 +222,7 @@ class Node(GenericComponent):
 
     # METHODS USED BY THE FRAMEWORK
 
-    def add_prefix_parameters(self, id):
+    def add_prefix_parameters(self, id, shared_parameters):
         """
         This method adds the prefix to the parameters of the elements that are
         contained in the node.
@@ -218,8 +233,27 @@ class Node(GenericComponent):
             Prefix to add.
         """
 
-        for h in self._content:
-            h.add_prefix_parameters(id)
+        # Add prefix to local parameters
+        if '_' in id:
+            message = '{}The prefix cannot contain \'_\''.format(self._error_message)
+            raise ValueError(message)
+
+        if self._local_parameters:  # the following block runs only if the dictionary is not empty
+            # Extract the prefixes in the parameters name
+            splitted = list(self._local_parameters.keys())[0].split('_')
+
+            if id not in splitted:
+                # Apply the prefix
+                for k in list(self._local_parameters.keys()):
+                    value = self._local_parameters.pop(k)
+                    self._local_parameters['{}_{}'.format(id, k)] = value
+
+                # Save the prefix for furure uses
+                self._prefix_local_parameters = '{}_{}'.format(id, self._prefix_local_parameters)
+
+        if not shared_parameters:
+            for h in self._content:
+                h.add_prefix_parameters(id)
 
     def add_prefix_states(self, id):
         """
@@ -231,6 +265,26 @@ class Node(GenericComponent):
         id : str
             Prefix to add.
         """
+
+        # Add prefix to local states
+        if '_' in id:
+            message = '{}The prefix cannot contain \'_\''.format(self._error_message)
+            raise ValueError(message)
+
+        if self._local_states:  # the following block runs only if the dictionary is not empty
+            # Extract the prefixes in the parameters name
+            splitted = list(self._local_states.keys())[0].split('_')
+
+            if id not in splitted:
+                # Apply the prefix
+                for k in list(self._local_states.keys()):
+                    value = self._local_states.pop(k)
+                    self._local_states['{}_{}'.format(id, k)] = value
+                    value = self._init_local_states.pop(k)
+                    self._init_local_states['{}_{}'.format(id, k)] = value
+
+                # Save the prefix for furure uses
+                self._prefix_local_states = '{}_{}'.format(id, self._prefix_local_states)
 
         for h in self._content:
             h.add_prefix_states(id)
@@ -274,10 +328,12 @@ class Node(GenericComponent):
 
         hru_num = self._find_content_from_name(id)
 
-        if len(splitted) == 3:
+        if len(splitted) == 2:
             return (hru_num, True)  # We are looking for an element
+        elif len(splitted) == 1:
+            return (hru_num, False)  # We are looking for a unit
         else:
-            return (hru_num, False)
+            raise ValueError('Tmp for debug in node')
 
     def _internal_routing(self, flux):
         """

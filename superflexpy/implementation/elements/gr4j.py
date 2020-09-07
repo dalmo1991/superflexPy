@@ -1,5 +1,5 @@
 """
-Copyright 2019 Marco Dal Molin et al.
+Copyright 2020 Marco Dal Molin et al.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -37,6 +37,7 @@ https://doi.org/10.1016/S0022-1694(03)00225-7, 2003.
 
 from ...framework.element import BaseElement, ODEsElement, LagElement
 import numpy as np
+import numba as nb
 
 
 class InterceptionFilter(BaseElement):
@@ -95,7 +96,7 @@ class ProductionStore(ODEsElement):
     This class implements the production store of GR4J.
     """
 
-    def __init__(self, parameters, states, solver, id):
+    def __init__(self, parameters, states, approximation, id):
         """
         This is the initializer of the class ProductionStore.
 
@@ -111,10 +112,8 @@ class ProductionStore(ODEsElement):
         states : dict
             Initial state of the element. The keys must be:
             - 'S0' : initial storage of the reservoir.
-        solver : superflexpy.utils.root_finder.RootFinder
-            Solver used to find the root(s) of the differential equation(s).
-            Child classes may implement their own solver, therefore the tipe
-            of the solver is not enforced.
+        approximation : superflexpy.utils.numerical_approximation.NumericalApproximator
+            Numerial method used to approximate the differential equation
         id : str
             Itentifier of the element. All the elements of the framework must
             have an id.
@@ -123,14 +122,15 @@ class ProductionStore(ODEsElement):
         ODEsElement.__init__(self,
                              parameters=parameters,
                              states=states,
-                             solver=solver,
+                             approximation=approximation,
                              id=id)
 
-        if solver.architecture == 'numba':
-            message = '{}numba differential equation not implemented'.format(self._error_message)
-            raise NotImplementedError(message)
-        elif solver.architecture == 'python':
-            self._differential_equation = self._differential_equation_python
+        self._fluxes_python = [self._flux_function_python]
+
+        if approximation.architecture == 'numba':
+            self._fluxes = [self._flux_function_numba]
+        elif approximation.architecture == 'python':
+            self._fluxes = [self._flux_function_python]
 
     def set_input(self, input):
         """
@@ -174,16 +174,16 @@ class ProductionStore(ODEsElement):
             # Update the states
             self.set_states({self._prefix_states + 'S0': self.state_array[-1, 0]})
 
-        x1 = self._parameters[self._prefix_parameters + 'x1']
-        alpha = self._parameters[self._prefix_parameters + 'alpha']
-        beta = self._parameters[self._prefix_parameters + 'beta']
-        ni = self._parameters[self._prefix_parameters + 'ni']
+        fluxes = self._num_app.get_fluxes(fluxes=self._fluxes_python,
+                                          S=self.state_array,
+                                          S0=self._solver_states,
+                                          dt=self._dt,
+                                          **self.input,
+                                          **{k[len(self._prefix_parameters):]: self._parameters[k] for k in self._parameters},
+                                          )
 
-        Pn_minus_Ps = self.input['P'] * np.power(self.state_array[:, 0] / x1, alpha)
-        Perc = (np.power(x1, 1 - beta) / ((beta - 1) * self._dt)) *\
-            np.power(ni, beta - 1) *\
-            np.power(self.state_array[:, 0], beta)
-
+        Pn_minus_Ps = self.input['P'] - fluxes[0][0]
+        Perc = - fluxes[0][2]
         return [Pn_minus_Ps + Perc]
 
     def get_aet(self):
@@ -197,29 +197,59 @@ class ProductionStore(ODEsElement):
         """
 
         try:
-            S = self.state_array[:, 0]
+            S = self.state_array
         except AttributeError:
             message = '{}get_aet method has to be run after running '.format(self._error_message)
             message += 'the model using the method get_output'
             raise AttributeError(message)
 
-        PET = self.input['PET']
-        x1 = self._parameters[self._prefix_parameters + 'x1']
-        alpha = self._parameters[self._prefix_parameters + 'alpha']
+        fluxes = self._num_app.get_fluxes(fluxes=self._fluxes_python,
+                                          S=S,
+                                          S0=self._solver_states,
+                                          dt=self._dt,
+                                          **self.input,
+                                          **{k[len(self._prefix_parameters):]: self._parameters[k] for k in self._parameters},
+                                          )
 
-        return PET * (2 * (S / x1) - np.power(S / x1, alpha))
+        return [- fluxes[0][1]]
 
     @staticmethod
-    def _differential_equation_python(S, S0, P, x1, alpha, beta, ni, PET, dt):
+    def _flux_function_python(S, S0, ind, P, x1, alpha, beta, ni, PET, dt):
 
-        if S is None:
-            S = 0
+        if ind is None:
+            return(
+                [
+                    P * (1 - (S / x1)**alpha),  # Ps
+                    - PET * (2 * (S / x1) - (S / x1)**alpha),  # Evaporation
+                    - ((x1**(1 - beta)) / ((beta - 1) * dt)) * (ni**(beta - 1)) * (S**beta)  # Perc
+                ],
+                0.0,
+                S0 + P * (1 - (S / x1)**alpha)
+            )
+        else:
+            return(
+                [
+                    P[ind] * (1 - (S / x1[ind])**alpha[ind]),  # Ps
+                    - PET[ind] * (2 * (S / x1[ind]) - (S / x1[ind])**alpha[ind]),  # Evaporation
+                    - ((x1[ind]**(1 - beta[ind])) / ((beta[ind] - 1) * dt[ind])) * (ni[ind]**(beta[ind] - 1)) * (S**beta[ind])  # Perc
+                ],
+                0.0,
+                S0 + P[ind] * (1 - (S / x1[ind])**alpha[ind])
+            )
+
+    @staticmethod
+    @nb.jit('Tuple((UniTuple(f8, 3), f8, f8))(optional(f8), f8, i4, f8[:], f8[:], f8[:], f8[:], f8[:], f8[:], f8[:])',
+            nopython=True)
+    def _flux_function_numba(S, S0, ind, P, x1, alpha, beta, ni, PET, dt):
 
         return(
-            (S - S0) / dt - P * (1 - (S / x1)**alpha) + PET * (2 * (S / x1) - (S / x1)**alpha)
-            + ((x1**(1 - beta)) / ((beta - 1) * dt)) * (ni**(beta - 1)) * (S**beta),
+            (
+                P[ind] * (1 - (S / x1[ind])**alpha[ind]),  # Ps
+                - PET[ind] * (2 * (S / x1[ind]) - (S / x1[ind])**alpha[ind]),  # Evaporation
+                - ((x1[ind]**(1 - beta[ind])) / ((beta[ind] - 1) * dt[ind])) * (ni[ind]**(beta[ind] - 1)) * (S**beta[ind])  # Perc
+            ),
             0.0,
-            S0 + P
+            S0 + P[ind] * (1 - (S / x1[ind])**alpha[ind])
         )
 
 
@@ -228,7 +258,7 @@ class RoutingStore(ODEsElement):
     This class implements the routing store of GR4J.
     """
 
-    def __init__(self, parameters, states, solver, id):
+    def __init__(self, parameters, states, approximation, id):
         """
         This is the initializer of the class ProductionStore.
 
@@ -243,10 +273,8 @@ class RoutingStore(ODEsElement):
         states : dict
             Initial state of the element. The keys must be:
             - 'S0' : initial storage of the reservoir.
-        solver : superflexpy.utils.root_finder.RootFinder
-            Solver used to find the root(s) of the differential equation(s).
-            Child classes may implement their own solver, therefore the tipe
-            of the solver is not enforced.
+        approximation : superflexpy.utils.numerical_approximation.NumericalApproximator
+            Numerial method used to approximate the differential equation
         id : str
             Itentifier of the element. All the elements of the framework must
             have an id.
@@ -254,14 +282,15 @@ class RoutingStore(ODEsElement):
         ODEsElement.__init__(self,
                              parameters=parameters,
                              states=states,
-                             solver=solver,
+                             approximation=approximation,
                              id=id)
 
-        if solver.architecture == 'numba':
-            message = '{}numba differential equation not implemented'.format(self._error_message)
-            raise NotImplementedError(message)
-        elif solver.architecture == 'python':
-            self._differential_equation = self._differential_equation_python
+        self._fluxes_python = [self._flux_function_python]
+
+        if approximation.architecture == 'numba':
+            self._fluxes = [self._flux_function_numba]
+        elif approximation.architecture == 'python':
+            self._fluxes = [self._flux_function_python]
 
     def set_input(self, input):
         """
@@ -299,28 +328,56 @@ class RoutingStore(ODEsElement):
             # Update the states
             self.set_states({self._prefix_states + 'S0': self.state_array[-1, 0]})
 
-        x2 = self._parameters[self._prefix_parameters + 'x2']
-        x3 = self._parameters[self._prefix_parameters + 'x3']
-        gamma = self._parameters[self._prefix_parameters + 'gamma']
-        omega = self._parameters[self._prefix_parameters + 'omega']
+        fluxes = self._num_app.get_fluxes(fluxes=self._fluxes_python,
+                                          S=self.state_array,
+                                          S0=self._solver_states,
+                                          dt=self._dt,
+                                          **self.input,
+                                          **{k[len(self._prefix_parameters):]: self._parameters[k] for k in self._parameters},
+                                          )
 
-        Qr = (np.power(x3, 1 - gamma) / ((gamma - 1) * self._dt)) * \
-            np.power(self.state_array[:, 0], gamma)
-        F = x2 * np.power(self.state_array[:, 0] / x3, omega)
+        Qr = - fluxes[0][1]
+        F = -fluxes[0][2]
 
         return [Qr, F]
 
     @staticmethod
-    def _differential_equation_python(S, S0, P, x2, x3, gamma, omega, dt):
+    def _flux_function_python(S, S0, ind, P, x2, x3, gamma, omega, dt):
 
-        if S is None:
-            S = 0
+        if ind is None:
+            return(
+                [
+                    P,  # P
+                    - ((x3**(1 - gamma)) / ((gamma - 1) * dt)) * (S**gamma),  # Qr
+                    - (x2 * (S / x3)**omega),  # F
+                ],
+                0.0,
+                S0 + P
+            )
+        else:
+            return(
+                [
+                    P[ind],  # P
+                    - ((x3[ind]**(1 - gamma[ind])) / ((gamma[ind] - 1) * dt[ind])) * (S**gamma[ind]),  # Qr
+                    - (x2[ind] * (S / x3[ind])**omega[ind]),  # F
+                ],
+                0.0,
+                S0 + P[ind]
+            )
+
+    @staticmethod
+    @nb.jit('Tuple((UniTuple(f8, 3), f8, f8))(optional(f8), f8, i4, f8[:], f8[:], f8[:], f8[:], f8[:], f8[:])',
+            nopython=True)
+    def _flux_function_numba(S, S0, ind, P, x2, x3, gamma, omega, dt):
 
         return(
-            (S - S0) / dt - P + ((x3**(1 - gamma)) / ((gamma - 1) * dt)) * (S**gamma)
-            + (x2 * (S / x3)**omega),
+            (
+                P[ind],  # P
+                - ((x3[ind]**(1 - gamma[ind])) / ((gamma[ind] - 1) * dt[ind])) * (S**gamma[ind]),  # Qr
+                - (x2[ind] * (S / x3[ind])**omega[ind]),  # F
+            ),
             0.0,
-            S0 + P
+            S0 + P[ind]
         )
 
 

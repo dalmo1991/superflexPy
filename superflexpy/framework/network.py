@@ -1,5 +1,5 @@
 """
-Copyright 2019 Marco Dal Molin et al.
+Copyright 2020 Marco Dal Molin et al.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ This file contains the implementation of the Network class.
 """
 
 from ..utils.generic_component import GenericComponent
+from .node import Node
 
 
 class Network(GenericComponent):
@@ -47,11 +48,16 @@ class Network(GenericComponent):
             be a tree, each key has only one downstream element
         """
 
-        self._content = nodes
-        self._downstream = topography
-
         self._error_message = 'module : superflexPy, Network ,'
         self._error_message += ' Error message : '
+
+        for n in nodes:
+            if not isinstance(n, Node):
+                message = '{}units must be instance of the Unit class'.format(self._error_message)
+                raise TypeError(message)
+
+        self._content = nodes
+        self._downstream = topography
 
         self._build_network()
 
@@ -146,7 +152,12 @@ class Network(GenericComponent):
         cat_num, ele = self._find_attribute_from_name(id)
 
         if ele:
-            return self._content[cat_num].get_internal(id, attribute)
+            splitted = id.split('_')
+            if len(splitted) == 3:  # element
+                ele_id = splitted[1] + '_' + splitted[2]
+            else:  # unit
+                ele_id = splitted[1]
+            return self._content[cat_num].get_internal(ele_id, attribute)
         else:
             try:
                 method = getattr(self._content[cat_num], attribute)
@@ -178,7 +189,12 @@ class Network(GenericComponent):
         cat_num, ele = self._find_attribute_from_name(id)
 
         if ele:
-            return self._content[cat_num].call_internal(id, method, **kwargs)
+            splitted = id.split('_')
+            if len(splitted) == 3:  # element
+                ele_id = splitted[1] + '_' + splitted[2]
+            else:  # unit
+                ele_id = splitted[1]
+            return self._content[cat_num].call_internal(ele_id, method, **kwargs)
         else:
             try:
                 method = getattr(self._content[cat_num], method)
@@ -264,7 +280,7 @@ class Network(GenericComponent):
 
         splitted = id.split('_')
 
-        cat_num = self._find_content_from_name(id)
+        cat_num = self._find_content_from_name(id)  # Options: None if cat_id not in id, number otherwise
 
         if len(splitted) >= 2:
             return (cat_num, True)  # We are looking for a HRU or an element

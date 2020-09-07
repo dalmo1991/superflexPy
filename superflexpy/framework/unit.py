@@ -1,5 +1,5 @@
 """
-Copyright 2019 Marco Dal Molin et al.
+Copyright 2020 Marco Dal Molin et al.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ class Unit(GenericComponent):
     graph.
     """
 
-    def __init__(self, layers, id, copy_pars=True):
+    def __init__(self, layers, id, parameters=None, states=None, copy_pars=True):
         """
         This is the initializer of the class Unit.
 
@@ -54,6 +54,14 @@ class Unit(GenericComponent):
 
         self._error_message = 'module : superflexPy, Unit : {},'.format(id)
         self._error_message += ' Error message : '
+
+        # Handle local parameters and states
+        if parameters is not None:
+            self._local_parameters = parameters
+
+        if states is not None:
+            self._local_states = states
+            self._init_local_states = deepcopy(states)
 
         if copy_pars:
             # Deep-copy the elements
@@ -221,6 +229,24 @@ class Unit(GenericComponent):
             Prefix to add.
         """
 
+        # Add prefix to local parameters
+        if '_' in id:
+            message = '{}The prefix cannot contain \'_\''.format(self._error_message)
+            raise ValueError(message)
+
+        if self._local_parameters:  # the following block runs only if the dictionary is not empty
+            # Extract the prefixes in the parameters name
+            splitted = list(self._local_parameters.keys())[0].split('_')
+
+            if id not in splitted:
+                # Apply the prefix
+                for k in list(self._local_parameters.keys()):
+                    value = self._local_parameters.pop(k)
+                    self._local_parameters['{}_{}'.format(id, k)] = value
+
+                # Save the prefix for furure uses
+                self._prefix_local_parameters = '{}_{}'.format(id, self._prefix_local_parameters)
+
         for l in self._layers:
             for el in l:
                 try:
@@ -238,6 +264,26 @@ class Unit(GenericComponent):
         id : str
             Prefix to add.
         """
+
+        # Add prefix to local states
+        if '_' in id:
+            message = '{}The prefix cannot contain \'_\''.format(self._error_message)
+            raise ValueError(message)
+
+        if self._local_states:  # the following block runs only if the dictionary is not empty
+            # Extract the prefixes in the parameters name
+            splitted = list(self._local_states.keys())[0].split('_')
+
+            if id not in splitted:
+                # Apply the prefix
+                for k in list(self._local_states.keys()):
+                    value = self._local_states.pop(k)
+                    self._local_states['{}_{}'.format(id, k)] = value
+                    value = self._init_local_states.pop(k)
+                    self._init_local_states['{}_{}'.format(id, k)] = value
+
+                # Save the prefix for furure uses
+                self._prefix_local_states = '{}_{}'.format(id, self._prefix_local_states)
 
         # add the Prefix to the elements
         for l in self._layers:
@@ -344,14 +390,34 @@ class Unit(GenericComponent):
             layers.append([])
             for el in l:
                 layers[-1].append(copy(el))
-        return self.__class__(layers=layers,
+
+        p = self._local_parameters
+        s = deepcopy(self._local_states)
+
+        unit = self.__class__(layers=layers,
                               id=self.id,
+                              parameters=p,
+                              states=s,
                               copy_pars=False)  # False because the copy is customized here
+        unit._prefix_local_parameters = self._prefix_local_parameters
+        unit._prefix_local_states = self._prefix_local_states
+
+        return unit
 
     def __deepcopy__(self, memo):
-        return self.__class__(layers=self._layers,
+
+        p = deepcopy(self._local_parameters)
+        s = deepcopy(self._local_states)
+
+        unit = self.__class__(layers=self._layers,
                               id=self.id,
+                              parameters=p,
+                              states=s,
                               copy_pars=True)  # init already implements deepcopy
+        unit._prefix_local_parameters = self._prefix_local_parameters
+        unit._prefix_local_states = self._prefix_local_states
+
+        return unit
 
     def __repr__(self):
         str = 'Module: superflexPy\nUnit: {}\n'.format(self.id)

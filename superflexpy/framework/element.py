@@ -1,5 +1,5 @@
 """
-Copyright 2019 Marco Dal Molin et al.
+Copyright 2020 Marco Dal Molin et al.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ class BaseElement():
     """
     Number of downstream elements
     """
-    
+
     _num_upstream = None
     """
     Number of upstream elements
@@ -469,7 +469,7 @@ class ODEsElement(StateParameterizedElement):
 
     dS/dt = input - output
     """
-    
+
     _num_upstream = 1
     """
     Number of upstream elements
@@ -485,7 +485,25 @@ class ODEsElement(StateParameterizedElement):
     List of states used by the solver of the differential equation
     """
 
-    def __init__(self, parameters, states, solver, id):
+    _fluxes = []
+    """
+    This attribute contains a list of methods (one per differential equation)
+    that calculate the values of the fluxes needed to solve the differential
+    equations that control the element. The single functions must return the
+    fluxes as a list where incoming fluxes are positive and outgoing are
+    negative. Here is a list of the required outputs of the single functions:
+
+    list(floats)
+        Values of the fluxes given states, inputs, and parameters.
+    float
+        Minimum value of the state. Used, sometimes, by the numerical solver
+        to search for the solution.
+    float
+        Maximum value of the state. Used, sometimes, by the numerical solver
+        to search for the solution.
+    """
+
+    def __init__(self, parameters, states, approximation, id):
         """
         This is the initializer of the abstract class ODEsElement.
 
@@ -498,10 +516,8 @@ class ODEsElement(StateParameterizedElement):
         states : dict
             Initial states of the element. Depending on the element the states
             can be either a float or a numpy.ndarray.
-        solver : superflexpy.utils.root_finder.RootFinder
-            Solver used to find the root(s) of the differential equation(s).
-            Child classes may implement their own solver, therefore the type
-            of the solver is not enforced.
+        approximation : superflexpy.utils.numerical_approximation.NumericalApproximator
+            Numerial method used to approximate the differential equation
         id : str
             Identifier of the element. All the elements of the framework must
             have an id.
@@ -510,7 +526,7 @@ class ODEsElement(StateParameterizedElement):
         StateParameterizedElement.__init__(self, parameters=parameters,
                                            states=states, id=id)
 
-        self._solver = solver
+        self._num_app = approximation
 
     def set_timestep(self, dt):
         """
@@ -534,7 +550,7 @@ class ODEsElement(StateParameterizedElement):
         """
         return self._dt
 
-    def define_solver(self, solver):
+    def define_numerical_approximation(self, approximation):
         """
         This method define the solver to use for the differential equation.
 
@@ -546,7 +562,7 @@ class ODEsElement(StateParameterizedElement):
             of the solver is not enforced.
         """
 
-        self._solver = solver
+        self._num_app = approximation
 
     def _solve_differential_equation(self, **kwargs):
         """
@@ -559,21 +575,12 @@ class ODEsElement(StateParameterizedElement):
             message = '{}the attribute _solver_states must be filled'.format(self._error_message)
             raise ValueError(message)
 
-        self.state_array = self._solver.solve(fun=self._differential_equation,
-                                              S0=self._solver_states,
-                                              dt=self._dt,
-                                              **self.input,
-                                              **{k[len(self._prefix_parameters):]: self._parameters[k] for k in self._parameters},
-                                              **kwargs)
-
-    def _differential_equation(self):
-        """
-        To be implemented by any child class. This method sets the differential
-        equation(s) to be solved by the solver. The method must be implemented
-        in order to satisfy the requirements of the solver.
-        """
-
-        raise NotImplementedError('The _differential_equation method must be implemented')
+        self.state_array = self._num_app.solve(fun=self._fluxes,
+                                               S0=self._solver_states,
+                                               dt=self._dt,
+                                               **self.input,
+                                               **{k[len(self._prefix_parameters):]: self._parameters[k] for k in self._parameters},
+                                               **kwargs)
 
     def __copy__(self):
         p = self._parameters  # Only the reference
@@ -581,7 +588,7 @@ class ODEsElement(StateParameterizedElement):
         ele = self.__class__(parameters=p,
                              states=s,
                              id=self.id,
-                             solver=self._solver)
+                             approximation=self._num_app)
         ele._prefix_states = self._prefix_states
         ele._prefix_parameters = self._prefix_parameters
         return ele
@@ -592,7 +599,7 @@ class ODEsElement(StateParameterizedElement):
         ele = self.__class__(parameters=p,
                              states=s,
                              id=self.id,
-                             solver=self._solver)
+                             approximation=self._num_app)
         ele._prefix_states = self._prefix_states
         ele._prefix_parameters = self._prefix_parameters
         return ele
@@ -728,7 +735,7 @@ class LagElement(StateParameterizedElement):
         """
         This method distributes the input fluxes according to the weight array
         and the initial state.
-        
+
         Parameters
         ----------
         weight : list(numpy.ndarray)
@@ -737,7 +744,7 @@ class LagElement(StateParameterizedElement):
             List of the initial states of the lag.
         input : list(numpy.ndarray)
             List of fluxes
-        
+
         Returns
         -------
         numpy.ndarray
@@ -761,12 +768,12 @@ class LagElement(StateParameterizedElement):
         """
         This method sets the initial state of the lag to arrays of proper
         length.
-        
+
         Parameters
         ----------
         lag_time : list(float)
             List of lag times
-        
+
         Returns
         -------
         list(numpy.ndarray)

@@ -1,5 +1,5 @@
 """
-Copyright 2019 Marco Dal Molin et al.
+Copyright 2020 Marco Dal Molin et al.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -25,7 +25,6 @@ model used in Dal Molin et al, 2020
 Bibliography
 ------------
 
-
 Dal Molin, M., Schirmer, M., Zappa, M., and Fenicia, F.: Understanding dominant
 controls on streamflow spatial variability to set up a semi-distributed
 hydrological model: the case study of the Thur catchment, Hydrol. Earth Syst.
@@ -41,7 +40,7 @@ import numpy as np
 
 class SnowReservoir(ODEsElement):
 
-    def __init__(self, parameters, states, solver, id):
+    def __init__(self, parameters, states, approximation, id):
         """
         This is the initializer of the class SnowReservoir.
 
@@ -67,13 +66,14 @@ class SnowReservoir(ODEsElement):
         ODEsElement.__init__(self,
                              parameters=parameters,
                              states=states,
-                             solver=solver,
+                             approximation=approximation,
                              id=id)
 
-        if solver.architecture == 'numba':
-            self._differential_equation = self._differential_equation_numba
-        elif solver.architecture == 'python':
-            self._differential_equation = self._differential_equation_python
+        self._fluxes_python = [self._flux_function_python]
+        if approximation.architecture == 'numba':
+            self._fluxes = [self._flux_function_numba]
+        elif approximation.architecture == 'python':
+            self._fluxes = [self._flux_function_numba]
 
     def set_input(self, input):
         """
@@ -119,54 +119,68 @@ class SnowReservoir(ODEsElement):
             # Update the state
             self.set_states({self._prefix_states + 'S0': self.state_array[-1, 0]})
 
-        k = self._parameters[self._prefix_parameters + 'k']
-        m = self._parameters[self._prefix_parameters + 'm']
+        fluxes = self._num_app.get_fluxes(fluxes=self._fluxes_python,
+                                          S=self.state_array,
+                                          S0=self._solver_states,
+                                          snow=snow,
+                                          **self.input,
+                                          **{k[len(self._prefix_parameters):]: self._parameters[k] for k in self._parameters},
+                                          )
 
-        melt_potential = np.where(self.input['T'] > t0,
-                                  k * self.input['T'],
-                                  0.0)
-
-        actual_melt = melt_potential * (1 - np.exp(-(self.state_array[:, 0] / m)))
+        actual_melt = - fluxes[0][1]
 
         return [rain + actual_melt]
 
     @staticmethod
-    def _differential_equation_python(S, S0, snow, T, t0, k, m, dt):
+    def _flux_function_python(S, S0, ind, snow, T, t0, k, m):
 
         if S is None:
             S = 0
 
-        melt_potential = k * T if T > t0 else 0.0
-        actual_melt = melt_potential * (1 - np.exp(-(S / m)))
+        if ind is None:
+            melt_potential = np.where(T > t0, k * T, 0.0)
+            actual_melt = melt_potential * (1 - np.exp(-(S / m)))
 
-        return(
-            (S - S0) / dt - snow + actual_melt,
-            0.0,
-            S0 + snow,
-        )
+            return(
+                [
+                    snow,
+                    - actual_melt,
+                ],
+                0.0,
+                S0 + snow,
+            )
+
+        else:
+            melt_potential = k[ind] * T[ind] if T[ind] > t0[ind] else 0.0
+            actual_melt = melt_potential * (1 - np.exp(-(S / m[ind])))
+
+            return(
+                [
+                    snow[ind],
+                    - actual_melt,
+                ],
+                0.0,
+                S0 + snow[ind],
+            )
 
     @staticmethod
-    @nb.jit('UniTuple(f8, 3)(optional(f8), f8, i4, f8[:], f8[:], f8[:], f8[:], f8[:], f8[:])',
+    @nb.jit('Tuple((UniTuple(f8, 2), f8, f8))(optional(f8), f8, i4, f8[:], f8[:], f8[:], f8[:], f8[:])',
             nopython=True)
-    def _differential_equation_numba(S, S0, ind, snow, T, t0, k, m, dt):
+    def _flux_function_numba(S, S0, ind, snow, T, t0, k, m):
 
         if S is None:
             S = 0
 
-        snow = snow[ind]
-        T = T[ind]
-        t0 = t0[ind]
-        k = k[ind]
-        m = m[ind]
-        dt = dt[ind]
-
-        melt_potential = k * T if T > t0 else 0.0
-        actual_melt = melt_potential * (1 - np.exp(-(S / m)))
+        melt_potential = k[ind] * T[ind] if T[ind] > t0[ind] else 0.0
+        actual_melt = melt_potential * (1 - np.exp(-(S / m[ind])))
 
         return(
-            (S - S0) / dt - snow + actual_melt,
+            (
+                snow[ind],
+                - actual_melt,
+            ),
             0.0,
-            S0 + snow,
+            S0 + snow[ind],
         )
 
 
@@ -180,7 +194,7 @@ class HalfTriangularLag(LagElement):
         ----------
         parameters : dict
             Parameters of the element. The keys must be:
-            - lag_time : total length (base) of the lag function.
+            - lag-time : total length (base) of the lag function.
         states : dict
             Initial state of the element. The keys must be:
             - lag : initial state of the lag function
