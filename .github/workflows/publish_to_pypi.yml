@@ -1,0 +1,27 @@
+name: publish releases automatically on PyPI
+
+# Trigger on push on release branch
+on:
+  push:
+    branches:
+      - release
+
+jobs:
+  create_and_publish:
+    name: publish releases automatically on PyPI
+    runs-on: ubuntu-latest
+    steps:
+    - name: Select branch
+      uses: actions/checkout@master
+      with:
+        ref: 'release'  # The default behavior is that it checkouts to the trigger so we don't need this
+    - name: Set up Python 3.7
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.7
+    - name: Build the package
+      run: python setup.py sdist
+    - name: Publish on PyPI
+      uses: pypa/gh-action-pypi-publish@master
+      with:
+        password: ${{ secrets.PYPI_ACCESS_TOKEN }}
