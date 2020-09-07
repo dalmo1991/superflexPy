@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name='superflexpy',
-    version='0.3.0',
+    version='0.3.1',
     author='Marco Dal Molin',
     author_email='marco.dalmolin.1991@gmail.com',
     description='Framework for building hydrological models',
