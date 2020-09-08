@@ -2,7 +2,7 @@
 ..              and existing ones modified. Once the guide will reach its final
 ..              version, this box will disappear.
 
-.. image:: pics/logo_transparent.PNG
+.. image:: pics/logo_transparent_2.png
    :align: center
 
 ===========

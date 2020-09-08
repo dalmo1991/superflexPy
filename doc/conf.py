@@ -57,7 +57,7 @@ html_theme = 'sphinx_rtd_theme'
 html_theme_options = {
     'logo_only': True
 }
-html_logo = "pics/logo_inverted_colors.PNG"
+html_logo = "/home/dalmo/Documents/BitBucket/superflexpy_aug2019/doc/source/pics/logo_inverted_2.PNG"
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
