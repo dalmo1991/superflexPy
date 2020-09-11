@@ -7,4 +7,5 @@ flexible, conceptual, distributed hydrological models.
 
 Refer to the [documentation](https://superflexpy.readthedocs.io/) to learn to
 use the SuperflexPy, [install](https://pypi.org/project/superflexpy/) the
-package from here.
+package from here. [Examples](examples/) showing the basic usage of SuperflexPy
+are available.
