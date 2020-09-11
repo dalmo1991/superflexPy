@@ -9,7 +9,7 @@
 Software organization and contribution
 ======================================
 
-.. image:: pics/contribute/schematic.png
+.. image:: pics/contribute/schematic_with_logo.png
    :align: center
 
 The superflexPy framework is composed by different pieces that are necessary to
