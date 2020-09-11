@@ -73,18 +73,6 @@ If you want to get e-mails about future developments of the framework, please
 subscribe to our mailing list `clicking here
 <https://forms.gle/utLbF6KWqvqS7LHZ7>`_.
 
-Code and demos
---------------
-
-The source code can be accessed at the `repository
-<https://github.com/dalmo1991/superflexPy/>`_.
-
-A demo, implementing GR4J, is available in a `Colab Notebook
-<https://colab.research.google.com/drive/1XBmkTY_1KsP1l8extzhomOOC-vH8PN9j>`_.
-
-.. TODO (review 26 Jun 2020):
-.. - Change demo GR4J because of new numerical implementation
-
 .. toctree::
    :maxdepth: 1
    :hidden:
