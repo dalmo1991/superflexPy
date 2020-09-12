@@ -1,0 +1,5 @@
+FLEX_HRU_CHARACTERISTICS_FILE_V1.1
+! Description: HRUs characterisics (-1=NA, depending on mask Unit Presence Matrix)
+!========
+AREAS (km2)
+1.0

@@ -1,0 +1,70 @@
+FLEX_MAIN_CONFIGURATION_FILE_V1.05
+! Description: FLEX-SPAM model configuration file
+!========
+01         ! index describing model configuration (for ease of reference/documentation)
+"M01" ! nametag describing model configuration (eg, "stdFLEX/powerAS", etc)
+!========
+FLEX NUMERICS
+1       ! numerical solver for interception reservoir (0=odeint, 1=fixed-spm-implicit, 2=bounded EE, -1=simple-threshold, -2=algebraic-statique)
+3       ! numerical solver for simple reservoirs (0=odeint, 3=fixed-liebre-implicit, 2=bounded EE)
+1       ! numerical solver for UR zone (0=odeint, 1=fixed-spm-implicit, 2=bounded EE)
+!========
+FLEX DISTRIBUTION
+1       ! number of HRUs
+1       ! number of catchments
+0       ! number of tracers
+1       ! number of layers (dead storages)
+!========
+HRU CHARACTERISTICS FILE NAME
+"*/flexConfig_Areas.dat"
+!========
+UNITS FILE NAME
+"*/flexConfig_ML01.dat"
+!========
+UNITS PRESENCE MATRIX                                                                                   
+ FC_01(Lumped)		! ID
+.true.				!
+!========
+INPUTS DESCRIPTION                                                                                   
+2 ! precipitation input (1=lumped,2=perSubcatchment(ID),3=perFied)
+0 ! tracer input (0=absent,1=lumped,2=perSubcatchment(ID),3=perFied)
+2 ! etp input (1=lumped,2=perSubcatchment(ID),3=perFied)
+0 ! temperature input (0=absent,1=lumped,2=perSubcatchment(ID),3=perFied)
+!========
+DRAINAGE DISTANCES                                                                                    
+riverScaleInc       riverScaleOut       riverSlopeInc       riverSlopeOut
+1.0                     1.0                  1.0                 1.0
+!========
+DEPENDENCIES      
+DrainsInto
+0
+!========
+RIVER ROUTING CONVOLUTION INFORMATION
+"none",.false.,-1,1 ! convolution function "symTri","genTri","kiedKeid","none", for symTri only tS and tR are needed; couple scales (if true relative scaleInc and scaleOut is preserved) smoothing options;  maximum number of convolution states
+!========
+ACTIVE_PARAMETER_INFO ! (parameters visible to BATEA)
+parName                  parDef             parLo        parHi        parScal    parSD         parTran   parFit  linkTo      Comment
+"Cmlt_P, -       "       1.0                0.9          1.1          10.0      -9999.9           0       F      0           (cannot be dead) Rainfall multiplication factor
+"Cmlt_E, -       "       1.0                0.2          5.0          10.0      -9999.9           1       F      0           (cannot be dead) Multiplication factor for evaporation
+"CmltSmax_IR, -  "       1.0                1.e-1        3.0          10.0      -9999.9           1       F      0           (cannot be dead) Intercaption multiplication factor
+"CmltSmax_UR, -  "       1.0                1.e-1        500.0        10.0      -9999.9           1       F      0           (cannot be dead) SuMax multiplication factor
+"CmltBetaQq_UR, -"       1.0                1.e-2        10.0         10.0      -9999.9           1       F      0           (cannot be dead) BetaQq multiplication factor
+"Cmlt_P_WR, -    "       1.0                1.e-1        3.0          10.0      -9999.9           0       F      0           (cannot be dead) Multiplication factor to wCorr in snow reservoir
+"CmltK_Qm_WR, -  "       1.0                1.e-1        10.0         10.0      -9999.9           1       F      0           (cannot be dead) Multiplication factor to K_Qm in snow reservoir
+"CmltK_Qq_SR, -  "       1.0                1.e-1        5.0          10.0      -9999.9           1       F      0           (cannot be dead) Multiplication factor to K_Qq in slow reservoir
+"CmltK_Qb_SR, -  "       1.0                1.e-1        5.0          10.0      -9999.9           1       F      0           (cannot be dead) Multiplication factor to K_Qb in slow reservoir
+!========
+MORTO_PARAMETER_INFO ! (parameters that dont exist for this configuration)
+"tFall_IL, t     "       0.5                0.5          20.0         10.0      -9999.9           0       T      0           Time base for river routing - TFall
+"K_IL, 1/t       "       0.0                1.e-2        4.0          10.0      -9999.9           0       F      0           k for linear nash cascade ("kiedKeid") (uses TRise as nRes)
+"tFall_OL, t     "       0.5                0.5          20.0         10.0      -9999.9           0       T      0           Time base for river routing - TFall
+"K_OL, 1/t       "       0.0                1.e-2        4.0          10.0      -9999.9           0       F      0           k for linear nash cascade ("kiedKeid") (uses TRise as nRes)
+"tStart_IL, t    "       0.0                0.0          10.0         10.0      -9999.9           0       F      0           Time base for river routing - TStart
+"tRise_IL, t     "       1.0                0.5          10.0         10.0      -9999.9           0       F      0           Time base for river routing - TRise
+"betaM_IL, -     "       1.0                0.1          1.0          10.0      -9999.9           0       F      0           Power slope
+"betaS_IL, -     "       1.0                0.1          1.0          10.0      -9999.9           0       F      0           Power storage (kiedKeid) or length/slope  (convolution)
+"tStart_OL, t    "       0.0                0.0          10.0         10.0      -9999.9           0       F      0           Time base for river routing - TStart
+"tRise_OL, t     "       1.0                0.5          10.0         10.0      -9999.9           0       F      0           Time base for river routing - TRise
+"betaM_OL, -     "       1.0                0.1          1.0          10.0      -9999.9           0       F      0           Power slope
+"betaS_OL, -     "       1.0                0.1          1.0          10.0      -9999.9           0       F      0           Power storage (kiedKeid) or length/slope  (convolution)
+!========
