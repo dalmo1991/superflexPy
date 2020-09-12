@@ -17,4 +17,4 @@ jobs:
         with:
           python-version: 3.7
       - name: Test
-        run: bash tests/unittest/test_all.sh
+        run: bash test/unittest/test_all.sh
