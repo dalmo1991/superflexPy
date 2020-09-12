@@ -1,3 +1,5 @@
+[![Actions Status](https://github.com/dalmo1991/superflexPy/workflows/unittest%20on%20push/badge.svg)](https://github.com/{user}/{repo}/actions)
+
 # SuperflexPy: The flexible language of hydrological modelling
 
 ![SuperflexPy logo](https://superflexpy.readthedocs.io/en/latest/_images/logo_transparent_2.png)
