@@ -88,6 +88,8 @@ subscribe to our mailing list `clicking here
    customize_components
    popular_models
    case_studies
+   .. share_models
    examples
+   testing
    reference
    changelog
