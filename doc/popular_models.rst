@@ -22,6 +22,8 @@ models. The translation of a model in SuperflexPy requires the following steps:
    the page :ref:`build_element`)
 3. Construction of the model structure using the elements implemented at point 2
 
+.. _M4_example:
+
 M4 from Kavetski and Fenicia, WRR, 2011
 ---------------------------------------
 
