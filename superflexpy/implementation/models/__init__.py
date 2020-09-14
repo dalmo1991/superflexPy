@@ -1,1 +1,1 @@
-from . import kavetski_m4, gr4j, hymod, thur_M2
+from . import m4_sf_2011, gr4j, hymod, thur_M2
