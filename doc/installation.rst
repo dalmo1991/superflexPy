@@ -9,10 +9,10 @@
 Installation
 ============
 
-SuperflexPy has been developed and tested using Python 3 (version 3.7.4). It is
-not compatible with Python 2.
+SuperflexPy is implemented using Python 3 (version 3.7.4). It is not compatible
+with Python 2.
 
-SuperflexPy is available as Python package at PyPI repository, at the link
+SuperflexPy is available as a Python package at PyPI repository,
 `https://pypi.org/project/superflexpy <https://pypi.org/project/superflexpy>`_
 
 The simplest way to install SuperflexPy is using the package installer for
@@ -22,7 +22,7 @@ Python (pip) running the command
 
    pip install superflexpy
 
-After the first installation, to upgrade to a new version run the command
+To upgrade to a newer version (when available), run the following command
 
 .. code-block:: bash
 
@@ -31,13 +31,15 @@ After the first installation, to upgrade to a new version run the command
 Dependencies
 ------------
 
-SuperflexPy needs the following python packages to run
+SuperflexPy requires the following Python packages
 
 - `numpy <https://docs.scipy.org/doc/numpy/user/install.html>`_
 - `numba <https://numba.pydata.org/numba-doc/dev/user/installing.html>`_
 
-All the packages are available through pip.
+All the packages are available through pip and will be installed automatically
+when installing SuperflexPy.
 
-The installation of numba is necessary only if the modeler decides to use the
-numba optimized implementation of the numerical solvers. GPU acceleration (CUDA)
-is not needed and, therefore, it is not supported.
+Note that numba is required only if the modeler wishes to use the numba
+optimized implementation of the numerical solvers. Given the nature of the
+model, GPU acceleration (CUDA) is not beneficial (in terms of performance) and,
+therefore, it is not supported.

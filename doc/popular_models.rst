@@ -12,12 +12,12 @@
 Application: implementation of existing conceptual models
 =========================================================
 
-In this page we propose the implementation of existing conceptual hydrological
-models. The translation of a model in SuperflexPy requires the following steps:
+This page proposes the implementation of existing conceptual hydrological
+models using SuperflexPy. The translation of a model in SuperflexPy requires the following steps:
 
-1. Design of a structure that reflects the original model but satisfy the
+1. Design of a structure that reflects the original model but satisfies the
    requirements of SuperflexPy (e.g. does not contain mutual interaction
-   between elements);
+   between elements, see :ref:`unit`);
 2. Extension of the framework, coding the required elements (as explained in
    the page :ref:`build_element`)
 3. Construction of the model structure using the elements implemented at point 2
@@ -27,7 +27,7 @@ models. The translation of a model in SuperflexPy requires the following steps:
 M4 from Kavetski and Fenicia, WRR, 2011
 ---------------------------------------
 
-M4 is a simple conceptual model presented, as part of a models comparison study,
+M4 is a simple conceptual model presented, as part of a model comparison study,
 in the article
 
     Kavetski, D., and F. Fenicia (2011), **Elements of a flexible approach for**
@@ -40,21 +40,22 @@ Design of the structure
 The structure of M4 is quite simple and can be implemented directly in
 SuperflexPy without the need of using connection elements. The figure shows, on
 the left, the structure as shown in the paper and, on the right, the SuperflexPy
-implementation. as part of a models comparison study.
+implementation.
 
 .. image:: pics/popular_models/M4.png
    :align: center
 
-The upstream element, the unsaturated reservoir (UR), is designed to represent
+The upstream element, the unsaturated reservoir (UR), is intended to represent
 runoff generation processes (e.g. separation between evaporation and runoff) and
 it is controlled by the differential equation
 
 .. math::
+   & \overline{S} = \frac{S_{\textrm{UR}}}{S_{\textrm{max}}} \\
    & \frac{\textrm{d}S_{\textrm{UR}}}{\textrm{d}t} = P -
-   E_{\textrm{P}} \left( \frac{\frac{S_{\textrm{UR}}}{S_{\textrm{max}}} \left(1+m\right)}{\frac{S_{\textrm{UR}}}{S_{\textrm{max}}} + m} \right) -
-   P \left(\frac{S_{\textrm{UR}}}{S_{\textrm{max}}}\right)^\beta \\
+   E_{\textrm{P}} \left( \frac{\overline{S} \left(1+m\right)}{\overline{S} + m} \right) -
+   P \left(\overline{S}\right)^\beta \\
 
-The downstream element, the fast reservoir (FR), is designed to represent runoff
+The downstream element, the fast reservoir (FR), is intended to represent runoff
 propagation processes (e.g. routing) and it is controlled by the differential
 equation
 
@@ -69,19 +70,19 @@ evapotranspiration, and :math:`S_{\textrm{max}}`, :math:`m`, :math:`\beta`,
 Elements creation
 .................
 
-We now report the code used to implement the elements designed in the
+We now show the code used to implement the elements designed in the
 previous section. Instruction on how to use the framework to build new
 elements can be found in the page :ref:`build_element`.
 
-Note that for common applications the elements are already available (refer to
-the page :ref:`elements_list`) and, therefore, the modeller does not need to
-implement the code presented in this section.
+Note that some elements have already been implemented (refer to the page
+:ref:`elements_list`) and, therefore, the modeller does not need to
+implement them, as shown in this section.
 
 Unsaturated reservoir
 *********************
 
-The element is a reservoir that can be implemented extending the
-:code:`ODEsElement` class.
+The element is a reservoir that can be implemented by extending the class
+:code:`ODEsElement`.
 
 .. literalinclude:: popular_models_code.py
    :language: python
@@ -91,8 +92,8 @@ The element is a reservoir that can be implemented extending the
 Fast reservoir
 **************
 
-The element is a reservoir that can be implemented extending the
-:code:`ODEsElement` class.
+The element is a reservoir that can be implemented by extending the class
+:code:`ODEsElement`.
 
 .. literalinclude:: popular_models_code.py
    :language: python
@@ -102,28 +103,30 @@ The element is a reservoir that can be implemented extending the
 Model initialization
 ....................
 
-Now that all the elements needed have been implemented, we can put them
-together to build the model structure. For details refer to :ref:`demo`.
+Now that all elements are implemented, we can put them together to build the
+model structure. For details refer to :ref:`demo`.
 
-The first step consists in initializing all the elements.
+First, we initialize all the elements.
 
 .. literalinclude:: popular_models_code.py
    :language: python
    :lines: 761-776
    :linenos:
 
-After that, the elements can be put together to create a :code:`Unit` that
-reflects the structure presented in the figure.
+Next, the elements can be put together to create a :code:`Unit` that reflects
+the structure presented in the figure.
 
 .. literalinclude:: popular_models_code.py
    :language: python
    :lines: 778-784
    :linenos:
 
+.. _gr4j_example:
+
 GR4J
 ----
 
-GR4J is a conceptual hydrological model originally introduced in the article
+GR4J is a conceptual hydrological model introduced in the article
 
     Perrin, C., Michel, C., and Andréassian, V.: **Improvement of a**
     **parsimonious model for streamflow simulation**, Journal of Hydrology,
@@ -146,9 +149,9 @@ al., 2003 and, on the right, the adaptation to SuperflexPy
 .. image:: pics/popular_models/gr4j.png
    :align: center
 
-In the original version, the potential evaporation and the precipitation
-are "filtered" by an interception layer that sets the smallest of the two fluxes
-to zero and the biggest to the difference between the two.
+The potential evaporation and the precipitation are "filtered" by an
+interception layer that sets the smallest of the two fluxes to zero and the
+biggest to the difference between the two.
 
 .. math::
    & \textrm{if } P > PE:  \\
@@ -161,20 +164,22 @@ to zero and the biggest to the difference between the two.
 This element is reproduced identically in the SuperflexPy implementation by the
 "interception filter"
 
-In the original model, the precipitation is split between a portion :math:`P_s`
-that flows into the production store and the remaining part :math:`P_b` that
-bypasses the reservoir. Since :math:`P_s` and :math:`P_b` are function of the
-state of the reservoir
+In the original implementation of GR4J, the precipitation is split between a
+part :math:`P_{\textrm{s}}` that flows into the production store and the
+remaining part :math:`P_{\textrm{b}}` that bypasses the reservoir.
+:math:`P_{\textrm{s}}` and :math:`P_{\textrm{b}}` are both function of the state
+of the reservoir
 
 .. math::
-   & P_s=P_{\textrm{NET}}\left(1-\left(\frac{S_{\textrm{UR}}}{x_1}\right)^{\alpha}\right) \\
-   & P_b=P_{\textrm{NET}}\left(\frac{S_{\textrm{UR}}}{x_1}\right)^{\alpha} \\
+   & P_{\textrm{s}}=P_{\textrm{NET}}\left(1-\left(\frac{S_{\textrm{UR}}}{x_1}\right)^{\alpha}\right) \\
+   & P_{\textrm{s}}=P_{\textrm{NET}}\left(\frac{S_{\textrm{UR}}}{x_1}\right)^{\alpha} \\
 
-when we implement this part of the model in SuperflexPy, these two fluxes
+When we implement this part of the model in SuperflexPy, these two fluxes
 cannot be calculated before solving the reservoir. For this reason, in the
-SuperflexPy implementation of GR4J, all the precipitation flows into an element
-that incorporates the production store; this element takes care of dividing the
-precipitation internally, while solving the differential equation
+SuperflexPy implementation of GR4J, all precipitation (and not only
+:math:`P_{\textrm{s}}`) flows into an element that incorporates the production
+store; this element takes care of dividing the precipitation internally, while
+solving the differential equation
 
 .. math::
    & \frac{\textrm{d}S_{\textrm{UR}}}{\textrm{d}t} =  P_{\textrm{NET}}\left(1-\left(\frac{S_{\textrm{UR}}}{x_1}\right)^{\alpha}\right)
@@ -207,12 +212,12 @@ gain/loss term (called :math:`Q_{\textrm{RF}}`).
 
 The gain/loss term :math:`Q_{\textrm{RF}}`, which is a function of the state
 :math:`S_{\textrm{RR}}` of the reservoir, is subtracted also to the output of
-UH2: in SuperflexPy, this operation cannot be done together with the solution of
-the routing store but it is done afterwards. For this reason, the SuperflexPy
-implementation of GR4J has an additional element (called "flux aggregator") that
-collects (through a junction element) the output of the routing store, the
-gain/loss term, and the output of UH2 and computes the outflow of the model
-using the equation
+UH2: in SuperflexPy, this operation cannot be done at the same time as the
+solution of the routing store but it is done afterwards. For this reason, the
+SuperflexPy implementation of GR4J has an additional element (called "flux
+aggregator") that collects (through a junction element) the output of the
+routing store, the gain/loss term, and the output of UH2 and computes the
+outflow of the model using the equation
 
 .. math::
    & Q = Q_{\textrm{RR}} + \max(0;Q_{\textrm{UH2}} - Q_{\textrm{RF}}) \\
@@ -220,18 +225,18 @@ using the equation
 Elements creation
 .................
 
-We now report the code used to implement the elements designed in the
+We now show the code used to implement the elements designed in the
 previous section. Instruction on how to use the framework to build new
 elements can be found in the page :ref:`build_element`.
 
-Note that for common applications the elements are already available (refer to
-the page :ref:`elements_list`) and, therefore, the modeller does not need to
-implement the code presented in this section.
+Note that some elements have already been implemented (refer to the page
+:ref:`elements_list`) and, therefore, the modeller does not need to
+implement them, as shown in this section.
 
 Interception
 ************
 
-The interception filter can be implemented extending the class
+The interception filter can be implemented by extending the class
 :code:`BaseElement`
 
 .. literalinclude:: popular_models_code.py
@@ -243,7 +248,7 @@ Production store
 ****************
 
 The production store is controlled by a differential equation and, therefore,
-it can be constructed extending the class :code:`ODEsElement`
+can be constructed by extending the class :code:`ODEsElement`
 
 .. literalinclude:: popular_models_code.py
    :language: python
@@ -253,8 +258,8 @@ it can be constructed extending the class :code:`ODEsElement`
 Unit hydrographs
 ****************
 
-The unit hydrographs are an extension of the :code:`LagElement` and they can
-be implemented with the following code
+The unit hydrographs are an extension of the :code:`LagElement` and can be
+implemented as follows
 
 .. literalinclude:: popular_models_code.py
    :language: python
@@ -279,7 +284,7 @@ The routing store is an :code:`ODEsElement`
 Flux aggregator
 ***************
 
-The flux aggregator can be implemented extending a :code:`BaseElement`
+The flux aggregator can be implemented by extending a :code:`BaseElement`
 
 .. literalinclude:: popular_models_code.py
    :language: python
@@ -289,17 +294,17 @@ The flux aggregator can be implemented extending a :code:`BaseElement`
 Model initialization
 ....................
 
-Now that all the elements needed have been implemented, we can put them
-together to build the model structure. For details refer to :ref:`demo`.
+Now that all elements are implemented, we can combine them to build the model
+structure. For details refer to :ref:`demo`.
 
-The first step consists in initializing all the elements.
+First, we initialize all the elements.
 
 .. literalinclude:: popular_models_code.py
    :language: python
    :lines: 300-338
    :linenos:
 
-After that, the elements can be put together to create a :code:`Unit` that
+After that, the elements can be put together to define a :code:`Unit` that
 reflects the structure presented in the figure.
 
 .. literalinclude:: popular_models_code.py
@@ -330,62 +335,61 @@ Design of the structure
 .. image:: pics/popular_models/hymod.png
    :align: center
 
-The structure of HYMOD is composed by three blocks of reservoirs that are
-designed to represent three mechanism that control the streamflow at the
-catchment scale: upper zone (soil dynamics), channel routing (surface runoff),
-and lower zone (subsurface flow).
+HYMOD is comprises three groups of reservoirs intended to represent the upper
+zone (soil dynamics), channel routing (surface runoff), and lower zone
+(subsurface flow).
 
-As it can be seen in the figure, the original structure of HYMOD already
-satisfy the design constrains of SuperflexPy and therefore it can be
-implemented simply translating the single elements individually, without
-the need of workarounds, as done in the case of GR4J.
+As can be seen in the figure, the original structure of HYMOD already
+satisfies the design constrains of SuperflexPy (it does not contains feedbacks
+between elements). Therefore, unlike GR4J, HYMOD can be implemented in
+SuperflexPy without the need for workarounds.
 
-The first element (upper zone) is a reservoirs intended to represent soil
-dynamics that simulates streamflow generation processes and evaporation. It is
-controlled by the differential equation
+The first element (upper zone) is a reservoir intended to represent streamflow
+generation processes and evaporation. It is controlled by the differential
+equation
 
 .. math::
+   & \overline{S} = \frac{S_{\textrm{UR}}}{S_{\textrm{max}}} \\
    & \frac{\textrm{d}S_{\textrm{UR}}}{\textrm{d}t} = P - E -
-   P \left(1 - \left(1-\frac{S_{\textrm{UR}}}{S_{\textrm{max}}}\right)^\beta\right) \\
+   P \left(1 - \left(1-\overline{S}\right)^\beta\right) \\
 
-where the first term represent the precipitation input, the second the
+where the first term represents the precipitation input, the second term is the
 actual evaporation (which is equal to the potential evaporation as long as
-there is sufficient storage in the reservoir) and the third the outflow of the
-reservoir.
+there is sufficient storage in the reservoir), and the third term is the outflow
+from the reservoir.
 
-The outflow of the reservoir is then split between the channel routing and the
-lower zone; these are all represented by some linear reservoirs that are
-controlled by the differential equation
+The outflow from the reservoir is then split between the channel routing and the
+lower zone; these elements are all represented by linear reservoirs controlled
+by the differential equation
 
 .. math::
    & \frac{\textrm{d}S}{\textrm{d}t} = P - kS \\
 
-where the first term is the input of the reservoir (the outflow of the
-upstream element, in this case) and the second term represent the outflow of
-the reservoir.
+where the first term is the input (here, the outflow from the upstream element)
+and the second term represents the outflow from the reservoir.
 
-Channel routing and lower zone differentiate one from the other by two
-factors: the number of reservoirs used (3 in the first case and 1 in the
-second) and by the value of the parameter :math:`k`, which controls the outflow
-rate, that is bigger for the channel routing.
+Channel routing and lower zone differentiate one from the other by the number of
+reservoirs used (3 in the first case and 1 in the second) and by the value of
+:math:`k`, which controls the outflow rate. :math:`k` should have a larger value
+for channel routing since it is design to represent faster processes.
 
-The output of these two branches of the model are collected together by a
-junction, which sums them to generate the output of the model.
+The output of these two flowpaths are collected by a junction, which generates
+the final model output.
 
-Comparing the two panels in the figure, the only difference is due to the
-presence of the two transparent element that are needed to fill the gaps that,
-otherwise, will be present in the structure.
+Comparing the two panels in the figure, the only difference is the presence of
+the two transparent element that are needed to fill the gaps that, otherwise,
+will be present in the structure (see :ref:`unit`).
 
 Elements creation
 .................
 
-We now report the code used to implement the elements designed in the
+We now show the code used to implement the elements designed in the
 previous section. Instruction on how to use the framework to build new
 elements can be found in the page :ref:`build_element`.
 
-Note that for common applications the elements are already available (refer to
-the page :ref:`elements_list`) and, therefore, the modeller does not need to
-implement the code presented in this section.
+Note that some elements have already been implemented (refer to the page
+:ref:`elements_list`) and, therefore, the modeller does not need to
+implement them, as shown in this section.
 
 Upper zone
 **********
@@ -406,15 +410,15 @@ which translates to the equation
    & \textrm{else}: \\
    & \quad E=0 \\
 
-Unfortunately this solution is not smooth and this can cause some computational
-problems. For this reason, it has been decided to use the following equation to
-calculate the potential evaporation
+Unfortunately this solution is not smooth and can cause some computational
+problems. A smooth version of this equation is given next
 
 .. math::
-   & E=PE\left( \frac{\frac{S_{\textrm{UR}}}{S_{\textrm{max}}}(1+\theta)}{\frac{S_{\textrm{UR}}}{S_{\textrm{max}}}+\theta} \right)\\
+   & \overline{S} = \frac{S_{\textrm{UR}}}{S_{\textrm{max}}} \\
+   & E=PE\left( \frac{\overline{S}(1+\theta)}{\overline{S}+\theta} \right)\\
 
-The upper zone reservoir can be implemented extending the :code:`ODEsElement`
-class.
+The upper zone reservoir can be implemented by extending the class
+:code:`ODEsElement`.
 
 .. literalinclude:: popular_models_code.py
    :language: python
@@ -425,7 +429,7 @@ Channel routing and lower zone
 ******************************
 
 All the elements belonging to the channel routing and to the lower zone are
-reservoirs that can be implemented extending the :code:`ODEsElement` class.
+reservoirs that can be implemented by extending the class :code:`ODEsElement`.
 
 .. literalinclude:: popular_models_code.py
    :language: python
@@ -435,17 +439,17 @@ reservoirs that can be implemented extending the :code:`ODEsElement` class.
 Model initialization
 ....................
 
-Now that all the elements needed have been implemented, we can put them
-together to build the model structure. For details refer to :ref:`demo`.
+Now that all elements are implemented, we can combine them to build the model
+structure. For details refer to :ref:`demo`.
 
-The first step consists in initializing all the elements.
+First, we initialize all the elements.
 
 .. literalinclude:: popular_models_code.py
    :language: python
    :lines: 533-570
    :linenos:
 
-After that, the elements can be put together to create a :code:`Unit` that
+After that, the elements can be put together to define a :code:`Unit` that
 reflects the structure presented in the figure.
 
 .. literalinclude:: popular_models_code.py

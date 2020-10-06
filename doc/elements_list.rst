@@ -10,17 +10,17 @@
 
 .. _elements_list:
 
-Elements list
-=============
+List of currently implemented elements
+======================================
 
-This page contains all the elements implemented as part of SuperflexPy. The
-elements are divided in three categories
+This page contains all the elements implemented extending the classes provided
+by SuperflexPy. The elements are divided in three categories
 
 - Reservoir
-- Lag functions
-- Connectors
+- Lag elements
+- Connections
 
-We will now list all the elements in alphabetical order.
+The elements are listed in alphabetical order.
 
 Reservoirs
 ----------
@@ -47,12 +47,26 @@ Reservoirs
     Secondary outputs
     .................
 
-Fast reservoir (HBV)
-********************
+Fast reservoir (inspired to HBV)
+********************************
+
+This is a reservoir, inspired do the family of HBV-like models, where the
+output is a power function of the state. The name "fast" derives from its common
+application to represent the fast response component in the model.
 
 .. code-block:: python
 
    from superflexpy.implementation.elements.hbv import FastReservoir
+
+Inputs
+......
+
+- Precipitation (:math:`P\ [LT^{-1}]`)
+
+Main outputs
+............
+
+- Total outflow (:math:`Q\ [LT^{-1}]`)
 
 Governing equations
 ...................
@@ -61,22 +75,27 @@ Governing equations
    & \frac{\textrm{d}S}{\textrm{d}{t}}=P - Q \\
    & Q=kS^{\alpha}
 
-Inputs required
-...............
-
-- Precipitation
-
-Main outputs
-............
-
-- Total outflow
-
 Interception filter (GR4J)
 **************************
+
+This reservoir is part of the GR4J model and it is used to simulate
+interception. Further details are provided in the page :ref:`gr4j_example`.
 
 .. code-block:: python
 
    from superflexpy.implementation.elements.gr4j import InterceptionFilter
+
+Inputs
+......
+
+- Potential evapotranspiration (:math:`E^{\textrm{in}}_{\textrm{POT}}\ [LT^{-1}]`)
+- Precipitation (:math:`P^{\textrm{in}}\ [LT^{-1}]`)
+
+Main outputs
+............
+
+- Net potential evapotranspiration (:math:`E^{\textrm{out}}_{\textrm{POT}}\ [LT^{-1}]`)
+- Net precipitation (:math:`P^{\textrm{out}}\ [LT^{-1}]`)
 
 Governing equations
 ...................
@@ -89,24 +108,25 @@ Governing equations
    & \quad P^{\textrm{out}} = 0 \\
    & \quad E^{\textrm{out}}_{\textrm{POT}} = E^{\textrm{in}}_{\textrm{POT}} - P^{\textrm{in}}
 
-Inputs required
-...............
-
-- Potential evapotranspiration
-- Precipitation
-
-Main outputs
-............
-
-- Net potential evapotranspiration
-- Net precipitation
-
 Linear reservoir (Hymod)
 ************************
+
+This reservoir is part of the Hymod model and it is used to simulate channel
+routing and lower zone. Further details are provided in the page :ref:`hymod`.
 
 .. code-block:: python
 
    from superflexpy.implementation.elements.hymod import LinearReservoir
+
+Inputs
+......
+
+- Precipitation (:math:`P\ [LT^{-1}]`)
+
+Main outputs
+............
+
+- Total outflow (:math:`Q\ [LT^{-1}]`)
 
 Governing equations
 ...................
@@ -115,171 +135,191 @@ Governing equations
    & \frac{\textrm{d}S}{\textrm{d}{t}}=P - Q \\
    & Q=kS
 
-Inputs required
-...............
-
-- Precipitation
-
-Main outputs
-............
-
-- Total outflow
-
 Production store (GR4J)
 ***********************
+
+This reservoir is part of the GR4J model and it is used to simulate runoff
+generation. Further details are provided in the page :ref:`gr4j_example`.
 
 .. code-block:: python
 
    from superflexpy.implementation.elements.gr4j import ProductionStore
 
-Governing equations
-...................
+Inputs
+......
 
-.. math::
-   & \frac{\textrm{d}S}{\textrm{d}{t}}=P_{\textrm{s}}-E_{\textrm{act}}-Perc \\
-   & P_{\textrm{s}}=P\left(1-\left(\frac{S}{x_1}\right)^\alpha\right) \\
-   & E_{\textrm{act}}=E_{\textrm{pot}}\left(2\frac{S}{x_1}-\left(\frac{S}{x_1}\right)^\alpha\right) \\
-   & Perc = \frac{x^{1-\beta}}{(\beta-1)\textrm{d}t}\nu^{\beta-1}S^{\beta} \\
-   & P_{\textrm{r}}=P - P_{\textrm{s}} + Perc
-
-Inputs required
-...............
-
-- Potential evapotranspiration
-- Precipitation
+- Potential evapotranspiration (:math:`E_{\textrm{pot}}\ [LT^{-1}]`)
+- Precipitation (:math:`P\ [LT^{-1}]`)
 
 Main outputs
 ............
 
-- Total outflow (:math:`P_{\textrm{r}}`)
+- Total outflow (:math:`P_{\textrm{r}}\ [LT^{-1}]`)
 
 Secondary outputs
 .................
 
-- Actual evapotranspiration (:math:`E_{\textrm{act}}`)
+- Actual evapotranspiration (:math:`E_{\textrm{act}}\ [LT^{-1}]`) :code:`get_aet()`
+
+Governing equations
+...................
+
+.. math::
+   & \frac{\textrm{d}S}{\textrm{d}{t}}=P_{\textrm{s}}-E_{\textrm{act}}-Q_{\textrm{perc}} \\
+   & P_{\textrm{s}}=P\left(1-\left(\frac{S}{x_1}\right)^\alpha\right) \\
+   & E_{\textrm{act}}=E_{\textrm{pot}}\left(2\frac{S}{x_1}-\left(\frac{S}{x_1}\right)^\alpha\right) \\
+   & Q_{\textrm{perc}} = \frac{x^{1-\beta}}{(\beta-1)}\nu^{\beta-1}S^{\beta} \\
+   & P_{\textrm{r}}=P - P_{\textrm{s}} + Q_{\textrm{perc}}
 
 Routing store (GR4J)
 ********************
 
+This reservoir is part of the GR4J model and it is used to simulate routing.
+Further details are provided in the page :ref:`gr4j_example`.
+
 .. code-block:: python
 
    from superflexpy.implementation.elements.gr4j import RoutingStore
+
+Inputs
+......
+
+- Precipitation (:math:`P\ [LT^{-1}]`)
+
+Main outputs
+............
+
+- Outflow (:math:`Q\ [LT^{-1}]`)
+- Loss term (:math:`F\ [LT^{-1}]`)
 
 Governing equations
 ...................
 
 .. math::
    & \frac{\textrm{d}S}{\textrm{d}{t}}=P-Q-F \\
-   & Q=\frac{x_3^{1-\gamma}}{(\gamma-1)\textrm{d}t}S^{\gamma} \\
+   & Q=\frac{x_3^{1-\gamma}}{(\gamma-1)}S^{\gamma} \\
    & F = \frac{x_2}{x_3^{\omega}}S^{\omega}
-
-Inputs required
-...............
-- Precipitation
-
-Main outputs
-............
-- Outflow (:math:`Q`)
-- Loss term (:math:`F`)
 
 Snow reservoir (Thur model HESS)
 ********************************
+
+This reservoir is part of the model used in for the Thur catchment and it is
+used to simulate snow processes. Further details are provided in the page
+:ref:`thur_case_study`.
 
 .. code-block:: python
 
    from superflexpy.implementation.elements.thur_model_hess import SnowReservoir
 
-Governing equations
-...................
+Inputs
+......
 
-.. math::
-   & \frac{\textrm{d}S}{\textrm{d}{t}}=Sn-M \\
-   & Sn=P\quad\textrm{if } T\leq T_0;\quad\textrm{else } 0 \\
-   & M = M_{\textrm{pot}}\left(1-\exp\left(-\frac{S}{m}\right)\right) \\
-   & M_{\textrm{pot}}=kT\quad\textrm{if } T\geq T_0;\quad\textrm{else } 0 \\
-
-Inputs required
-...............
-
-- Precipitation (total, the separation between snow and rain is done
-  internally)
-- Temperature
+- Precipitation (:math:`P\ [LT^{-1}]`)
+- Temperature (:math:`T\ [°C]`)
 
 Main outputs
 ............
 
-- Melt + rainfall input
+- Sum of snow melt and rainfall input (:math:`=P-P_{\textrm{snow}}+M\ [LT^{-1}]`)
 
-Unsaturated reservoir (HBV)
-***************************
+Governing equations
+...................
+
+.. math::
+   & \frac{\textrm{d}S}{\textrm{d}{t}}=P_{\textrm{snow}}-M \\
+   & P_{\textrm{snow}}=P\quad\textrm{if } T\leq T_0;\quad\textrm{else } 0 \\
+   & M = M_{\textrm{pot}}\left(1-\exp\left(-\frac{S}{m}\right)\right) \\
+   & M_{\textrm{pot}}=kT\quad\textrm{if } T\geq T_0;\quad\textrm{else } 0 \\
+
+Unsaturated reservoir (inspired to HBV)
+***************************************
+
+This is a reservoir, inspired do the family of HBV-like models, where the
+output is a smoothed threshold function of the state. The name "unsaturated"
+derives from its common application to represent soil dynamics.
 
 .. code-block:: python
 
    from superflexpy.implementation.elements.hbv import UnsaturatedReservoir
 
+Inputs
+......
+
+- Precipitation (:math:`P\ [LT^{-1}]`)
+- Potential evapotranspiration (:math:`E_{\textrm{pot}}\ [LT^{-1}]`)
+
+Main outputs
+............
+
+- Total outflow (:math:`Q\ [LT^{-1}]`)
+
+Secondary outputs
+.................
+
+- Actual evapotranspiration (:math:`E_{\textrm{act}}`) :code:`get_AET()`
+
 Governing equations
 ...................
 
 .. math::
    & \frac{\textrm{d}S}{\textrm{d}{t}}=P - E_{\textrm{act}} - Q \\
-   & E_{\textrm{act}}=C_{\textrm{e}}E_{\textrm{pot}}\left(\frac{\left(\frac{S}{S_{\textrm{max}}}\right)(1+m)}{\frac{S}{S_{\textrm{max}}}+m}\right) \\
-   & Q=P\left(\frac{S}{S_{\textrm{max}}}\right)^{\beta}
-
-Inputs required
-...............
-
-- Precipitation
-- Potential evapotranspiration
-
-Main outputs
-............
-
-- Total outflow
-
-Secondary outputs
-.................
-
-- Actual evapotranspiration
+   & \overline{S} = \frac{S}{S_{\textrm{max}}} \\
+   & E_{\textrm{act}}=C_{\textrm{e}}E_{\textrm{pot}}\left(\frac{\overline{S}(1+m)}{\overline{S}+m}\right) \\
+   & Q=P\left(\overline{S}\right)^{\beta}
 
 Upper zone (Hymod)
 ******************
+
+This reservoir is part of the Hymod model and it is used to simulate th upper
+zone. Further details are provided in the page :ref:`hymod`.
 
 .. code-block:: python
 
    from superflexpy.implementation.elements.hymod import UpperZone
 
+Inputs
+......
+
+- Precipitation (:math:`P\ [LT^{-1}]`)
+- Potential evapotranspiration (:math:`E_{\textrm{pot}}\ [LT^{-1}]`)
+
+Main outputs
+............
+
+- Total outflow (:math:`Q\ [LT^{-1}]`)
+
+Secondary outputs
+.................
+
+- Actual evapotranspiration (:math:`E_{\textrm{act}}\ [LT^{-1}]`) :code:`get_AET()`
+
 Governing equations
 ...................
 
 .. math::
    & \frac{\textrm{d}S}{\textrm{d}{t}}=P - E_{\textrm{act}} - Q \\
-   & E_{\textrm{act}}=E_{\textrm{pot}}\left(\frac{\left(\frac{S}{S_{\textrm{max}}}\right)(1+m)}{\frac{S}{S_{\textrm{max}}}+m}\right) \\
-   & Q=P\left(1-\left(1-\frac{S}{S_{\textrm{max}}}\right)^{\beta}\right)
+   & \overline{S} = \frac{S}{S_{\textrm{max}}} \\
+   & E_{\textrm{act}}=E_{\textrm{pot}}\left(\frac{\overline{S}(1+m)}{\overline{S}+m}\right) \\
+   & Q=P\left(1-\left(1-\overline{S}\right)^{\beta}\right)
 
-Inputs required
-...............
+Lag elements
+------------
 
-- Precipitation
-- Potential evapotranspiration
+All the lag elements implemented in SuperflexPy are designed to take an
+arbitrary number of input fluxes and to apply a convolution to them based on a
+weight array, which defines the shape of the lag function.
 
-Main outputs
-............
+Different lag elements differ only in the choice of the weight array.
 
-- Total outflow
+.. image:: pics/elements_list/lag.png
+   :align: center
 
-Secondary outputs
-.................
-
-- Actual evapotranspiration
-
-
-Lag functions
--------------
-
-All the lag functions implemented in SuperflexPy are designed to take an
-arbitrary number of input fluxes and to apply a transformation to it based on
-a weight array that defines the shape of the lag function. It is only this that
-differentiate different lag functions.
+One method to define the weight array is to define first the area underneath
+the lag function as a function of the time coordinate and of the total length
+of the lag :math:`t_{\textrm{lag}}`. The weights can, then, be calculated by
+difference between the values of the area as the various time steps. This is
+shown in the figure where the weight :math:`W_i` is calculated as the difference
+of the areas :math:`A_i` and :math:`A_{i-1}`.
 
 ..
     Please use the following template
@@ -298,12 +338,15 @@ differentiate different lag functions.
 Half triangular lag (Thur model HESS)
 *************************************
 
+This lag element implements the element present in the case study
+:ref:`thur_case_study`.
+
 .. code-block:: python
 
    from superflexpy.implementation.elements.thur_model_hess import HalfTriangularLag
 
-Equation used for the lag
-.........................
+Equation used for calculating the weight array
+..............................................
 
 The area of the lag is calculated with the following expression
 
@@ -318,17 +361,19 @@ The weight array is then calculated as the difference between the value of
 
 .. math::
 
-   w(t_{\textrm{j}}) = A_{\textrm{lag}}(t_{\textrm{j}}) - A_{\textrm{lag}}(t_{\textrm{j-1}})
+   w(t_{\textrm{i}}) = A_{\textrm{lag}}(t_{\textrm{i}}) - A_{\textrm{lag}}(t_{\textrm{i-1}})
 
 Unit hydrograph 1 (GR4J)
 ************************
+
+This lag element implements the unit hydrograph of :ref:`gr4j_example`.
 
 .. code-block:: python
 
    from superflexpy.implementation.elements.gr4j import UnitHydrograph1
 
-Equation used for the lag
-.........................
+Equation used for calculating the weight array
+..............................................
 
 The area of the lag is calculated with the following expression
 
@@ -343,17 +388,19 @@ The weight array is then calculated as the difference between the value of
 
 .. math::
 
-   w(t_{\textrm{j}}) = A_{\textrm{lag}}(t_{\textrm{j}}) - A_{\textrm{lag}}(t_{\textrm{j-1}})
+   w(t_{\textrm{i}}) = A_{\textrm{lag}}(t_{\textrm{i}}) - A_{\textrm{lag}}(t_{\textrm{i-1}})
 
 Unit hydrograph 2 (GR4J)
 ************************
+
+This lag element implements the unit hydrograph of :ref:`gr4j_example`.
 
 .. code-block:: python
 
    from superflexpy.implementation.elements.gr4j import UnitHydrograph2
 
-Equation used for the lag
-.........................
+Equation used for calculating the weight array
+..............................................
 
 The area of the lag is calculated with the following expression
 
@@ -369,12 +416,12 @@ The weight array is then calculated as the difference between the value of
 
 .. math::
 
-   w(t_{\textrm{j}}) = A_{\textrm{lag}}(t_{\textrm{j}}) - A_{\textrm{lag}}(t_{\textrm{j-1}})
+   w(t_{\textrm{i}}) = A_{\textrm{lag}}(t_{\textrm{i}}) - A_{\textrm{lag}}(t_{\textrm{i-1}})
 
-Connectors
-----------
+Connections
+-----------
 
-SuperflexPy implements, by default four different connectors:
+SuperflexPy implements four connection elements:
 
 - splitter
 - junction
@@ -385,6 +432,34 @@ All of them are designed to operate with an infinite number of fluxes and,
 when possible, with infinite upstream or downstream elements.
 
 Apart from those, there are also some connectors that have been implemented as
-part of a specific configuration, to achieve a particular design.
+part of a specific configuration, to achieve a particular design. Such elements
+are listed in this section.
 
-.. flux aggregator of GR4J
+Flux aggregator (GR4J)
+**********************
+
+This element is part of the GR4J model and it is used to aggregate the fluxes to
+calculate the output of the unit. Further details are provided in the page
+:ref:`gr4j_example`.
+
+.. code-block:: python
+
+   from superflexpy.implementation.elements.gr4j import FluxAggregator
+
+Inputs
+......
+
+- Outflow routing store (:math:`Q_{\textrm{RR}}\ [LT^{-1}]`)
+- Exchange flux (:math:`Q_{\textrm{RF}}\ [LT^{-1}]`)
+- Outflow UH2 (:math:`Q_{\textrm{UH2}}\ [LT^{-1}]`)
+
+Main outputs
+............
+
+- Outflow (:math:`Q\ [LT^{-1}]`)
+
+Governing equations
+...................
+
+.. math::
+   & Q = Q_{\textrm{RR}} + \max(0;Q_{\textrm{UH2}} - Q_{\textrm{RF}}) \\

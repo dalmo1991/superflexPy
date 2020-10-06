@@ -45,11 +45,11 @@ reservoir_state = fast_reservoir.state_array[:, 0]
 fig, ax = plt.subplots(2, 1, sharex=True, figsize=(10, 6))
 ax[0].bar(x=range(len(precipitation)), height=precipitation, color='blue')
 
-ax[1].plot(range(len(precipitation)), output, color='blue', lw=2,
-           label='Outflow')
+ax[1].plot(range(len(precipitation)), output, color='blue', lw=2, label='Outflow')
+
 ax_bis = ax[1].twinx()
-ax_bis.plot(range(len(precipitation)), reservoir_state, color='red', lw=2,
-            ls='--', label='Reservoir state')
+ax_bis.plot(range(len(precipitation)), reservoir_state, color='red', lw=2, ls='--', label='Reservoir state')
+
 ax[0].set_ylabel('Precipitation [mm/day]')
 ax[1].set_ylabel('Flow [mm/day]')
 ax_bis.set_ylabel('State [mm]')

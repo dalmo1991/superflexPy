@@ -3,24 +3,20 @@
 Automated testing
 =================
 
-For the first release of SuperflexPy, the testing is limited to the correctness
-of the numerical results; this should spot major errors in the code and offer
-some degree of validation of the model. Running the tests, implicitly checks
-also the correct functionality of auxiliary methods (e.g. to set parameters and
-states, to inspect the internals of the model, to set inputs and get outputs,
-etc.).
-
 Testing is done comparing numerical results of SuperflexPy with the one obtained
 running `Superflex <https://doi.org/10.1029/2010WR010174>`_ for some specific
 model configurations and sets of parameters and inputs.
 
-Testing code is contained in the folder :code:`test/` and uses the module
+Current testing consists in validating the correctness of the numerical results.
+This testing strategy implicitly checks auxiliary methods (e.g. setting
+parameters and states, retrieving the internal fluxes of the model, setting
+inputs and getting outputs, etc.).
+
+The testing code is contained in folder :code:`test/` and uses the Python module
 :code:`unittest`. The folder contains :code:`reference_results/` (so far only
 from Superflex) and :code:`unittest/` containing the scripts that run the tests.
-Further development of the framework will possibly improve and change this
-organization.
 
-At this point, testing covers:
+Current testing covers:
 
 - Correct functionality of specific elements (reservoirs and lag functions) that
   are implemented in Superflex (e.g. :code:`01_FR.py`, :code:`02_UR.py`);
@@ -32,15 +28,19 @@ At this point, testing covers:
 - Correct functionality of auxiliary methods (implicit testing, i.e. in case of
   malfunctioning errors propagate to the results).
 
-Testing currently does not cover:
+Current testing does not cover:
 
-- Elements for witch numerical results are not available (e.g. some components
+- Elements for which numerical results are not available (e.g. some components
   of GR4J);
 - Usage of the Explicit Euler solver;
-- Corner cases (e.g. extreme values of parameters and states)
+- Edge cases (e.g. extreme values of parameters and states)
 
-When creating new elements for SuperflexPy, some degree of testing should be
-provided.
+Users contributing to SuperflexPy creating new elements should provide some
+degree of testing (i.e. reference results and code testing them against
+SuperflexPy results).
+
+Further development of the framework will possibly improve and change the
+testing organization.
 
 Automation
 ----------

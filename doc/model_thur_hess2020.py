@@ -193,7 +193,7 @@ waengi = Node(
     id='waengi'
 )
 
-model = Network(
+thur_catchment = Network(
     nodes=[
         andelfingen,
         appenzell,
@@ -259,4 +259,4 @@ for cat, cat_name in zip(catchments, catchments_names):
 
 thur_catchment.set_timestep(1.0)
 
-thur_catchment.get_output()
+output = thur_catchment.get_output()

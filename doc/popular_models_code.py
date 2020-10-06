@@ -98,7 +98,7 @@ class ProductionStore(ODEsElement):
                 [
                     P * (1 - (S / x1)**alpha),  # Ps
                     - PET * (2 * (S / x1) - (S / x1)**alpha),  # Evaporation
-                    - ((x1**(1 - beta)) / ((beta - 1) * dt)) * (ni**(beta - 1)) * (S**beta)  # Perc
+                    - ((x1**(1 - beta)) / ((beta - 1))) * (ni**(beta - 1)) * (S**beta)  # Perc
                 ],
                 0.0,
                 S0 + P * (1 - (S / x1)**alpha)
@@ -108,7 +108,7 @@ class ProductionStore(ODEsElement):
                 [
                     P[ind] * (1 - (S / x1[ind])**alpha[ind]),  # Ps
                     - PET[ind] * (2 * (S / x1[ind]) - (S / x1[ind])**alpha[ind]),  # Evaporation
-                    - ((x1[ind]**(1 - beta[ind])) / ((beta[ind] - 1) * dt[ind])) * (ni[ind]**(beta[ind] - 1)) * (S**beta[ind])  # Perc
+                    - ((x1[ind]**(1 - beta[ind])) / ((beta[ind] - 1))) * (ni[ind]**(beta[ind] - 1)) * (S**beta[ind])  # Perc
                 ],
                 0.0,
                 S0 + P[ind] * (1 - (S / x1[ind])**alpha[ind])
@@ -123,7 +123,7 @@ class ProductionStore(ODEsElement):
             (
                 P[ind] * (1 - (S / x1[ind])**alpha[ind]),  # Ps
                 - PET[ind] * (2 * (S / x1[ind]) - (S / x1[ind])**alpha[ind]),  # Evaporation
-                - ((x1[ind]**(1 - beta[ind])) / ((beta[ind] - 1) * dt[ind])) * (ni[ind]**(beta[ind] - 1)) * (S**beta[ind])  # Perc
+                - ((x1[ind]**(1 - beta[ind])) / ((beta[ind] - 1))) * (ni[ind]**(beta[ind] - 1)) * (S**beta[ind])  # Perc
             ),
             0.0,
             S0 + P[ind] * (1 - (S / x1[ind])**alpha[ind])
@@ -182,7 +182,7 @@ class RoutingStore(ODEsElement):
             return(
                 [
                     P,  # P
-                    - ((x3**(1 - gamma)) / ((gamma - 1) * dt)) * (S**gamma),  # Qr
+                    - ((x3**(1 - gamma)) / ((gamma - 1))) * (S**gamma),  # Qr
                     - (x2 * (S / x3)**omega),  # F
                 ],
                 0.0,
@@ -192,7 +192,7 @@ class RoutingStore(ODEsElement):
             return(
                 [
                     P[ind],  # P
-                    - ((x3[ind]**(1 - gamma[ind])) / ((gamma[ind] - 1) * dt[ind])) * (S**gamma[ind]),  # Qr
+                    - ((x3[ind]**(1 - gamma[ind])) / ((gamma[ind] - 1))) * (S**gamma[ind]),  # Qr
                     - (x2[ind] * (S / x3[ind])**omega[ind]),  # F
                 ],
                 0.0,
@@ -207,7 +207,7 @@ class RoutingStore(ODEsElement):
         return(
             (
                 P[ind],  # P
-                - ((x3[ind]**(1 - gamma[ind])) / ((gamma[ind] - 1) * dt[ind])) * (S**gamma[ind]),  # Qr
+                - ((x3[ind]**(1 - gamma[ind])) / ((gamma[ind] - 1))) * (S**gamma[ind]),  # Qr
                 - (x2[ind] * (S / x3[ind])**omega[ind]),  # F
             ),
             0.0,

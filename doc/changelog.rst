@@ -6,10 +6,10 @@ Change log
 Version 1.0.0
 -------------
 
-Version 1.0.0 represents the first mature release of SuperflexPy. Many things
-have changed since previous 0.* releases both in terms of code organization
-and conceptualization of the framework. For this reason, models built with
-versions 0.* are not compatible.
+Version 1.0.0 represents the first mature release of SuperflexPy. Many aspects
+have changed since earlier 0.x releases both in terms of code organization
+and conceptualization of the framework. **Models built with versions 0.x are**
+**not compatible with this version and with the following**.
 
 Major changes to existing components
 ....................................

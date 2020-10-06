@@ -1,5 +1,7 @@
 .. note:: Last update 01/09/2020
 
+.. _examples:
+
 Examples
 ========
 

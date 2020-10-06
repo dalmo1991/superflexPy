@@ -7,9 +7,12 @@
 Reference
 =========
 
-This reference provides details about the API of SuperflexPy. This page is
-limited to the framework; particular implementations of elements or components
-are not included for brevity
+This reference provides details about the classes composing SuperflexPy. This
+page is limited to the core framework (i.e. content of
+:code:`superflexpy/framework/` and :code:`superflexpy/utils/`) to provide a
+clear reference for the classes that should be customized to extend SuperflexPy.
+Particular implementations of  components (i.e. the content of
+:code:`superflexpy/implementation/`) are not included.
 
 superflexpy.framework.element
 -----------------------------
