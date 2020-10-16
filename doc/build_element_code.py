@@ -81,14 +81,14 @@ class LinearReservoir(ODEsElement):
         fluxes = self._num_app.get_fluxes(fluxes=self._fluxes_python,
                                           S=self.state_array,
                                           S0=self._solver_states,
+                                          dt=self._dt,
                                           **self.input,
                                           **{k[len(self._prefix_parameters):]: self._parameters[k] for k in self._parameters},
                                           )
-
         return [- fluxes[0][1]]
 
     @staticmethod
-    def _fluxes_function_python(S, S0, ind, P, k):
+    def _fluxes_function_python(S, S0, ind, P, k, dt):
 
         if ind is None:
             return (
@@ -97,7 +97,7 @@ class LinearReservoir(ODEsElement):
                     - k * S,
                 ],
                 0.0,
-                S0 + P
+                S0 + P * dt
             )
         else:
             return (
@@ -106,13 +106,13 @@ class LinearReservoir(ODEsElement):
                     - k[ind] * S,
                 ],
                 0.0,
-                S0 + P[ind]
+                S0 + P[ind] * dt[ind]
             )
 
     @staticmethod
-    @nb.jit('Tuple((UniTuple(f8, 2), f8, f8))(optional(f8), f8, i4, f8[:], f8[:])',
+    @nb.jit('Tuple((UniTuple(f8, 2), f8, f8))(optional(f8), f8, i4, f8[:], f8[:], f8[:])',
             nopython=True)
-    def _fluxes_function_numba(S, S0, ind, P, k):
+    def _fluxes_function_numba(S, S0, ind, P, k, dt):
 
         return (
             (
@@ -120,7 +120,7 @@ class LinearReservoir(ODEsElement):
                 - k[ind] * S,
             ),
             0.0,
-            S0 + P[ind]
+            S0 + P[ind] * dt[ind]
         )
 
 # Implement lag function

@@ -1,0 +1,23 @@
+DATA_SPEX_FILE_V1.3
+"Lacmalac data"   ! file comment (not used)
+"$(CASE_STUDIES)$07_FR_2dt/input.dat"  ! observation file
+
+0               ! file format (unsupported), 0=standard
+5               ! number of header lines to skip to format specification
+7               ! number of header lines to the data cols
+
+9               ! number of data columns in observation data file
+
+2,1             ! number of columns for inputs (X) and others (Y)
+7,8             ! column indices of observed input data
+9               ! column indices of observed other data
+
+1.e0,1.e0       ! conversion factors for input data
+1.e0            ! conversion factors for other data
+
+0               ! number of quality code columns (ie, number of distinct values on the next line)
+0               ! indxQC: quality code columns for all data
+0,0             ! quality code columns for observed input data (relative to indxQC)
+0               ! quality code columns for observed other data (relative to indxQC)
+
+1, 1, 10        ! iStartWarmInfern, iStartInfern, iEndInfern 1, 27, 679 / 1, 680, 1331 / 1, 27, 353 / 1, 27, 1331 / 1, 27, 6549

@@ -101,7 +101,7 @@ class ProductionStore(ODEsElement):
                     - ((x1**(1 - beta)) / ((beta - 1))) * (ni**(beta - 1)) * (S**beta)  # Perc
                 ],
                 0.0,
-                S0 + P * (1 - (S / x1)**alpha)
+                S0 + P * (1 - (S / x1)**alpha) * dt
             )
         else:
             return(
@@ -111,7 +111,7 @@ class ProductionStore(ODEsElement):
                     - ((x1[ind]**(1 - beta[ind])) / ((beta[ind] - 1))) * (ni[ind]**(beta[ind] - 1)) * (S**beta[ind])  # Perc
                 ],
                 0.0,
-                S0 + P[ind] * (1 - (S / x1[ind])**alpha[ind])
+                S0 + P[ind] * (1 - (S / x1[ind])**alpha[ind]) * dt[ind]
             )
 
     @staticmethod
@@ -126,7 +126,7 @@ class ProductionStore(ODEsElement):
                 - ((x1[ind]**(1 - beta[ind])) / ((beta[ind] - 1))) * (ni[ind]**(beta[ind] - 1)) * (S**beta[ind])  # Perc
             ),
             0.0,
-            S0 + P[ind] * (1 - (S / x1[ind])**alpha[ind])
+            S0 + P[ind] * (1 - (S / x1[ind])**alpha[ind]) * dt[ind]
         )
 
 
@@ -186,7 +186,7 @@ class RoutingStore(ODEsElement):
                     - (x2 * (S / x3)**omega),  # F
                 ],
                 0.0,
-                S0 + P
+                S0 + P * dt
             )
         else:
             return(
@@ -196,7 +196,7 @@ class RoutingStore(ODEsElement):
                     - (x2[ind] * (S / x3[ind])**omega[ind]),  # F
                 ],
                 0.0,
-                S0 + P[ind]
+                S0 + P[ind] * dt[ind]
             )
 
     @staticmethod
@@ -211,7 +211,7 @@ class RoutingStore(ODEsElement):
                 - (x2[ind] * (S / x3[ind])**omega[ind]),  # F
             ),
             0.0,
-            S0 + P[ind]
+            S0 + P[ind] * dt[ind]
         )
 
 
@@ -384,10 +384,10 @@ class UpperZone(ODEsElement):
         fluxes = self._num_app.get_fluxes(fluxes=self._fluxes_python,
                                           S=self.state_array,
                                           S0=self._solver_states,
+                                          dt=self._dt,
                                           **self.input,
                                           **{k[len(self._prefix_parameters):]: self._parameters[k] for k in self._parameters},
                                           )
-
         return [-fluxes[0][2]]
 
     def get_AET(self):
@@ -402,16 +402,16 @@ class UpperZone(ODEsElement):
         fluxes = self._num_app.get_fluxes(fluxes=self._fluxes_python,
                                           S=S,
                                           S0=self._solver_states,
+                                          dt=self._dt,
                                           **self.input,
                                           **{k[len(self._prefix_parameters):]: self._parameters[k] for k in self._parameters},
                                           )
-
         return [- fluxes[0][1]]
 
     # PROTECTED METHODS
 
     @staticmethod
-    def _fluxes_function_python(S, S0, ind, P, Smax, m, beta, PET):
+    def _fluxes_function_python(S, S0, ind, P, Smax, m, beta, PET, dt):
 
         if ind is None:
             return (
@@ -421,7 +421,7 @@ class UpperZone(ODEsElement):
                     - P * (1 - (1 - (S / Smax))**beta),
                 ],
                 0.0,
-                S0 + P
+                S0 + P * dt
             )
         else:
             return (
@@ -431,13 +431,13 @@ class UpperZone(ODEsElement):
                     - P[ind] * (1 - (1 - (S / Smax[ind]))**beta[ind]),
                 ],
                 0.0,
-                S0 + P[ind]
+                S0 + P[ind] * dt[ind]
             )
 
     @staticmethod
-    @nb.jit('Tuple((UniTuple(f8, 3), f8, f8))(optional(f8), f8, i4, f8[:], f8[:], f8[:], f8[:], f8[:])',
+    @nb.jit('Tuple((UniTuple(f8, 3), f8, f8))(optional(f8), f8, i4, f8[:], f8[:], f8[:], f8[:], f8[:], f8[:])',
             nopython=True)
-    def _fluxes_function_numba(S, S0, ind, P, Smax, m, beta, PET):
+    def _fluxes_function_numba(S, S0, ind, P, Smax, m, beta, PET, dt):
 
         return (
             (
@@ -446,7 +446,7 @@ class UpperZone(ODEsElement):
                 - P[ind] * (1 - (1 - (S / Smax[ind]))**beta[ind]),
             ),
             0.0,
-            S0 + P[ind]
+            S0 + P[ind] * dt[ind]
         )
 
 
@@ -485,16 +485,16 @@ class LinearReservoir(ODEsElement):
         fluxes = self._num_app.get_fluxes(fluxes=self._fluxes_python,  # I can use the python method since it is fast
                                           S=self.state_array,
                                           S0=self._solver_states,
+                                          dt=self._dt,
                                           **self.input,
                                           **{k[len(self._prefix_parameters):]: self._parameters[k] for k in self._parameters},
                                           )
-
         return [- fluxes[0][1]]
 
     # PROTECTED METHODS
 
     @staticmethod
-    def _fluxes_function_python(S, S0, ind, P, k):
+    def _fluxes_function_python(S, S0, ind, P, k, dt):
 
         if ind is None:
             return (
@@ -503,7 +503,7 @@ class LinearReservoir(ODEsElement):
                     - k * S,
                 ],
                 0.0,
-                S0 + P
+                S0 + P * dt
             )
         else:
             return (
@@ -512,13 +512,13 @@ class LinearReservoir(ODEsElement):
                     - k[ind] * S,
                 ],
                 0.0,
-                S0 + P[ind]
+                S0 + P[ind] * dt[ind]
             )
 
     @staticmethod
-    @nb.jit('Tuple((UniTuple(f8, 2), f8, f8))(optional(f8), f8, i4, f8[:], f8[:])',
+    @nb.jit('Tuple((UniTuple(f8, 2), f8, f8))(optional(f8), f8, i4, f8[:], f8[:], f8[:])',
             nopython=True)
-    def _fluxes_function_numba(S, S0, ind, P, k):
+    def _fluxes_function_numba(S, S0, ind, P, k, dt):
 
         return (
             (
@@ -526,7 +526,7 @@ class LinearReservoir(ODEsElement):
                 - k[ind] * S,
             ),
             0.0,
-            S0 + P[ind]
+            S0 + P[ind] * dt[ind]
         )
 
 
@@ -613,10 +613,10 @@ class UnsaturatedReservoir(ODEsElement):
         fluxes = self._num_app.get_fluxes(fluxes=self._fluxes_python,
                                           S=self.state_array,
                                           S0=self._solver_states,
+                                          dt=self._dt,
                                           **self.input,
                                           **{k[len(self._prefix_parameters):]: self._parameters[k] for k in self._parameters},
                                           )
-
         return [-fluxes[0][2]]
 
     def get_AET(self):
@@ -631,16 +631,16 @@ class UnsaturatedReservoir(ODEsElement):
         fluxes = self._num_app.get_fluxes(fluxes=self._fluxes_python,
                                           S=S,
                                           S0=self._solver_states,
+                                          dt=self._dt,
                                           **self.input,
                                           **{k[len(self._prefix_parameters):]: self._parameters[k] for k in self._parameters},
                                           )
-
         return [- fluxes[0][1]]
 
     # PROTECTED METHODS
 
     @staticmethod
-    def _fluxes_function_python(S, S0, ind, P, Smax, m, beta, PET):
+    def _fluxes_function_python(S, S0, ind, P, Smax, m, beta, PET, dt):
 
         if ind is None:
             return (
@@ -650,7 +650,7 @@ class UnsaturatedReservoir(ODEsElement):
                     - P * (S / Smax)**beta,
                 ],
                 0.0,
-                S0 + P
+                S0 + P * dt
             )
         else:
             return (
@@ -660,13 +660,13 @@ class UnsaturatedReservoir(ODEsElement):
                     - P[ind] * (S / Smax[ind])**beta[ind],
                 ],
                 0.0,
-                S0 + P[ind]
+                S0 + P[ind] * dt[ind]
             )
 
     @staticmethod
-    @nb.jit('Tuple((UniTuple(f8, 3), f8, f8))(optional(f8), f8, i4, f8[:], f8[:], f8[:], f8[:], f8[:])',
+    @nb.jit('Tuple((UniTuple(f8, 3), f8, f8))(optional(f8), f8, i4, f8[:], f8[:], f8[:], f8[:], f8[:], f8[:])',
             nopython=True)
-    def _fluxes_function_numba(S, S0, ind, P, Smax, m, beta, PET):
+    def _fluxes_function_numba(S, S0, ind, P, Smax, m, beta, PET, dt):
 
         return (
             (
@@ -675,7 +675,7 @@ class UnsaturatedReservoir(ODEsElement):
                 - P[ind] * (S / Smax[ind])**beta[ind],
             ),
             0.0,
-            S0 + P[ind]
+            S0 + P[ind] * dt[ind]
         )
 
 class FastReservoir(ODEsElement):
@@ -713,6 +713,7 @@ class FastReservoir(ODEsElement):
         fluxes = self._num_app.get_fluxes(fluxes=self._fluxes_python,  # I can use the python method since it is fast
                                           S=self.state_array,
                                           S0=self._solver_states,
+                                          dt=self._dt,
                                           **self.input,
                                           **{k[len(self._prefix_parameters):]: self._parameters[k] for k in self._parameters},
                                           )
@@ -722,7 +723,7 @@ class FastReservoir(ODEsElement):
     # PROTECTED METHODS
 
     @staticmethod
-    def _fluxes_function_python(S, S0, ind, P, k, alpha):
+    def _fluxes_function_python(S, S0, ind, P, k, alpha, dt):
 
         if ind is None:
             return (
@@ -731,7 +732,7 @@ class FastReservoir(ODEsElement):
                     - k * S**alpha,
                 ],
                 0.0,
-                S0 + P
+                S0 + P * dt
             )
         else:
             return (
@@ -740,13 +741,13 @@ class FastReservoir(ODEsElement):
                     - k[ind] * S**alpha[ind],
                 ],
                 0.0,
-                S0 + P[ind]
+                S0 + P[ind] * dt[ind]
             )
 
     @staticmethod
-    @nb.jit('Tuple((UniTuple(f8, 2), f8, f8))(optional(f8), f8, i4, f8[:], f8[:], f8[:])',
+    @nb.jit('Tuple((UniTuple(f8, 2), f8, f8))(optional(f8), f8, i4, f8[:], f8[:], f8[:], f8[:])',
             nopython=True)
-    def _fluxes_function_numba(S, S0, ind, P, k, alpha):
+    def _fluxes_function_numba(S, S0, ind, P, k, alpha, dt):
 
         return (
             (
@@ -754,7 +755,7 @@ class FastReservoir(ODEsElement):
                 - k[ind] * S**alpha[ind],
             ),
             0.0,
-            S0 + P[ind]
+            S0 + P[ind] * dt[ind]
         )
 
 

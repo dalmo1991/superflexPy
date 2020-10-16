@@ -1,23 +1,26 @@
 """
 Copyright 2020 Marco Dal Molin et al.
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+This file is part of SuperflexPy.
 
-    http://www.apache.org/licenses/LICENSE-2.0
+SuperflexPy is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+SuperflexPy is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with SuperflexPy. If not, see <https://www.gnu.org/licenses/>.
 
 This file is part of the SuperflexPy modelling framework. For details about it,
 visit the page https://superflexpy.readthedocs.io
 
 CODED BY: Marco Dal Molin
-DESIGNED BY: Marco Dal Molin, Fabrizio Fenicia
+DESIGNED BY: Marco Dal Molin, Fabrizio Fenicia, Dmitri Kavetski
 
 This file contains the implementation of some elements needed to replicate the
 model used in Dal Molin et al, 2020
@@ -123,6 +126,7 @@ class SnowReservoir(ODEsElement):
                                           S=self.state_array,
                                           S0=self._solver_states,
                                           snow=snow,
+                                          dt=self._dt,
                                           **self.input,
                                           **{k[len(self._prefix_parameters):]: self._parameters[k] for k in self._parameters},
                                           )
@@ -132,7 +136,7 @@ class SnowReservoir(ODEsElement):
         return [rain + actual_melt]
 
     @staticmethod
-    def _flux_function_python(S, S0, ind, snow, T, t0, k, m):
+    def _flux_function_python(S, S0, ind, snow, T, t0, k, m, dt):
 
         if S is None:
             S = 0
@@ -147,7 +151,7 @@ class SnowReservoir(ODEsElement):
                     - actual_melt,
                 ],
                 0.0,
-                S0 + snow,
+                S0 + snow * dt,
             )
 
         else:
@@ -160,13 +164,13 @@ class SnowReservoir(ODEsElement):
                     - actual_melt,
                 ],
                 0.0,
-                S0 + snow[ind],
+                S0 + snow[ind] * dt[ind],
             )
 
     @staticmethod
-    @nb.jit('Tuple((UniTuple(f8, 2), f8, f8))(optional(f8), f8, i4, f8[:], f8[:], f8[:], f8[:], f8[:])',
+    @nb.jit('Tuple((UniTuple(f8, 2), f8, f8))(optional(f8), f8, i4, f8[:], f8[:], f8[:], f8[:], f8[:], f8[:])',
             nopython=True)
-    def _flux_function_numba(S, S0, ind, snow, T, t0, k, m):
+    def _flux_function_numba(S, S0, ind, snow, T, t0, k, m, dt):
 
         if S is None:
             S = 0
@@ -180,7 +184,7 @@ class SnowReservoir(ODEsElement):
                 - actual_melt,
             ),
             0.0,
-            S0 + snow[ind],
+            S0 + snow[ind] * dt[ind],
         )
 
 

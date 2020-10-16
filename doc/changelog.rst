@@ -1,7 +1,22 @@
-.. note:: Last update 04/09/2020
+.. note:: Last update 16/10/2020
 
 Change log
 ==========
+
+Version 1.1.0
+-------------
+
+Major changes to existing components
+....................................
+
+- Form this version, SuperflexPy is released under license LGPL. For details,
+  read :ref:`license`
+
+Minor changes to existing components
+....................................
+
+- Bug fix on the solution of the differential equations of the reservoirs. The
+  calculation of the maximum storage was not correct.
 
 Version 1.0.0
 -------------

@@ -1,0 +1,11 @@
+FLEX_MODEL_INFO_FILE_V1.00
+"$(CASE_STUDIES)$"  "/home/dalmo/Documents/BitBucket/superflexpy_aug2019/test/reference_results/"                                        relative path
+"$(CASE_STUDIES)$07_FR_2dt/test.INF_DAT"                        inf_dat file (rel to case study path)
+"$(CASE_STUDIES)$07_FR_2dt/M01_main.dat"                    flexConfig file
+""                                      fileNamePar (if blank uses parameters from flexConfig file)
+"$(CASE_STUDIES)$07_FR_2dt/SuperflexRes.dat"                                      fileNameOut (if blank if blank it no file is written)
+2                                                                                       parameter format (1:all, 2:fitted, 3:fitted matrix)
+0, 0, 2                                                                                   nX, nY, nS (0 if no output)
+0                                                                                         output X
+0                                                                                         output Y
+1,5                                                                                       output S

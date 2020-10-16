@@ -1,5 +1,5 @@
 FLEX_MODEL_INFO_FILE_V1.00
-"$(CASE_STUDIES)$"  "/home/dalmo/Documents/BitBucket/superflexpy_aug2019/test/superflex_results/"                                        relative path
+"$(CASE_STUDIES)$"  "/home/dalmo/Documents/BitBucket/superflexpy_aug2019/test/reference_results/"                                        relative path
 "$(CASE_STUDIES)$05_2HRUs/test.INF_DAT"                        inf_dat file (rel to case study path)
 "$(CASE_STUDIES)$05_2HRUs/M01_main.dat"                    flexConfig file
 ""                                      fileNamePar (if blank uses parameters from flexConfig file)

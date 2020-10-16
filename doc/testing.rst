@@ -1,4 +1,4 @@
-.. note:: Last update 06/10/2020
+.. note:: Last update 08/10/2020
 
 Automated testing
 =================

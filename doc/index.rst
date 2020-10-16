@@ -72,6 +72,10 @@ If you wish to receive e-mails about future developments of the framework,
 please subscribe to our mailing list `clicking here
 <https://forms.gle/utLbF6KWqvqS7LHZ7>`_.
 
+.. note:: Before starting to use SuperflexPy you should have a general knowledge
+          of Python and Numpy. Other Python libraries may be needed for pre- and
+          postprocessing of the data.
+
 .. toctree::
    :maxdepth: 1
    :hidden:
@@ -87,8 +91,11 @@ please subscribe to our mailing list `clicking here
    customize_components
    popular_models
    case_studies
+   sfpy_in_literature
    share_models
+   interfaces
    examples
    testing
+   license
    reference
    changelog

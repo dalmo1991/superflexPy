@@ -8,7 +8,7 @@ sys.path.append('/home/dalmo/Documents/BitBucket/superflexPython/C_so/')
 from superflex import Superflex_C
 import numpy as np
 from os import chdir
-chdir('/home/dalmo/Documents/BitBucket/superflexpy_aug2019/test/superflex_results/01_FR/')
+chdir('/home/dalmo/Documents/BitBucket/superflexpy_aug2019/test/reference_results/01_FR/')
 
 # Initialize the class
 sup = Superflex_C()

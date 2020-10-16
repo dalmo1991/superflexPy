@@ -1,4 +1,4 @@
-.. note:: Last update 06/10/2020
+.. note:: Last update 16/10/2020
 
 .. .. warning:: This guide is still work in progress. New pages are being written
 ..              and existing ones modified. Once the guide will reach its final
@@ -12,8 +12,8 @@ Installation
 SuperflexPy is implemented using Python 3 (version 3.7.4). It is not compatible
 with Python 2.
 
-SuperflexPy is available as a Python package at PyPI repository,
-`https://pypi.org/project/superflexpy <https://pypi.org/project/superflexpy>`_
+SuperflexPy is available as a Python package at
+`PyPI repository <https://pypi.org/project/superflexpy>`_
 
 The simplest way to install SuperflexPy is using the package installer for
 Python (pip) running the command

@@ -1,23 +1,26 @@
 """
 Copyright 2020 Marco Dal Molin et al.
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+This file is part of SuperflexPy.
 
-    http://www.apache.org/licenses/LICENSE-2.0
+SuperflexPy is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+SuperflexPy is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with SuperflexPy. If not, see <https://www.gnu.org/licenses/>.
 
 This file is part of the SuperflexPy modelling framework. For details about it,
 visit the page https://superflexpy.readthedocs.io
 
 CODED BY: Marco Dal Molin
-DESIGNED BY: Marco Dal Molin, Fabrizio Fenicia
+DESIGNED BY: Marco Dal Molin, Fabrizio Fenicia, Dmitri Kavetski
 
 This file contains the implementation of the elements of the GR4J model,
 combining the continuous state-space representation of Santos et al., 2018
@@ -224,7 +227,7 @@ class ProductionStore(ODEsElement):
                     - ((x1**(1 - beta)) / ((beta - 1) * dt)) * (ni**(beta - 1)) * (S**beta)  # Perc
                 ],
                 0.0,
-                S0 + P * (1 - (S / x1)**alpha)
+                S0 + P * (1 - (S / x1)**alpha) * dt
             )
         else:
             return(
@@ -234,7 +237,7 @@ class ProductionStore(ODEsElement):
                     - ((x1[ind]**(1 - beta[ind])) / ((beta[ind] - 1) * dt[ind])) * (ni[ind]**(beta[ind] - 1)) * (S**beta[ind])  # Perc
                 ],
                 0.0,
-                S0 + P[ind] * (1 - (S / x1[ind])**alpha[ind])
+                S0 + P[ind] * (1 - (S / x1[ind])**alpha[ind]) * dt[ind]
             )
 
     @staticmethod
@@ -249,7 +252,7 @@ class ProductionStore(ODEsElement):
                 - ((x1[ind]**(1 - beta[ind])) / ((beta[ind] - 1) * dt[ind])) * (ni[ind]**(beta[ind] - 1)) * (S**beta[ind])  # Perc
             ),
             0.0,
-            S0 + P[ind] * (1 - (S / x1[ind])**alpha[ind])
+            S0 + P[ind] * (1 - (S / x1[ind])**alpha[ind]) * dt[ind]
         )
 
 
@@ -352,7 +355,7 @@ class RoutingStore(ODEsElement):
                     - (x2 * (S / x3)**omega),  # F
                 ],
                 0.0,
-                S0 + P
+                S0 + P * dt
             )
         else:
             return(
@@ -362,7 +365,7 @@ class RoutingStore(ODEsElement):
                     - (x2[ind] * (S / x3[ind])**omega[ind]),  # F
                 ],
                 0.0,
-                S0 + P[ind]
+                S0 + P[ind] * dt[ind]
             )
 
     @staticmethod
@@ -377,7 +380,7 @@ class RoutingStore(ODEsElement):
                 - (x2[ind] * (S / x3[ind])**omega[ind]),  # F
             ),
             0.0,
-            S0 + P[ind]
+            S0 + P[ind] * dt[ind]
         )
 
 

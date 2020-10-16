@@ -1,0 +1,114 @@
+FLEX_UNIT_CONFIGURATION_FILE_V1.13
+! Description: Snow + FR alpha
+!========
+FLEX RESERVOIR INFO
+status       max number of reservoirs
+.false.      1                          ! enableWR
+.false.      1                          ! enableIR    ! UR-A-ID: supported= 0,1,2,3,10,11,20,21,22,30,31,32
+.true.       1                          ! enableUR    ! UR-B-ID: supported= 0,1 (more options easy to add)
+.false.      1                          ! enableCR    ! UR-E-ID: supported= 0,1,2,3,20,21,22,30,31,32
+.false.      1                          ! enableRR    !  UR-D-ID: supported= 0
+.false.      1                          ! enableFR    ! 
+.false.      1                          ! enableSR    ! 
+!========
+FLEX CONSTITUTIVE RELATIONSHIPS
+2,1,31,0     ! URFunID - {A,B,E,D} [see cpsm_dmsl_kit], 0=zero*, 1=linear*, 2=power, 3=refPow, 10=logistic, 11=quadroid*, 20=exp, 21=hyperExp*, 22=con2lin*, 30=tessier, 31=michMentes*, 32=lin2con*, *=algebraic, D-recommends {21,1,31,0}
+0,21         ! IRFunID - EIRmeth[see cpsm_dmsl_kit]: 0=rawETpot, -1=no E when rains; IRsmoothType=2(power),21(hyperbolic-recommended)
+2,31,21      ! CRFunID - {A from U - (2,3,31,10), E from U (2,31), A from S (2,3,21)} recomm: 2,31,21
+.false.,2    ! FRFunID - EsplitFrSr - true: splits evaporation between Fr and Sr according to Split_C - .false.: only from Fr;  FSFunID - 2=power, 23=line2line
+!========
+FLEX LAG FUNCTION INFORMATION
+convShape        smthID        max number of conv states    ! convolution function options: "none","halfTri"(tR),"symTri"(tS,tR),"genTri"(tS,rR,tF)
+"none"           -1            1           ! RR 
+"none"           -1            20          ! FR 
+"none"           -1            50          ! SR smthID: -1=original, 0=quadrature, 1=midpoint, 2=trapezoidal (Lag function smoothing)
+!========
+FLEX INITIAL CONDITIONS INFO
+3.8,0.6  ! annual rainfall(mm/ts) and runoff coefficient (used only to determine initial condition with option 2 below) (Parameters for the Thur, 1400 mm/y rainfall)
+!========
+RESERVOIRS_STATE_INFO
+stateName            iniFlag         stateIni              stateLo      stateHi     stateScal    ! absolute_inCond=0,relative_inCond=1,steadyState_inCond=2,calib_inCond=3
+"Sw,mm "             0               0.0                   0.0          1.e4         10.0        ! WR reservoir (snow) [supported iniFlag: 0] (see Kavetski and Kuczera., WRR 2007 for snow res and smoothing strategies)
+"Si,mm "             0               0.0                   0.0          20.0         10.0        ! IR reservoir (interception) [supported iniFlag: 0,1]
+"Su,mm "             1               0.2                   0.0          1.e4         10.0        ! UR reservoir (unsaturated) [supported iniFlag: 0,1]
+"Uc,-  "             0               0.2                   0.0          1.e4         10.0        ! CR_unsat reservoir (combined) (theta) [supported iniFlag: 0]
+"Sc,mm "             1               0.2                   0.0          1.e4         10.0        ! CR_sat reservoir (combined) [supported iniFlag: 0,1]
+"Sr,mm "             0               0.0                   0.0          1.e4         10.0        ! RR reservoir (riparian) [supported iniFlag: 0]
+"Sf,mm "             0               0.0                   0.0          1.e4         10.0        ! FR reservoir (fast) [supported iniFlag: 0,2,3]
+"Ss,mm "             0               0.0                   0.0          1.e4         10.0        ! SR reservoir (slow) [supported iniFlag: 0,2,3]
+!========
+ACTIVE_PARAMETER_INFO ! (parameters visible to BATEA)
+parName                  parDef             parLo        parHi        parScal    parSD         parTran   parFit  linkTo    Comment
+"Cmlt_E, -       "       1.5                0.2          5.0          10.0      -9999.9           0       F      0         (cannot be dead) evaporation multiplication factor
+"Dspl_SD, -      "       0.0                0.0          1.0          10.0      -9999.9           0       F      0         (cannot be dead) Dspl_SD->1 diverts input from FR to SR
+"Cmlt_P, -       "       1.0                0.9          10.0         10.0      -9999.9           0       F      0         (cannot be dead) precipitation multiplication factor
+"Cmlt_Q, -       "       1.0                1.e-2        1.e4         10.0      -9999.9           1       F      0         (cannot be dead) streamflow multiplication factor
+"Dspl_RD, -      "       0.0                0.0          0.2          10.0      -9999.9           0       F      0         (cannot be dead) Dspl_RD->1 shortcuts to RR reservoir (1-res-path)
+"Dspl_FD, -      "       0.0                0.0          1.0          10.0      -9999.9           0       F      0         (cannot be dead) Dspl_FD->1 diverts input from UR to FR
+"Pmax_ED, mm/t   "       1.e6               0.1          1.e7         10.0      -9999.9           1       F      0         (cannot be dead) threshold for Inf_Exc_Ov_Fl. High values effectively disable Inf_Exc_Ov_Fl
+"MsmtP_ED, mm/t  "       0.e-2              0.e-3        10.0         10.0      -9999.9           0       F      0         (cannot be dead) smoothing for Inf_Exc_Ov_Fl. MsmtP_ED->0 gives less smoothing
+"Smax_UR, mm     "       50.0               0.01         100.0        10.0      -9999.9           0       F      0         UR, store capacity
+"BetaQq_UR, -    "       1.5                1.e-3        10.0         10.0      -9999.9           1       F      0         UR, runoff coefficient function parameter, (power, logistic & quadroid) BetaQq_UR->0 gives stronger step-threshold in UR A(S) function
+"BetaE_UR, -     "       1.e-2              1.e-2        10.0         10.0      -9999.9           1       F      0         UR, (michMentes) BetaE_UR->0 gives Evaporation approaching potential if S>0
+"K_Qb_UR, 1/t    "       0.e-3              1.e-6        2.0          10.0      -9999.9           0       F      0         UR, (linear) controls percolation from UR to SR
+!========
+MORTO_PARAMETER_INFO ! (parameters that dont exist for this configuration)
+"nRes_FR, -      "       1.0                1.e-3        50.0         10.0      -9999.9           1       F      0         FR, number of reservoir states in FR cascade
+"K_Qq_FR, mm^b/t "       1.e-2              1.e-8        1.e-1        10.0      -9999.9           1       F      0         FR, K in Q=K*S^alfa
+"Alfa_Qq_FR, -   "       2.5                1.0          10.0         10.0      -9999.9           1       F      0         FR, alfa in Q=K*S^alfa
+"K_Qb_FR, 1/t    "       0.0                0.e-2        4.0          10.0      -9999.9           0       F      0         FR, controls exchange between FR and SR (e.g. HBV model)
+"MsmtE_S0_FR, mm "       0.5                1.e-2        2.0          10.0      -9999.9           1       F      0         FR, smoothing factor for evaporation (only when UR is disabled, otherwise evap is from UR)
+"MsmtP_Tp_WR, °C "       1.0                1.e-2        2.0          10.0      -9999.9           1       F      0         WR, smoothing parameter for Tp_WR
+"MsmtMmTm_WR, °C "       1.0                1.e-2        2.0          10.0      -9999.9           1       F      0         WR, smoothing parameter for Tm_WR
+"MsmtQmS0_WR, mm "       1.0                1.e-2        2.0          10.0      -9999.9           1       F      0         WR, smoothing parameter for storage in snow reservoir
+"K_Qm_WR, mm/°C/t"       1.0                1.e-1        10.0         10.0      -9999.9           1       F      0         WR, degree day factor
+"Cmlt_P_WR, -    "       1.0                0.5          5.0          10.0      -9999.9           0       F      0         WR, snowfall multiplication factor
+"Tm_WR, °C       "       2.0               -5.0          4.0          10.0      -9999.9           0       F      0         WR, melting point of snow on the ground
+"Tp_WR, °C       "       0.0               -5.0          10.0         10.0      -9999.9           0       F      0         WR, temperature where precipitation becomes snow
+"nRes_SR, -      "       1.0                1.0          1.9          10.0      -9999.9           0       F      0         SR, number of reservoir states in SR cascade
+"K_Qq_SR, mm^b/t "       1.e-2              1.e-6        1.0          10.0      -9999.9           1       T      0         SR, K in Q=K*S^alfa
+"Alfa_Qq_SR, -   "       2.0                1.0          5.0          10.0      -9999.9           1       F      0         SR, alfa in Q=K*S^alfa
+"K_Qb_SR, 1/t    "       0.e-2              0.e-6        1.e-2        10.0      -9999.9           0       F      0         SR, K in Q=K*S, loss from groundwater reservoir
+"Gamma_FL, -     "       1.0                1.e-1        10.0         10.0      -9999.9           1       F      0         FL, makes lag triangle non-linear
+"tRise_FL, t     "       1.0                1.0          20.0         10.0      -9999.9           0       F      0         FL, base of rising limb
+"Sini_FR, mm     "       1.0                0.01         1.e4         10.0      -9999.9           1       T      0         FR, initial state
+"tStart_RL, t    "       1.0                1.0          10.0         10.0      -9999.9           1       F      0         RL, time before start of rising limb with zero weight, when LAGsmthID=1, nStateConv>tStart[hi] to avoid chopping recession of lag function
+"tRise_RL, t     "       1.0                1.0          10.0         10.0      -9999.9           1       F      0         RL, base of rising limb
+"tFall_RL, t     "       1.0                1.0          10.0         10.0      -9999.9           1       F      0         RL, base of falling limb
+"tStart_FL, t    "       1.0                1.0          10.0         10.0      -9999.9           1       F      0         FL, time before start of rising limb with zero weight, when LAGsmthID=1, nStateConv>tStart[hi] to avoid chopping recession of lag function
+"tFall_FL, t     "       1.0                1.0          10.0         10.0      -9999.9           1       F      0         FL, base of falling limb
+"tStart_SL, t    "       1.0                1.0          10.0         10.0      -9999.9           1       F      0         SL, time before start of rising limb with zero weight, when LAGsmthID=1, nStateConv>tStart[hi] to avoid chopping recession of lag function
+"tRise_SL, t     "       1.0                1.0          10.0         10.0      -9999.9           1       F      0         SL, base of rising limb
+"tFall_SL, t     "       1.0                1.0          10.0         10.0      -9999.9           1       F      0         SL, base of falling limb
+"MedQq_UR, -     "       0.5                0.1          1.0          10.0      -9999.9           0       F      0         UR, Runoff coefficient function parameter, center for logistic function (see SF 2011 papers, Table 1 parameter lambda)
+"K_Qq_RR, 1/t    "       1.0                5.e-2        4.0          10.0      -9999.9           1       T      0         RR, K in Q=K*S
+"Dspl_CD, -      "       0.0                0.0          1.0          10.0      -9999.9           0       T      0         CR, Dspl_CD->1 diverts input from Slow convolution store to sat zone in CR
+"BetaE_CR, -     "       1.e-2              1.e-2        10.0         10.0      -9999.9           1       F      0         CR, (michMentes) BetaE_CR->0 gives Evaporation approaching potential if S>0
+"SevMax_CR, mm   "       100.0              1.e-2        500.0        10.0      -9999.9           1       F      0         CR, Evaporation influence zone
+"Umax_uCR, -     "       0.9                0.0          1.0          10.0      -9999.9           0       F      0         CR, max theta, 0.0<thetaMax<1.0, cannot be 1.0, should not be calibrated
+"K_Qb_uCR, 1/t   "       1.e-4              0.e-8        0.2          10.0      -9999.9           0       T      0         CR, matrix flow from unsat (saturation U) to sat (storage S) zone in CR
+"Smax_CR, mm     "       200.0              10.0         500          10.0      -9999.9           1       T      0         CR, maximum capacity
+"Smin_uCR, mm    "       5.0                1.0          10           10.0      -9999.9           1       F      0         CR, minimum capacity of unsat zone must be smaller than parLo(Smax_CR)
+"BetaQq_uCR, -   "       3.0                0.1          10.0         10.0      -9999.9           1       T      0         CR, runoff coefficient function parameter, (power) Beta->0 gives stronger step-threshold in A(S) function
+"MedQq_uCR, -    "       0.5                0.1          1.0          10.0      -9999.9           0       F      0         CR, runoff coefficient function parameter, center for logistic function (see SF 2011 papers, Table 1 parameter lambda)
+"BetaQq_sCR, -   "       1.e-2              1.e-2        10.0         10.0      -9999.9           1       F      0         CR, (power) Beta->0 gives stronger step-threshold in A(S) function
+"K_Qb_sCR, 1/t   "       1.e-3              1.e-6        0.2          10.0      -9999.9           1       T      0         CR, K in Q=K*S for matrix flow 
+"K_Qd_sCR, 1/t   "       0.e-3              1.e-6        2.0          10.0      -9999.9           0       F      0         CR, K in Q=K*S for flow to drainage network
+"Sini_SR, mm     "       1.0                1.0          1.e4         10.0      -9999.9           1       F      0         SR, initial state
+"MsmtQqSb_FR, mm "       0.5                1.e-2        2.0          10.0      -9999.9           1       F      0         FR, (line2line) smoothing factor for piecewise linear Q-S relation (with KmQq_FR and KpQq_FR)
+"KmQq_FR, 1/t    "       0.2                1.e-6        1.0          10.0      -9999.9           0       T      0         FR, K minus, (line2line) K in Q=K*S for the first piece of the piecewise linear Q-S relation
+"KpQq_FR, 1/t    "       1.1                1.e-3        2.0          10.0      -9999.9           0       T      0         FR, K plus, (line2line) K in Q=K*S for the second piece of the piecewise linear Q-S relation
+"Sb_FR, mm       "       12.0               0.0          100.0        10.0      -9999.9           0       T      0         FR, (line2line) storage at which there is the transition between Km_FR and Kp_FR
+"Dspl_ID, -      "       0.0                0.0          1.0          10.0      -9999.9           0       T      0         IR, Dspl_ID->1 diverts input from IR to UR (e.g. to represent throughfall)
+"Smax_IR, mm     "       10.0               1.e-2        20.0         10.0      -9999.9           1       T      0         IR, store capacity
+"MsmtQE_S0_IR, - "       1.e-1              1.e-3        1.0          10.0      -9999.9           1       T      0         IR, smoothing parameter in interception reservoir, controls IR smoothness when odeSolverIRR={0,1,2}: MsmtQE_S0_IR->0 yields stronger threshold in IR reservoir. DK-NB1: probably should be kept fixed; DK-NB2: must be MORTO when odeSolverIRR={-1,-2}. For power smoothing IRsmth~0.3-0.5 is sufficient
+!========                                     
+ACTIVE_STATE_INFO
+stateName        stateDef         stateLo       stateHi    stateScal  
+"Qstrm "           0.0               0.0          1.e4         10.0
+"Qpcor "           0.0               0.0          1.e4         10.0
+"Eact  "           0.0               0.0          1.e4         10.0
+!========
+MORTO_STATE_INFO ! (states that dont exist for this configuration)
+"Qreg  "           0.0               0.0          1.e4         10.0
+!========

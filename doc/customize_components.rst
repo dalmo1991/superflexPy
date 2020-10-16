@@ -1,4 +1,4 @@
-.. note:: Last update 06/10/2020
+.. note:: Last update 08/10/2020
 
 .. .. warning:: This guide is still work in progress. New pages are being written
 ..              and existing ones modified. Once the guide will reach its final
