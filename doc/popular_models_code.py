@@ -678,7 +678,7 @@ class UnsaturatedReservoir(ODEsElement):
             S0 + P[ind] * dt[ind]
         )
 
-class FastReservoir(ODEsElement):
+class PowerReservoir(ODEsElement):
 
     def __init__(self, parameters, states, approximation, id):
 
@@ -769,7 +769,7 @@ ur = UnsaturatedReservoir(
     id='UR'
 )
 
-fr = FastReservoir(
+fr = PowerReservoir(
     parameters={'k': 0.1, 'alpha': 1.0},
     states={'S0': 10.0},
     approximation=numeric_approximator,

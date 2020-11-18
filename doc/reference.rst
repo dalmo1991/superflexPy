@@ -1,4 +1,4 @@
-.. note:: Last update 08/10/2020
+.. note:: Last update 18/11/2020
 
 .. .. warning:: This guide is still work in progress. New pages are being written
 ..              and existing ones modified. Once the guide will reach its final
@@ -7,11 +7,11 @@
 Reference
 =========
 
-This reference provides details about the classes composing SuperflexPy. This
-page is limited to the core framework (i.e. content of
-:code:`superflexpy/framework/` and :code:`superflexpy/utils/`) to provide a
-clear reference for the classes that should be customized to extend SuperflexPy.
-Particular implementations of  components (i.e. the content of
+This reference provides details of the classes within SuperflexPy. This page is
+limited to the core framework (i.e. content of :code:`superflexpy/framework/`
+and :code:`superflexpy/utils/`), in order to provide a clear reference for the
+classes that should be customized to extend SuperflexPy. Particular
+implementations of  components (i.e. the content of
 :code:`superflexpy/implementation/`) are not included.
 
 superflexpy.framework.element

@@ -1,4 +1,4 @@
-.. note:: Last update 16/10/2020
+.. note:: Last update 18/11/2020
 
 Change log
 ==========
@@ -54,7 +54,7 @@ Minor changes to existing components
 - Some minor changes to the :code:`RootFinder` to accommodate the new numerical
   implementation.
 
-- Added numba implementation to GR4J elements
+- Added Numba implementation to GR4J elements
 
 New code
 ........

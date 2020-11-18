@@ -1,7 +1,4 @@
-.. TODO (review 26 Jun 2020):
-.. - Add link to paper
-
-.. note:: Last update 08/10/2020
+.. note:: Last update 18/11/2020
 
 .. .. warning:: This guide is still work in progress. New pages are being written
 ..              and existing ones modified. Once the guide will reach its final
@@ -17,8 +14,8 @@ Hydrological models are widely used in engineering and science for prediction
 and process understanding.
 
 Models can differ depending on how the processes are represented (conceptual
-vs. physical based models) or on how the physical domain gets discretized (from
-lumped configurations to detailed grid-based models).
+vs. physical based models), and how the physical domain is discretized (from
+lumped configurations to detailed fully-distributed models).
 
 At the catchment scale, conceptual models are the most widely used class of
 models due to their ability to capture hydrological dynamics in a parsimonious
@@ -27,13 +24,14 @@ and computationally fast way.
 Conceptual models
 -----------------
 
-Conceptual models describe hydrological dynamics directly
-at the catchment scale, providing relationship between the storage of the
-catchment and the outflow. Such models are usually relatively simple and cheap
-to run; their simplicity allows to use conceptual models to explore the
-processes directly at the catchment scale.
+Conceptual models describe hydrological dynamics directly at the catchment
+scale, providing relationships between the storage of the catchment and the
+outflow. Such models are usually relatively simple and cheap to run; their
+simplicity allows extensive explorations of many different process
+representations, uncertainty quantification using Monte Carlo methods, and so
+forth.
 
-Many conceptual models have been proposed in the last 40 years. These models
+Many conceptual models have been proposed over the last 40 years. These models
 have in common that they are composed by general elements such as reservoirs,
 lag functions, and connections. That said, these models differ one from the
 other, making model selection and comparison complicated.
@@ -46,7 +44,7 @@ Differences may appear on several levels:
 - **mathematical model**: the same process (e.g. a flux) may be represented by
   different equations;
 
-- **numerical model**: the same equation may be solved with different numerical
+- **numerical model**: the same equation may be solved using different numerical
   techniques.
 
 Several flexible modeling frameworks have been proposed in the last decade to
@@ -66,7 +64,8 @@ platform that allows the user to build models that differ in the
 conceptualization but share the same mathematical and numerical formulation.
 
 Although in the last decade several flexible modeling frameworks have been
-proposed, there are still some challenges that need to be taken:
+proposed, there are still some challenges that impact on usability and the
+types of modelling problems that can be tackled:
 
 - implementation constrains can limit the envisaged flexibility of the
   framework;
@@ -86,58 +85,60 @@ Spatial organization
 Hydrologist may need to model large catchments where spatial heterogeneity
 becomes important. The following categories can be distinguished:
 
-- **lumped configuration**, when all the physical domain is considered uniform;
+- **lumped configuration**, where all the physical domain is considered uniform;
 
-- **semi-distributed configuration**, when the physical domain is subdivided in
+- **semi-distributed configuration**, where the physical domain is subdivided in
   areal fractions that have the same hydrological response and operate in
-  parallel (without connectivity between them).
+  parallel (without connectivity between them);
 
-- **grid-based configuration**, when the physical domain is subdivided with a
-  (usually) uniform grid;
+- **fully-distributed configuration**, where the physical domain is subdivided
+  with a (usually) uniform grid. This configuration account for the presence of
+  flux exchanges between cells that operate together to calculate the
+  hydrological response.
 
-The lumped approach is the simplest, with a limited number of parameters and
-usually fairly good predictions. However, the obvious limitation is that if the
-catchment properties vary substantially in space, the lumped model will not
+The lumped approach yields the simplest, with a low number of parameters and
+often sufficiently good predictions. However, the obvious limitation is that if
+the catchment properties vary substantially in space, the lumped model will not
 capture these variations. Nor can a lumped model produce distributed streamflow
 predictions.
 
-The grid-based approach divides the catchment with a grid and the underlying
-assumption, that each pixel has its own hydrological behavior, may be relaxed
-aggregating different areas. This configuration produces models with high
-computational demand and a large number of parameters.
+The fully-distributed approach divides the catchment into a grid. Pixels can be
+modelled individually or aggregated into larger groups. This approach produces
+models with high computational demand and a large number of parameters, usually
+related to the resolution of the grid that is used.
 
-The semi-distributed approach, which is in between the other two in terms of
-spatial complexity and number of parameters, tries to find a subdivision of the
-catchment that is driven by process understanding; this results is a
-subdivision in irregular areas that are supposed to have the same hydrological
-behavior (often referred to as Hydrological Response Units, HRUs).
+The semi-distributed approach is intermediate between the other two approaches
+in terms of spatial complexity and number of parameters. A typical example is
+the discretisation of the catchment into Hydrological Response Units (HRUs),
+defined as catchment areas assumed to behave in a hydrologically "similar" way.
+The definition of HRUs represents a modelling choice and depends on the process
+understanding available for the catchment of interest.
 
 SuperflexPy
 -----------
 
-SuperflexPy is a new flexible framework for building conceptual hydrological
-models with different levels of spatial complexity, from lumped to
-semi-distributed. It is designed to overcome several limitations of existing
-flexible frameworks.
+SuperflexPy is a new flexible framework for building hydrological
+models. It is designed to accommodate models with a wide range of structural
+complexity, and to support spatial configurations ranging from lumped to
+distributed. The design of SuperflexPy is informed by the extensive experience
+of its authors and their colleagues in developing and applying conceptual
+hydrological models.
 
-SuperflexPy contains the functionalities to build conceptual models, ranging
-from lumped to distributed.
+In order to balance flexibility and ease of use, SuperflexPy is organized in
+four different levels, which correspond to different degrees of spatial
+complexity:
 
-In order to balance ease of use and flexibility, SuperflexPy is internally
-organized in four different levels, which correspond to different degrees of
-spatial complexity:
+1. elements;
 
-- elements;
+2. units;
 
-- units;
+3. nodes;
 
-- nodes;
+4. network.
 
-- network.
-
-The lower level is represented by "elements"; they can be, for example,
-reservoirs, lag functions, or connections. They can represent entire models, or
-individual model components, intended to represent specific processes within the
+The first level is represented by "elements"; elements comprise reservoirs, lag
+functions, and connections. Elements can represent entire models, or individual
+model components, intended to represent specific processes within the
 hydrological cycle (e.g. soil dynamics).
 
 The second level is represented by "units"; a unit is a component that connects
@@ -147,7 +148,7 @@ composed by multiple elements, creating the structure of a lumped configuration.
 The third level is represented by "nodes"; a node contains several units that
 operate in parallel. Nodes are typically used to distinguish the behavior of
 distinct units within a catchment, which may represent separate landscape
-sections (e.g. Hydrological Response Units).
+sections (e.g. HRUs).
 
 The fourth level is represented by the "network"; a network connects multiple
 nodes, routing the fluxes from the upstream to downstream nodes. This

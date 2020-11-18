@@ -1,4 +1,4 @@
-.. note:: Last update 08/10/2020
+.. note:: Last update 18/11/2020
 
 .. .. warning:: This guide is still work in progress. New pages are being written
 ..              and existing ones modified. Once the guide will reach its final
@@ -14,10 +14,10 @@ Software organization and contribution
 
 The SuperflexPy framework comprises the following components:
 
-- **Source code**: Latest version of all the code necessary to use the framework
-  at its latest version. It should be accessed only by an advanced user who
-  wants to understand the internal functioning, install manually the latest
-  version, or expand the framework.
+- **Source code**: Latest version of all the code necessary to use the
+  framework. It should be accessed only by an advanced user who wants to
+  understand the internal functioning, install manually the latest version, or
+  extend the framework.
 - **Packaged release**: Latest stable version of the framework available for
   users to install and use.
 - **Documentation**: Detailed explanation of the framework.
@@ -27,25 +27,27 @@ The SuperflexPy framework comprises the following components:
   framework in a scientific context, including a broad comparison with other
   existing solutions.
 
-New releases of the software are distributed through the official Python Package
+The source code, documentation, and examples are part of the official repository
+of SuperflexPy that is hosted on
+`GitHub <https://github.com/dalmo1991/superflexPy>`_. A user who wants to read
+the source code or modify any aspect of SuperflexPy (source code, documentation,
+and examples) can do it using GitHub.
+
+New releases of the software are available from the official Python Package
 Index (PyPI) where SuperflexPy has a
 `dedicated page <https://pypi.org/project/superflexpy/>`_.
 
-The source code, documentation, and examples are part of the official repository
-of SuperflexPy that is hosted on
-`GitHub <https://github.com/dalmo1991/superflexPy>`_. The repository is the only
-place where code, documentation, and examples should be modified.
-
 Documentation builds automatically from the
 `source folder <https://github.com/dalmo1991/superflexPy/tree/master/doc>`_ on
-GitHub and is published online in a
-`dedicated website <https://superflexpy.readthedocs.io/>`_.
+GitHub and is published online in
+`Read the Docs <https://superflexpy.readthedocs.io/>`_.
 
-Examples are made available on GitHub as Jupyter notebooks and can be either
-`visualized statically <TODO>`_ or run in a `sandbox environment <TODO>`_.
+Examples are made available on GitHub as Jupyter notebooks. These examples can
+be visualized statically or run in a sandbox environment (see :ref:`examples`
+for further details).
 
-The scientific publication is currently in preparation and it will be linked
-here once available.
+The scientific publication introducing SuperflexPy is currently in preparation
+and it will be linked here once available.
 
 Contributions
 -------------
@@ -60,10 +62,16 @@ Contributions to the framework can be made in the following ways:
 
 `This page <https://www.dataschool.io/how-to-contribute-on-github/>`_
 illustrates the typical workflow that should be followed when contributing to a
-GitHub project
+GitHub project. In summary, it consists of the following steps:
 
-Branching scheme
-................
+1. Fork the SuperflexPy repository to the user GitHub account;
+2. Clone the fork in the user computer;
+3. Modify the code, commit the changes, and push them to the GitHub fork of
+   SuperflexPy;
+4. Make a pull request on GitHub to the SuperflexPy repository.
+
+Branching scheme of the GitHub repository
+.........................................
 
 Updates to SuperflexPy are made directly in the branch :code:`master`, which
 represents the most up-to-date branch. The branch :code:`release` is used only
@@ -72,7 +80,8 @@ directly to it.
 
 When an update of the code is merged from :code:`master` to the branch
 :code:`release`, a new version of the package is automatically released on PyPI.
-Remember to change the version number in the :code:`setup.py` file.
+Remember to update the version number in the :code:`setup.py` file to avoid
+conflicts in the process.
 
 Developers are free to create new branches but pull requests must be directed to
 :code:`master` and not to :code:`release`.

@@ -1,13 +1,15 @@
-.. note:: Last update 08/10/2020
+.. note:: Last update 18/11/2020
+
+.. _tests:
 
 Automated testing
 =================
 
-Testing is done comparing numerical results of SuperflexPy with the one obtained
-running `Superflex <https://doi.org/10.1029/2010WR010174>`_ for some specific
-model configurations and sets of parameters and inputs.
+Current testing consists of validating the numerical results of SuperflexPy
+against the original implementation of
+`Superflex <https://doi.org/10.1029/2010WR010174>`_ for selected model
+configurations and sets of parameters and inputs.
 
-Current testing consists in validating the correctness of the numerical results.
 This testing strategy implicitly checks auxiliary methods (e.g. setting
 parameters and states, retrieving the internal fluxes of the model, setting
 inputs and getting outputs, etc.).
@@ -35,15 +37,16 @@ Current testing does not cover:
 - Usage of the Explicit Euler solver;
 - Edge cases (e.g. extreme values of parameters and states)
 
-Users contributing to SuperflexPy creating new elements should provide some
-degree of testing (i.e. reference results and code testing them against
-SuperflexPy results).
+Users contributing to SuperflexPy creating new elements should provide reference
+results and the code that tests them (including input data and model parameter
+values).
 
-Further development of the framework will possibly improve and change the
-testing organization.
+As the SuperflexPy framework continues to develop, additional facilities for
+unit-testing and integrated-testing will be employed.
 
 Automation
 ----------
 
-Any push of new code to any branch will trigger automatic testing based on the
-scripts contained in the folder :code:`test/unittest`.
+Any push of new code to any branch on the github repository will trigger
+automatic testing based on the scripts contained in the folder
+:code:`test/unittest`.

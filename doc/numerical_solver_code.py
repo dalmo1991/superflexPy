@@ -10,7 +10,7 @@ from ...superflexpy.utils.root_finder import RootFinder
 
 class CustomRootFinder(RootFinder):
 
-    def solve(self, dif_eq, fluxes, S0, dt, ind, args):
+    def solve(self, diff_eq, fluxes, S0, dt, ind, args):
 
         # Some code here
 
@@ -31,4 +31,4 @@ class CustomNumericalApproximator(NumericalApproximator):
 
         # Some code here
 
-        return [dif_eq, min_val, max_val]
+        return [diff_eq, min_val, max_val]

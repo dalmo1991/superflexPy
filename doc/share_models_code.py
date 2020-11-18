@@ -1,6 +1,6 @@
 from superflexpy.implementation.computation.pegasus_root_finding import PegasusPython
 from superflexpy.implementation.computation.implicit_euler import ImplicitEulerPython
-from superflexpy.implementation.elements.hbv import UnsaturatedReservoir, FastReservoir
+from superflexpy.implementation.elements.hbv import UnsaturatedReservoir, PowerReservoir
 from superflexpy.framework.unit import Unit
 
 root_finder = PegasusPython()
@@ -13,7 +13,7 @@ ur = UnsaturatedReservoir(
     id='UR'
 )
 
-fr = FastReservoir(
+fr = PowerReservoir(
     parameters={'k': 0.1, 'alpha': 1.0},
     states={'S0': 10.0},
     approximation=numeric_approximator,
@@ -36,4 +36,4 @@ model.reset_states()
 
 output = model.get_output()
 
-from .m4_sf_2011 import model
+from .my_new_model import model

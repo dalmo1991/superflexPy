@@ -12,28 +12,30 @@ SuperflexPy
 SuperflexPy is an open-source Python framework for constructing conceptual
 hydrological models for lumped and semi-distributed applications.
 
-SuperflexPy builds on our 10-years-experience with the development and
-application of `Superflex <https://doi.org/10.1029/2010WR010174>`_. The
-new framework offers a brand new implementation of Superflex, allowing to build
-completely customized, spatially-distributed hydrological models.
+SuperflexPy builds on our 10 year experience with the development and
+application of `Superflex <https://doi.org/10.1029/2010WR010174>`_, including
+collaborations with colleagues at the Eawag (Switzerland), TU-Delft
+(Netherlands), LIST (Luxembourg), University of Adelaide (Australia), and
+others. The SuperflexPy framework offers a brand new implementation of
+Superflex, allowing to build fully customized, spatially-distributed
+hydrological models.
 
 Thanks to its object-oriented architecture, SuperflexPy can be easily
-extended to satisfy your own modelling requirements, including the creation of
-new elements with customized internal structure, just in a few lines of Python
+extended to meet your modelling requirements, including the creation of new
+components with customized internal structure, in just a few lines of Python
 code.
 
-Constructing a hydrological model is straightforward with SuperflexPy, with a
-user experience similar to any other Python framework:
+Constructing a hydrological model is straightforward with SuperflexPy:
 
 - inputs and outputs are handled directly by the modeler using common Python
-  libraries (e.g. Numpy or Pandas for reading from text files) without the need
-  of customized input files and long pre- and post-processing to adapt the data
-  to the model;
+  libraries (e.g. Numpy or Pandas). This means that the modeller can use data
+  files of his/her own design, without the need to pre- and/or post- process
+  data into text formats prescribed by the framework itself;
 
-- the elements of the framework are declared and initialized through a Python
+- the components of the framework are declared and initialized through a Python
   script;
 
-- all the elements of the framework are objects with built-in functionalities
+- all the components of the framework are classes with built-in functionalities
   for handling parameters and states, routing the fluxes, and solving common
   structures present in conceptual models (e.g. reservoirs, lag functions,
   etc.);
@@ -41,8 +43,11 @@ user experience similar to any other Python framework:
 - the numerical implementation is separated from the conceptual model, allowing
   for testing different numerical methods for solving differential equations;
 
-- the framework can be run at multiple level of complexity, from a single bucket
-  to an entire river network;
+- the framework can be run at multiple levels of complexity, from a single
+  bucket to an entire river network;
+
+- the framework is available as an open source Python package from
+  `Github <https://github.com/dalmo1991/superflexPy>`_.
 
 - the framework can be easily interfaced with other Python modules for
   calibration and uncertainty analysis.
@@ -74,7 +79,11 @@ please subscribe to our mailing list `clicking here
 
 .. note:: Before starting to use SuperflexPy you should have a general knowledge
           of Python and Numpy. Other Python libraries may be needed for pre- and
-          postprocessing of the data.
+          post- processing of the data.
+
+          In line with the Python terminology, we will use the word **define**
+          when referring to the definition of a class, and **initialize** when
+          referring to the creation of an instance of a class, i.e. an object.
 
 .. toctree::
    :maxdepth: 1

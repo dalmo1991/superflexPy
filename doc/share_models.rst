@@ -1,4 +1,4 @@
-.. note:: Last update 08/10/2020
+.. note:: Last update 18/11/2020
 
 Sharing model configurations
 ============================
@@ -11,17 +11,24 @@ can be imported in other scripts.
 
 A user who wants to share their model configuration with the community can
 create a Python script (with a meaningful name) that initializes the model
-(without running it) and put it in the folder
-:code:`superflexpy/implementation/models/`. The contributed code will be
-incorporated in the following release of SuperflexPy and, therefore, other users
-will be able to import it.
+(without running it) and "upload" it to the GitHub repository in the folder
+:code:`superflexpy/implementation/models/`. This can be done (1) forking the
+`SuperflexPy <https://github.com/dalmo1991/superflexPy>`_ repository, (2) adding
+the script to the local fork of the repository, and (3) making a pull request to
+the original repository (see :ref:`contribute` for further details). The
+contributed code will be incorporated in the following release of SuperflexPy
+and, therefore, other users will be able to import it.
 
-The user will maintain authorship on the contributed code.
+The user will maintain authorship on the contributed code, which will be
+released with the same :ref:`license` of SuperflexPy. It is good practice to add
+to the contributions also some tests (see :ref:`tests`) to assess the
+correctness.
 
 Practical example with M4
 -------------------------
 
-We provide an example of how to distribute the model :ref:`M4_example`.
+We illustrate of how to distribute SuperflexPy models using as an example the
+model :ref:`M4_example`.
 
 First, we create the file :code:`m4_sf_2011.py` that contains the code to
 initialize the model
@@ -31,33 +38,32 @@ initialize the model
    :lines: 1-29
    :linenos:
 
-Then we incorporate it in the SuperflexPy repository (see :ref:`contribute`) in
-the folder :code:`superflexpy/implementation/models/`.
+Then we incorporate it in the SuperflexPy repository in the folder
+:code:`superflexpy/implementation/models/` following the procedure illustrated
+in the previous section (fork, change, and pull request).
 
-Once the next release of SuperflexPy is available, another user will find this
-implementation in the updated installed package and can import it for their own
-application, as shown below.
+Once the next release of SuperflexPy is available, the M4 model implementation
+will be available in the updated installed package and can be imported by
+general users for their own application, as shown below.
 
 .. literalinclude:: share_models_code.py
    :language: python
    :lines: 31-37
    :linenos:
 
-Sharing models privately
-------------------------
+Sharing models "privately" with other users
+-------------------------------------------
 
-Although we discourage this choice since we believe in the
-`F.A.I.R. <https://www.go-fair.org/fair-principles/>`_ principles, model
-configurations can be shared "privately" between research groups without waiting
-for a new release of the framework.
+Model configurations can be shared "privately" between research groups without
+waiting for a new release of the framework.
 
-This can be done exactly by creating a :code:`my_new_model.py` file that
-initializes the model and sharing the file "privately" with other users.
+This can be done by creating a :code:`my_new_model.py` file that initializes the
+model and then sharing the file "privately" with other users.
 
-The recipients of the new file will then save the file in their computer and use
+The recipients of the new file can then save the file in their computer and use
 local importing. Assuming that the script that the recipients use to run the
-model is in the same folder as the file initializing the model (named
-:code:`m4_sf_2011.py`), the recipients will use the model as follows
+model is in the same folder as the file initializing the model, the recipients
+will use the model as follows
 
 .. literalinclude:: share_models_code.py
    :language: python
@@ -66,10 +72,14 @@ model is in the same folder as the file initializing the model (named
 
 Note the local import in line 1.
 
+As we believe in the `F.A.I.R. <https://www.go-fair.org/fair-principles/>`_
+principles, we encourage modelers to share their models with the whole
+community.
+
 Dumping objects with Pickle
 ---------------------------
 
 Python offers the module
 `Pickle <https://docs.python.org/3/library/pickle.html>`_ to serialize objects
-to binary files. We discourage this practice due to the lack of transparency in
-the shared model.
+to binary files.  This approach enables the distribution of binary files, but
+has the disadvantage of lacking transparency in the model structure.

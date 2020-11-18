@@ -2,7 +2,7 @@ import sys
 import pathlib
 REPO_FOLDER = pathlib.Path(__file__).absolute().parents[2]
 sys.path.insert(0, str(REPO_FOLDER))
-from superflexpy.implementation.elements.thur_model_hess import SnowReservoir, UnsaturatedReservoir, HalfTriangularLag, FastReservoir
+from superflexpy.implementation.elements.thur_model_hess import SnowReservoir, UnsaturatedReservoir, HalfTriangularLag, PowerReservoir
 from superflexpy.implementation.elements.structure_elements import Transparent, Junction, Splitter
 from superflexpy.framework.unit import Unit
 from superflexpy.framework.node import Node
@@ -70,14 +70,14 @@ lag_fun = HalfTriangularLag(
     id='lag-fun'
 )
 
-fast = FastReservoir(
+fast = PowerReservoir(
     parameters={'k': 0.01, 'alpha': 3.0},
     states={'S0': 0.0},
     approximation=approximator,
     id='fast'
 )
 
-slow = FastReservoir(
+slow = PowerReservoir(
     parameters={'k': 1e-4, 'alpha': 1.0},
     states={'S0': 0.0},
     approximation=approximator,

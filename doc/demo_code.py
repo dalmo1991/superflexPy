@@ -5,7 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 # Import SuperflexPy
-from superflexpy.implementation.elements.hbv import FastReservoir
+from superflexpy.implementation.elements.hbv import PowerReservoir
 from superflexpy.implementation.elements.gr4j import UnitHydrograph1
 from superflexpy.implementation.computation.pegasus_root_finding import PegasusPython
 from superflexpy.implementation.computation.implicit_euler import ImplicitEulerPython
@@ -21,25 +21,25 @@ solver_python = PegasusPython()
 approximator = ImplicitEulerPython(root_finder=solver_python)
 #%% Run element
 # Initialize the reservoir
-fast_reservoir = FastReservoir(
+reservoir = PowerReservoir(
     parameters={'k': 0.01, 'alpha': 2.0},
     states={'S0': 10.0},
     approximation=approximator,
-    id='FR'
+    id='R'
 )
 
-fast_reservoir.set_timestep(1.0)
+reservoir.set_timestep(1.0)
 
 # Create input
 precipitation = np.array([6.5, 3.0, 0.0, 0.0, 0.0, 2.0, 4.0, 8.0, 2.0, 0.0,
                           0.0, 2.5, 1.0, 0.0, 4.0, 0.0, 1.0, 0.0, 0.0, 0.0])
 
 # Set input
-fast_reservoir.set_input([precipitation])
+reservoir.set_input([precipitation])
 
 # Run the element
-output = fast_reservoir.get_output()[0]
-reservoir_state = fast_reservoir.state_array[:, 0]
+output = reservoir.get_output()[0]
+reservoir_state = reservoir.state_array[:, 0]
 
 # Plotting
 fig, ax = plt.subplots(2, 1, sharex=True, figsize=(10, 6))
@@ -63,7 +63,7 @@ fig.savefig('pics/demo/SingleReservoir.png', res=600)
 
 #%% Run Unit
 # Reset the fast reservoir (we use it again)
-fast_reservoir.reset_states()
+reservoir.reset_states()
 
 # Initialize the lag function
 lag_function = UnitHydrograph1(
@@ -74,7 +74,7 @@ lag_function = UnitHydrograph1(
 
 # Create unit
 unit_1 = Unit(
-    layers=[[fast_reservoir], [lag_function]],
+    layers=[[reservoir], [lag_function]],
     id='unit-1'
 )
 
@@ -86,8 +86,8 @@ unit_1.set_input([precipitation])
 output = unit_1.get_output()[0]
 
 # Fast reservoir
-fr_state = unit_1.get_internal(id='FR', attribute='state_array')[:, 0]
-fr_output = unit_1.call_internal(id='FR', method='get_output', solve=False)[0]
+r_state = unit_1.get_internal(id='R', attribute='state_array')[:, 0]
+r_output = unit_1.call_internal(id='R', method='get_output', solve=False)[0]
 
 # The output of lag is the same of the unit
 
@@ -96,10 +96,10 @@ fig, ax = plt.subplots(3, 1, sharex=True, figsize=(10, 9))
 
 ax[0].bar(x=range(len(precipitation)), height=precipitation, color='blue')
 
-ax[1].plot(range(len(precipitation)), fr_output, color='blue', lw=2,
+ax[1].plot(range(len(precipitation)), r_output, color='blue', lw=2,
            label='Outflow')
 ax_bis = ax[1].twinx()
-ax_bis.plot(range(len(precipitation)), fr_state, color='red', lw=2,
+ax_bis.plot(range(len(precipitation)), r_state, color='red', lw=2,
             ls='--', label='Reservoir state')
 
 ax[2].plot(range(len(precipitation)), output, color='blue', lw=2,
@@ -110,7 +110,7 @@ ax[1].set_ylabel('Outflow [mm/day]')
 ax_bis.set_ylabel('State [mm]')
 ax[2].set_ylabel('Outflow [mm/day]')
 ax[2].set_xlabel('Time [day]')
-ax[1].set_title('Fast reservoir')
+ax[1].set_title('Reservoir')
 ax[2].set_title('Lag function')
 
 lines = [Line2D([0], [0], color='blue', lw=2, label='Outflow'),
@@ -128,7 +128,7 @@ unit_1.set_states({'unit-1_lag-fun_lag': None})  # Remove after new build
 
 # Create second unit
 unit_2 = Unit(
-    layers=[[fast_reservoir]],
+    layers=[[reservoir]],
     id='unit-2'
 )
 

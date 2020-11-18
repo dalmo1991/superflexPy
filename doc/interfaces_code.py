@@ -1,6 +1,6 @@
 from superflexpy.implementation.computation.implicit_euler import ImplicitEulerPython
 from superflexpy.implementation.computation.pegasus_root_finding import PegasusPython
-from superflexpy.implementation.elements.hbv import FastReservoir
+from superflexpy.implementation.elements.hbv import PowerReservoir
 from superflexpy.framework.unit import Unit
 import spotpy
 import numpy as np
@@ -10,11 +10,11 @@ import numpy as np
 root_finder = PegasusPython()
 num_app = ImplicitEulerPython(root_finder=root_finder)
 
-reservoir_1 = FastReservoir(parameters={'k': 0.1, 'alpha': 2.0},
+reservoir_1 = PowerReservoir(parameters={'k': 0.1, 'alpha': 2.0},
                             states={'S0': 10.0},
                             approximation=num_app,
                             id='FR1')
-reservoir_2 = FastReservoir(parameters={'k': 0.5, 'alpha': 1.0},
+reservoir_2 = PowerReservoir(parameters={'k': 0.5, 'alpha': 1.0},
                             states={'S0': 10.0},
                             approximation=num_app,
                             id='FR2')
