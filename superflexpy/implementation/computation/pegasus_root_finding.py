@@ -64,33 +64,33 @@ class PegasusPython(RootFinder):
         self._error_message = 'module : superflexPy, solver : {},'.format(self._name)
         self._error_message += ' Error message : '
 
-    def solve(self, dif_eq, fluxes, S0, dt, ind, args):
+    def solve(self, diff_eq, fluxes, S0, dt, ind, args):
         """
         This method calculated the root of the input function.
 
         Parameters
         ----------
-        dif_eq : function
+        diff_eq : function
             Function be solved. The function must accept the following inputs:
             - fluxes : function used to calculate the fluxes given parameters
                        and state
             - S : proposed root. If None, the function must initialize the root
             - S0 : state at the beginning of the time step
             - dt : time step
-            - kwargs : other parameters needed by dif_eq
+            - kwargs : other parameters needed by diff_eq
             It must return three float values:
             - Value of the function given the root and the kwargs
             - Lower x boundary for the search
             - Upper x boundary for the search
         fluxes : function
-            Function to be passed to dif_eq. See specificatio in
+            Function to be passed to diff_eq. See specificatio in
             superflexpy.utils.numerical_approximator
         S0 : float
             state at the beginning of the time step
         dt : float
             time step
         kwargs : dict(str: float)
-            parameters needed by dif_eq
+            parameters needed by diff_eq
 
         Returns
         -------
@@ -98,9 +98,9 @@ class PegasusPython(RootFinder):
             Root of the function
         """
 
-        a, b = dif_eq(fluxes=fluxes, S=None, S0=S0, dt=dt, args=args, ind=ind)[1:]
-        fa = dif_eq(fluxes=fluxes, S=a, S0=S0, dt=dt, args=args, ind=ind)[0]
-        fb = dif_eq(fluxes=fluxes, S=b, S0=S0, dt=dt, args=args, ind=ind)[0]
+        a, b = diff_eq(fluxes=fluxes, S=None, S0=S0, dt=dt, args=args, ind=ind)[1:]
+        fa = diff_eq(fluxes=fluxes, S=a, S0=S0, dt=dt, args=args, ind=ind)[0]
+        fb = diff_eq(fluxes=fluxes, S=b, S0=S0, dt=dt, args=args, ind=ind)[0]
 
         # Check if a or b are already the solution
         need_solve = True
@@ -134,7 +134,7 @@ class PegasusPython(RootFinder):
 
                 dx = root - a
 
-                f_root = dif_eq(fluxes=fluxes, S=root, S0=S0, dt=dt, args=args, ind=ind)[0]
+                f_root = diff_eq(fluxes=fluxes, S=root, S0=S0, dt=dt, args=args, ind=ind)[0]
 
                 if f_root * fa < 0:
                     b = a
@@ -192,11 +192,11 @@ class PegasusNumba(RootFinder):
 
     @staticmethod
     @nb.jit(nopython=True)
-    def solve(dif_eq, fluxes, S0, dt, ind, args, tol_F, tol_x, iter_max):
+    def solve(diff_eq, fluxes, S0, dt, ind, args, tol_F, tol_x, iter_max):
 
-        a, b = dif_eq(fluxes=fluxes, S=None, S0=S0, dt=dt, ind=ind, args=args)[1:]
-        fa = dif_eq(fluxes=fluxes, S=a, S0=S0, dt=dt, ind=ind, args=args)[0]
-        fb = dif_eq(fluxes=fluxes, S=b, S0=S0, dt=dt, ind=ind, args=args)[0]
+        a, b = diff_eq(fluxes=fluxes, S=None, S0=S0, dt=dt, ind=ind, args=args)[1:]
+        fa = diff_eq(fluxes=fluxes, S=a, S0=S0, dt=dt, ind=ind, args=args)[0]
+        fb = diff_eq(fluxes=fluxes, S=b, S0=S0, dt=dt, ind=ind, args=args)[0]
 
         # Check if a or b are already the solution
         need_solve = True
@@ -231,7 +231,7 @@ class PegasusNumba(RootFinder):
 
                 dx = root - a
 
-                f_root = dif_eq(fluxes=fluxes, S=root, S0=S0, dt=dt, ind=ind, args=args)[0]
+                f_root = diff_eq(fluxes=fluxes, S=root, S0=S0, dt=dt, ind=ind, args=args)[0]
 
                 if f_root * fa < 0:
                     b = a

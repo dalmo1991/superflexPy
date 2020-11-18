@@ -36,7 +36,7 @@ Sci., 24, 1319–1345, https://doi.org/10.5194/hess-24-1319-2020, 2020.
 
 
 from ...framework.element import LagElement, ODEsElement
-from .hbv import FastReservoir, UnsaturatedReservoir
+from .hbv import PowerReservoir, UnsaturatedReservoir
 import numba as nb
 import numpy as np
 

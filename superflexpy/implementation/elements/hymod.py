@@ -211,7 +211,7 @@ class LinearReservoir(ODEsElement):
 
     def __init__(self, parameters, states, approximation, id):
         """
-        This is the initializer of the class FastReservoir.
+        This is the initializer of the class PowerReservoir.
 
         Parameters
         ----------

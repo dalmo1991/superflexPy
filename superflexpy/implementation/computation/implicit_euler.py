@@ -79,9 +79,9 @@ class ImplicitEulerPython(NumericalApproximator):
         fl = fluxes_out[0]
 
         # Calculate the numerical approximation of the differential equation
-        dif_eq = (S - S0) / dt[ind] - sum(fl)
+        diff_eq = (S - S0) / dt[ind] - sum(fl)
 
-        return (dif_eq,           # Fun to set to zero
+        return (diff_eq,           # Fun to set to zero
                 fluxes_out[1],    # Min search
                 fluxes_out[2])    # Max search
 
@@ -139,8 +139,8 @@ class ImplicitEulerNumba(NumericalApproximator):
         for f in fl:
             sum_flux += f
 
-        dif_eq = (S - S0) / dt[ind] - sum_flux
+        diff_eq = (S - S0) / dt[ind] - sum_flux
 
-        return (dif_eq,           # Fun to set to zero
+        return (diff_eq,           # Fun to set to zero
                 fluxes_out[1],    # Min search
                 fluxes_out[2])    # Max search

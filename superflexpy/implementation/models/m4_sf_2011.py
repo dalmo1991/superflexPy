@@ -34,7 +34,7 @@ Water Resour. Res., 47, W11511, doi:10.1029/2011WR010748
 
 from superflexpy.implementation.computation.pegasus_root_finding import PegasusPython
 from superflexpy.implementation.computation.implicit_euler import ImplicitEulerPython
-from superflexpy.implementation.elements.hbv import UnsaturatedReservoir, FastReservoir
+from superflexpy.implementation.elements.hbv import UnsaturatedReservoir, PowerReservoir
 from superflexpy.framework.unit import Unit
 
 root_finder = PegasusPython()
@@ -47,7 +47,7 @@ ur = UnsaturatedReservoir(
     id='UR'
 )
 
-fr = FastReservoir(
+fr = PowerReservoir(
     parameters={'k': 0.1, 'alpha': 1.0},
     states={'S0': 10.0},
     approximation=numeric_approximator,

@@ -159,7 +159,7 @@ class NumericalApproximator():
             root_settings = self._root_finder.get_settings()
 
             output.append(self._solve(root_finder=self._root_finder.solve,  # Passing just the method
-                                      dif_eq=self._differential_equation,
+                                      diff_eq=self._differential_equation,
                                       fun=f,
                                       S0=s_zero,
                                       dt=kwargs['dt'],
@@ -195,7 +195,7 @@ class NumericalApproximator():
         return output
 
     @staticmethod
-    def _solve_python(root_finder, dif_eq, fun, S0, dt, num_ts, args, root_settings):  # here args are all vectors of the same lenght
+    def _solve_python(root_finder, diff_eq, fun, S0, dt, num_ts, args, root_settings):  # here args are all vectors of the same lenght
 
         # Note: root_settings not used. Here only to have uniform interface
         output = np.zeros(num_ts)
@@ -203,7 +203,7 @@ class NumericalApproximator():
         for i in range(num_ts):
 
             # Call the root finder
-            root = root_finder(dif_eq=dif_eq,
+            root = root_finder(diff_eq=diff_eq,
                                fluxes=fun,
                                S0=S0,
                                dt=dt,
@@ -217,14 +217,14 @@ class NumericalApproximator():
 
     @staticmethod
     @nb.jit(nopython=True)
-    def _solve_numba(root_finder, dif_eq, fun, S0, dt, num_ts, args, root_settings):  # here args are all vectors of the same lenght
+    def _solve_numba(root_finder, diff_eq, fun, S0, dt, num_ts, args, root_settings):  # here args are all vectors of the same lenght
 
         output = np.zeros(num_ts)
 
         for i in range(num_ts):
 
             # Call the root finder
-            root = root_finder(dif_eq=dif_eq,
+            root = root_finder(diff_eq=diff_eq,
                                fluxes=fun,
                                S0=S0,
                                dt=dt,

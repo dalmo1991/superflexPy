@@ -31,14 +31,14 @@ from ...framework.element import ODEsElement
 import numba as nb
 
 
-class FastReservoir(ODEsElement):
+class PowerReservoir(ODEsElement):
     """
-    This class implements the FastReservoir present in HBV.
+    This class implements the PowerReservoir present in HBV.
     """
 
     def __init__(self, parameters, states, approximation, id):
         """
-        This is the initializer of the class FastReservoir.
+        This is the initializer of the class PowerReservoir.
 
         Parameters
         ----------

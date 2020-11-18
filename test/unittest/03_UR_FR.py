@@ -34,7 +34,7 @@ import numpy as np
 package_path = join(abspath(dirname(__file__)), '..', '..')
 sys.path.insert(0, package_path)
 
-from superflexpy.implementation.elements.hbv import FastReservoir, UnsaturatedReservoir
+from superflexpy.implementation.elements.hbv import PowerReservoir, UnsaturatedReservoir
 from superflexpy.implementation.computation.pegasus_root_finding import PegasusNumba, PegasusPython
 from superflexpy.implementation.computation.implicit_euler import ImplicitEulerNumba, ImplicitEulerPython
 from superflexpy.framework.unit import Unit
@@ -57,7 +57,7 @@ class TestHRU(unittest.TestCase):
             solver = PegasusPython()
             num_app = ImplicitEulerPython(root_finder=solver)
 
-        fr = FastReservoir(parameters = {'k' : 0.01,
+        fr = PowerReservoir(parameters = {'k' : 0.01,
                                          'alpha' : 2.5},
                            states = {'S0' : 0.0},
                            approximation=num_app,

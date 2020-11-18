@@ -35,7 +35,7 @@ Sci., 24, 1319–1345, https://doi.org/10.5194/hess-24-1319-2020, 2020.
 
 from superflexpy.implementation.computation.pegasus_root_finding import PegasusPython
 from superflexpy.implementation.computation.implicit_euler import ImplicitEulerPython
-from superflexpy.implementation.elements.thur_model_hess import SnowReservoir, UnsaturatedReservoir, FastReservoir, HalfTriangularLag
+from superflexpy.implementation.elements.thur_model_hess import SnowReservoir, UnsaturatedReservoir, PowerReservoir, HalfTriangularLag
 from superflexpy.implementation.elements.structure_elements import Transparent, Junction, Splitter
 from superflexpy.framework.unit import Unit
 from superflexpy.framework.node import Node
@@ -101,14 +101,14 @@ lag_fun = HalfTriangularLag(
     id='lag-fun'
 )
 
-fast = FastReservoir(
+fast = PowerReservoir(
     parameters={'k': 0.01, 'alpha': 3.0},
     states={'S0': 0.0},
     approximation=approximator,
     id='fast'
 )
 
-slow = FastReservoir(
+slow = PowerReservoir(
     parameters={'k': 1e-4, 'alpha': 1.0},
     states={'S0': 0.0},
     approximation=approximator,
