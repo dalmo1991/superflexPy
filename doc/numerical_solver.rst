@@ -18,10 +18,10 @@ equations (ODEs) of the form
 
 and associated initial conditions.
 
-Such differential equations are usually difficult/impossible to solve
+Such differential equations are usually difficult or impossible to solve
 analytically, therefore, numerical approximations are employed.
 
-Many robust numerical approximations (e.g. Implicit Euler) require an iterative
+Many robust numerical approximations (e.g. implicit Euler) require an iterative
 root-finding procedure at each time step.
 
 Therefore, the current implementation of SuperflexPy conceptualizes the solution
@@ -41,7 +41,7 @@ Other ODE solution algorithms, e.g. Runge-Kutta, can be accommodated
 by extending the classes :code:`NumericalApproximator` and/or
 :code:`RootFinder`. Even more generally, ODE solvers from external libraries
 could be used within SuperflexPy by incorporating them in a class that respects
-the interface proposed by the :code:`NumericalApproximator`.
+the interface expected by the :code:`NumericalApproximator`.
 
 The following sections describe the standard approach to create customized
 numerical approximators and root finders.
@@ -65,15 +65,16 @@ by the functions in :code:`fluxes`, and :code:`ind` is the index of the input
 arrays to use.
 
 The method :code:`_get_fluxes` is responsible for calculating the fluxes after
-the ODE has been solved and operates with a vector of states. The method
-:code:`_differential_equation` calculates the approximation of the ODE,
-returning the value of the numerical approximation of the  differential
+the ODE has been solved and operates with a vector of states.
+
+The method :code:`_differential_equation` calculates the approximation of the
+ODE, returning the value of the numerical approximation of the  differential
 equation given a value of :code:`S` and the minimum and maximum boundary for the
 search of the solution. This method is designed to be interfaced with the root
 finder.
 
-To understand better how these methods work, please see the implementation of
-:code:`ImplicitEuler` and :code:`ExplicitEuler`.
+For further details, please see the implementation of :code:`ImplicitEuler` and
+:code:`ExplicitEuler`.
 
 Root finder
 -----------
@@ -108,14 +109,14 @@ is therefore an important requirement of SuperflexPy.
 
 Computational efficiency is not the greatest strength of pure Python, but
 libraries like Numpy and Numba can help in pushing the performance closer to
-traditionally fast languages as Fortran and C.
+traditionally fast languages such as Fortran and C.
 
 Numpy provides highly efficient arrays for vectorized operations (i.e.
 elementwise operations between arrays). Numba provides a “just-in-time compiler”
 that can be used to compile (at runtime) a normal Python method to machine code
 that interacts efficiently with Numpy arrays. The combined use of Numpy and
 Numba is extremely effective when solving ODEs, where the method loops through a
-vector to perform element-wise operations.
+vector to perform elementwise operations.
 
 For this reason we provide Numba-optimized versions of
 :code:`NumericalApproximator` and :code:`RootFinder`, which enable efficient
@@ -123,14 +124,15 @@ solution of ODEs describing the reservoir elements.
 
 The figure below compares the execution times of pure Python vs. the Numba
 implementation, as a function of the length of the time series (upper panel) and
-the number of model runs (lower panel). The plot clearly shows the tradeoff
-between compilation time (which is zero for Python and around 2 seconds for
-Numba) versus run time (where Numba is 30 times faster than Python). For
-example, a single run of 1000 time steps of the :ref:`hymod` model, solved using
-the implicit Euler numerical solver takes 0.11 seconds with Python and 1.85 with
-Numba. In contrast, if the same model is run 100 times (e.g., as part of a
-calibration) the Python version takes 11.75 seconds while the Numba version
-takes 2.35 seconds.
+the number of model runs (lower panel).
+
+The plot clearly shows the tradeoff between compilation time (which is zero for
+Python and around 2 seconds for Numba) versus run time (where Numba is 30 times
+faster than Python). For example, a single run of 1000 time steps of the
+:ref:`hymod` model solved using the implicit Euler numerical solver takes 0.11
+seconds with Python and 1.85 with Numba. In contrast, if the same model is run
+100 times (e.g., as part of a calibration) the Python version takes 11.75
+seconds while the Numba version takes 2.35 seconds.
 
 .. image:: pics/numerical_solver/bench_all.png
    :align: center

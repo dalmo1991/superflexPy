@@ -14,10 +14,11 @@ and network) for constructing conceptual hydrological models. The components
 presented in the page :ref:`components` represent the core of SuperflexPy.
 However, such components must be extended to create customized models.
 
-Most of the customization regards elements (i.e., reservoirs, lag, and
-connection elements). This page contains all the elements implemented extending
-the classes provided by SuperflexPy and made available to the users to construct
-models. The elements are divided in three categories
+Most of the customization efforts will be required for elements (i.e.,
+reservoirs, lag, and connection elements). This page contains all the elements
+implemented by extending the classes provided by SuperflexPy, and made available
+to the users to help them construct their own models. The elements are divided
+in three categories
 
 - Reservoir
 - Lag elements
@@ -219,8 +220,8 @@ Unsaturated reservoir (inspired to HBV)
 
 This reservoir specifies the actual evapotranspiration as a smoothed threshold
 function of storage, in combination with the storage-discharge relationship
-being a power function. It is inspired by the HBV family of models, where a
-similar (but non-smooth) approach is used to represent unsaturated soil
+being set to a power function. It is inspired by the HBV family of models, where
+a similar (but non-smooth) approach is used to represent unsaturated soil
 dynamics.
 
 .. code-block:: python
@@ -255,7 +256,7 @@ Governing equations
 Upper zone (Hymod)
 ******************
 
-This reservoir is part of the Hymod model and it is used to simulate th upper
+This reservoir is part of the Hymod model and is used to simulate the upper soil
 zone. Further details are provided in the page :ref:`hymod`.
 
 .. code-block:: python
@@ -295,8 +296,8 @@ number of input fluxes, and apply a convolution based on a weight array that
 defines the shape of the lag function.
 
 Different lag elements differ solely in the values of the weight array. The
-nature (i.e., number and order) of inputs and outputs depends on the element
-upstream the lag element.
+nature (i.e., number and order) of inputs and outputs depend on the element
+upstream of the lag element.
 
 .. image:: pics/elements_list/lag.png
    :align: center
@@ -305,7 +306,7 @@ The weight array can be defined by giving the area below the lag function as a
 function of the time coordinate. The maximum lag :math:`t_{\textrm{lag}}` must
 also be specified. The weights are then given by differences between the values
 of the area at consecutive lags. This approach is shown in the figure above,
-where the weight :math:`W_i` is calculated as the difference of areas
+where the weight :math:`W_i` is calculated as the difference between areas
 :math:`A_i` and :math:`A_{i-1}`.
 
 Half triangular lag
@@ -321,7 +322,7 @@ This lag element implements the element present in the case study
 Definition of weight array
 ..........................
 
-The value of the area below the lag function is given by
+The area below the lag function is given by
 
 .. math::
 
@@ -338,7 +339,7 @@ The weight array is then calculated as
 Unit hydrograph 1 (GR4J)
 ************************
 
-This lag element implements the unit hydrograph of :ref:`gr4j_example`.
+This lag element implements the unit hydrograph 1 of :ref:`gr4j_example`.
 
 .. code-block:: python
 
@@ -347,7 +348,7 @@ This lag element implements the unit hydrograph of :ref:`gr4j_example`.
 Definition of weight array
 ..........................
 
-The value of the area below the lag function is given by
+The area below the lag function is given by
 
 .. math::
 
@@ -364,7 +365,7 @@ The weight array is then calculated as
 Unit hydrograph 2 (GR4J)
 ************************
 
-This lag element implements the unit hydrograph of :ref:`gr4j_example`.
+This lag element implements the unit hydrograph 2 of :ref:`gr4j_example`.
 
 .. code-block:: python
 
@@ -373,7 +374,7 @@ This lag element implements the unit hydrograph of :ref:`gr4j_example`.
 Definition of weight array
 ..........................
 
-The value of the area below the lag function is given by
+The area below the lag function is given by
 
 .. math::
 
@@ -398,8 +399,8 @@ SuperflexPy implements four connection elements:
 - linker
 - transparent element
 
-In addition, customized connectors have been implemented to achieve a specific
-model design. These customized elements are listed in this section.
+In addition, customized connectors have been implemented to achieve specific
+model designs. These customized elements are listed in this section.
 
 Flux aggregator (GR4J)
 **********************

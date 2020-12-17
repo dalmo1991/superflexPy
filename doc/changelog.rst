@@ -3,6 +3,24 @@
 Change log
 ==========
 
+Version 1.2.0
+-------------
+
+Major changes to existing components
+....................................
+
+- The abbreviation of "differential equation" changes, in the code, from
+  :code:`dif_eq` to :code:`diff_eq`. This change regards variables names, both
+  in the methods arguments and implementation.
+
+- The class :code:`FastReservoir` has been changed to :code:`PowerReservoir`. No
+  changes in the functionality of the class.
+
+Minor changes
+.............
+
+- Testing improved.
+
 Version 1.1.0
 -------------
 
@@ -24,7 +42,7 @@ Version 1.0.0
 Version 1.0.0 represents the first mature release of SuperflexPy. Many aspects
 have changed since earlier 0.x releases both in terms of code organization
 and conceptualization of the framework. **Models built with versions 0.x are**
-**not compatible with this version and with the following**.
+**not compatible with this version and with the following releases**.
 
 Major changes to existing components
 ....................................
@@ -54,7 +72,7 @@ Minor changes to existing components
 - Some minor changes to the :code:`RootFinder` to accommodate the new numerical
   implementation.
 
-- Added Numba implementation to GR4J elements
+- Added Numba implementation of GR4J elements
 
 New code
 ........

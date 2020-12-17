@@ -8,8 +8,8 @@
 ..              version, this box will disappear.
 
 .. note:: If you build your own component using SuperflexPy, we would appreciate
-          if share your implementation with the community (see
-          :ref:`contribute`). Remember to contribute also to the
+          if you share your implementation with the community (see
+          :ref:`contribute`). Please remember to contribute also to the
           :ref:`elements_list` page to make other users aware of your
           implementation.
 
@@ -27,10 +27,10 @@ The examples include three elements:
 - Half-triangular lag function
 - Parameterized splitter
 
-The elements presented here are relatively simple in order to provide a clear
-illustration of the programming approach. To gain a deeper understanding of
-SuperflexPy functionalities, please see the existing elements (importing path
-:code:`superflexpy.implementation.elements`).
+The customized elements presented here are relatively simple, in order to
+provide a clear illustration of the programming approach. To gain a deeper
+understanding of SuperflexPy functionalities, please see the existing elements
+(importing path :code:`superflexpy.implementation.elements`).
 
 .. _linear_reservoir:
 
@@ -79,7 +79,7 @@ The main purpose of the method (lines 9-16) is to deal with the numerical
 solver. In this case we can accept two architectures: pure Python or Numba. The
 option selected will control the function used to calculate the fluxes. Keep in
 mind that, since some methods may still need the Python implementation of the
-fluxes, the Python implementation must be always implemented.
+fluxes, the Python implementation must be always provided.
 
 The second method to implement is :code:`set_input`, which maps the (ordered)
 list of input fluxes to a dictionary that gives a name to these fluxes.
@@ -101,16 +101,16 @@ returns the output flux.
    :linenos:
 
 The method takes, as input, the parameter :code:`solve`: if :code:`False`, the
-state array of the reservoir will not be recalculated and outputs will be
+state array of the reservoir will not be recalculated and the outputs will be
 computed based on the current state (e.g., computed in a previous run of the
-reservoir). This option is needed for post-run inspection, when we want to get
+reservoir). This option is needed for post-run inspection, when we want to check
 the output of the reservoir without solving it again.
 
 Line 4 transforms the states dictionary to an ordered list. Line 5 calls the
 built-in ODE solver. Line 7 updates the state of the model to the last value
 calculated. Lines 9-14 call the external numerical approximator to get the
 values of the fluxes. Note that, for this operation, the Python implementation
-of the fluxes method is always used since the vectorized operation executed
+of the fluxes method is always used because the vectorized operation executed
 by the method :code:`get_fluxes` of the numerical approximator does not benefit
 from the Numba optimization.
 
@@ -128,7 +128,7 @@ private static methods.
 
 Their inputs are: the state used to compute the fluxes (:code:`S`), initial
 state (:code:`S0`), index to use in the arrays (:code:`ind`, all inputs are
-arrays and, when solving for a single time step, the index indicates the time
+arrays and, when solving for a single time step, the index indicating the time
 step to look for), input fluxes (:code:`P`), and parameters (:code:`k`).
 
 The output is a tuple containing three elements:
@@ -144,8 +144,8 @@ The implementation for the Numba solver differs in two aspects:
 - the usage of the Numba decorator that defines the types of input variables
   (lines 24-25)
 - the method works only for a single time step and not for the vectorized
-  solution since. For the vectorized solution the Python implementation is fast
-  enough.
+  solution. For the vectorized solution the Python implementation (with Numpy)
+  is fast enough.
 
 .. _build_lag:
 
@@ -159,7 +159,7 @@ Half-triangular lag function
 The half-triangular lag function has the shape of a triangle that, as shown in
 the figure, grows linearly until :math:`t_{\textrm{lag}}` and then drops to
 zero. The growth rate :math:`\alpha` is determined from the constraint that the
-total area of the triangle must be 1.
+total area of the triangle must be equal to 1.
 
 .. math::
 
@@ -204,14 +204,14 @@ Parameterized splitter
 ----------------------
 
 A splitter is an element that takes the flux from an upstream element and
-divides it to feed multiple downstream elements. The element is controlled by
-parameters that define the portion of the flux that goes into a specific
+distributes it to feed multiple downstream elements. The element is controlled
+by parameters that define the portion of the flux that goes into a specific
 element.
 
 The simple case that we consider here has a single input flux that is split
 to two downstream elements. In this case, the splitter needs only one
-parameter (:math:`\alpha_{\textrm{split}}`) to be defined and the fluxes to the
-downstream elements are
+parameter (:math:`\alpha_{\textrm{split}}`). The fluxes to the downstream
+elements are
 
 .. math::
 
@@ -228,8 +228,8 @@ from :code:`ParameterizedElement` and implement only some methods.
    :lines: 5, 176, 177
    :linenos:
 
-First, we define two private attributes that specify how many upstream and
-downstream elements the splitter has; this information is used by the unit when
+First, we define two private attributes that specify the number of upstream and
+downstream elements of the splitter. This information is used by the unit when
 constructing the model structure.
 
 .. literalinclude:: build_element_code.py
@@ -237,7 +237,7 @@ constructing the model structure.
    :lines: 194-195
    :linenos:
 
-We then define the method that takes the inputs and the method that calculates
+We then define the method that takes the inputs, and the method that calculates
 the outputs.
 
 .. literalinclude:: build_element_code.py

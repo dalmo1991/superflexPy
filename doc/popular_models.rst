@@ -13,7 +13,8 @@ Application: implementation of existing conceptual models
 =========================================================
 
 This page describes the implementation of existing conceptual hydrological
-models using SuperflexPy. The translation of a model in SuperflexPy requires the following steps:
+models using SuperflexPy. The translation of a model in SuperflexPy requires the
+following steps:
 
 1. Design of a structure that reflects the original model but satisfies the
    requirements of SuperflexPy (e.g. does not contain mutual interaction
@@ -31,7 +32,7 @@ M4 is a simple conceptual model presented, as part of a model comparison study,
 in the article
 
     Kavetski, D., and F. Fenicia (2011), **Elements of a flexible approach for**
-    **conceptual hydrological modeling: 2. Applicationand experimental**
+    **conceptual hydrological modeling: 2. Application and experimental**
     **insights**, WaterResour.Res.,47, W11511, doi:10.1029/2011WR010748.
 
 Design of the model structure
@@ -39,13 +40,13 @@ Design of the model structure
 
 The structure of M4 is simple and can be implemented directly in SuperflexPy
 without using connection elements. The figure shows, on the left, the structure
-as shown in the original M4 publication; on the right, the SuperflexPy
+as presented in the original M4 publication; on the right, the SuperflexPy
 implementation is shown.
 
 .. image:: pics/popular_models/M4.png
    :align: center
 
-The upstream element, the unsaturated reservoir (UR), is intended to represent
+The upstream element, i.e., the unsaturated reservoir (UR), is intended to represent
 runoff generation processes (e.g. separation between evaporation and runoff). It
 is controlled by the differential equation
 
@@ -67,7 +68,7 @@ equation
 potential evapotranspiration (a model input), and :math:`S_{\textrm{max}}`,
 :math:`m`, :math:`\beta`, :math:`k`, :math:`\alpha` are the model parameters.
 
-Elements creation
+Element creation
 .................
 
 We now show the code used to implement the elements designed in the
@@ -104,7 +105,7 @@ Model initialization
 Now that all elements are implemented, we can put them together to build the
 model structure. For details refer to :ref:`demo`.
 
-First, we initialize all the elements.
+First, we initialize all elements.
 
 .. literalinclude:: popular_models_code.py
    :language: python
@@ -161,12 +162,12 @@ largest of the fluxes to the difference between the two.
 
 This element is implemented in SuperflexPy using the "interception filter".
 
-After the interception filter the SuperflexPy implementation starts to differ
+After the interception filter, the SuperflexPy implementation starts to differ
 from the original. In the original implementation of GR4J, the precipitation is
 split between a part :math:`P_{\textrm{s}}` that flows into the production store
 and the remaining part :math:`P_{\textrm{b}}` that bypasses the reservoir.
-:math:`P_{\textrm{s}}` and :math:`P_{\textrm{b}}` are both function of the state
-of the reservoir
+:math:`P_{\textrm{s}}` and :math:`P_{\textrm{b}}` are both functions of the
+state of the reservoir
 
 .. math::
    & P_{\textrm{s}}=P_{\textrm{NET}}\left(1-\left(\frac{S_{\textrm{UR}}}{x_1}\right)^{\alpha}\right) \\
@@ -174,11 +175,12 @@ of the reservoir
 
 When we implement this part of the model in SuperflexPy, these two fluxes
 cannot be calculated before solving the reservoir (due to the representation of
-the :ref:`unit` as a succession of layers). To solve this problem, in the
-SuperflexPy implementation of GR4J, all precipitation (and not only
-:math:`P_{\textrm{s}}`) flows into an element that incorporates the production
-store. This element takes care of dividing the precipitation internally, while
-solving the differential equation
+the :ref:`unit` as a succession of layers).
+
+To solve this problem, in the SuperflexPy implementation of GR4J, all
+precipitation (and not only :math:`P_{\textrm{s}}`) flows into an element that
+incorporates the production store. This element takes care of dividing the
+precipitation internally, while solving the differential equation
 
 .. math::
    & \frac{\textrm{d}S_{\textrm{UR}}}{\textrm{d}t} =  P_{\textrm{NET}}\left(1-\left(\frac{S_{\textrm{UR}}}{x_1}\right)^{\alpha}\right)
@@ -186,19 +188,19 @@ solving the differential equation
      \frac{x_1^{1-\beta}}{(\beta-1)} \nu^{\beta-1}S_{\textrm{UR}}^\beta \\
 
 where the first term is the precipitation :math:`P_s`, the second term is the
-actual evaporation, and the third term represent the output of the reservoir,
+actual evaporation, and the third term represents the output of the reservoir,
 which here corresponds to "percolation".
 
 Once the reservoir is solved (i.e. the values of :math:`S_{\textrm{UR}}` that
-solve the differential equation are found), the element outputs the sum of
-percolation and bypassing precipitation :math:`P_b`
+solve the discretized differential equation are found), the element outputs the
+sum of percolation and bypassing precipitation (:math:`P_b`).
 
 The flux is then divided between two lag functions (referred to as "unit
-hydrographs", abbreviated UH): 90% of the flux goes to UH1 and 10% goes to UH2.
-In this part of the structure the correspondence between the elements of GR4J
-and their SuperflexPy implementation is quite clear.
+hydrographs" and abbreviated UH): 90% of the flux goes to UH1 and 10% goes to
+UH2. In this part of the model structure the correspondence between the elements
+of GR4J and their SuperflexPy implementation is quite clear.
 
-The output of UH1 provides the input of the routing store, a reservoir
+The output of UH1 provides the input of the routing store, that is a reservoir
 controlled by the differential equation
 
 .. math::
@@ -210,7 +212,7 @@ where the second term is the output of the reservoir and the last is a
 gain/loss term (called :math:`Q_{\textrm{RF}}`).
 
 The gain/loss term :math:`Q_{\textrm{RF}}`, which is a function of the state
-:math:`S_{\textrm{RR}}` of the reservoir, is subtracted also from the output of
+:math:`S_{\textrm{RR}}` of the reservoir, is also subtracted from the output of
 UH2. In SuperflexPy, this operation cannot be done in the same unit layer as the
 solution of the routing store, and instead it is done afterwards. For this
 reason, the SuperflexPy implementation of GR4J has an additional element (called
@@ -257,7 +259,7 @@ can be constructed by extending the class :code:`ODEsElement`
 Unit hydrographs
 ****************
 
-The unit hydrographs are an extension of the :code:`LagElement` and can be
+The unit hydrographs are an extension of the :code:`LagElement`, and can be
 implemented as follows
 
 .. literalinclude:: popular_models_code.py
@@ -353,7 +355,7 @@ equation
    & \frac{\textrm{d}S_{\textrm{UR}}}{\textrm{d}t} = P - E -
    P \left(1 - \left(1-\overline{S}\right)^\beta\right) \\
 
-where the first term represents the precipitation input, the second term is the
+where the first term is the precipitation input, the second term is the
 actual evaporation (which is equal to the potential evaporation as long as
 there is sufficient storage in the reservoir), and the third term is the outflow
 from the reservoir.
@@ -369,7 +371,7 @@ where the first term is the input (here, the outflow from the upstream element)
 and the second term represents the outflow from the reservoir.
 
 Channel routing and lower zone differ from each other in the number of
-reservoirs used (3 in the first case and 1 in the second) and in the value of
+reservoirs used (3 in the first case and 1 in the second), and in the value of
 the parameter :math:`k`, which controls the outflow rate. Based on intended
 model operation, :math:`k` should have a larger value for channel routing
 because this element is intended to represent faster processes.
@@ -378,7 +380,7 @@ The outputs of these two flowpaths are collected by a junction, which generates
 the final model output.
 
 Comparing the two panels in the figure, the only difference is the presence of
-the two transparent element that are needed to fill the "gaps" that, otherwise,
+the two transparent elements that are needed to fill the "gaps" that, otherwise,
 will be present in the structure (see :ref:`unit`).
 
 Elements creation

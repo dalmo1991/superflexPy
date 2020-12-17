@@ -15,81 +15,99 @@ single reservoir to a complex river network.
 All SuperflexPy components, namely elements, units, nodes, network, are designed
 to operate alone or within other components. For this reason, all components
 have methods that enable the execution of basic functionality (e.g. parameter
-handling) at all levels.
+handling) at all levels. For example, consider a unit that contains multiple
+elements. The unit will then provide the functionality for setting the parameter
+values for its elements.
 
-We will first describe each component in specific detail and, then, highlight
-some :ref:`generalities` that apply to all the components.
+Note that, programmatically, SuperflexPy component types are classes, and the
+actual model components are then class instances (objects).
+
+We will first describe each component type in specific detail, and then
+highlight some :ref:`generalities` that apply to all components.
 
 Elements
 --------
 
-Elements represent the basic level of the SuperflexPy's architecture.
-Conceptually, SuperflexPy uses the following elements: reservoirs, lag
-functions, and connections. Elements can be used to represent a complete model
-structure, or combined together to form one or more :ref:`unit`.
+Elements represent the basic level of the SuperflexPy. Conceptually, SuperflexPy
+uses the following elements: reservoirs, lag functions, and connections.
+Elements can be used to represent a complete model structure, or combined
+together to form one or more :ref:`unit`.
 
-Depending on their type, the conceptual elements can have parameters or
-states, can handle multiple fluxes as input or as output, can be designed to
+Depending on their type, conceptual elements can have parameters and/or states,
+can handle multiple fluxes as inputs and/or as outputs, can be designed to
 operate with one or more elements upstream or downstream, can be controlled by
-differential equations, or by a convolution operations.
+differential equations or by a convolution operations, etc.
 
-Programmatically, the conceptual elements can be implemented extending the
+Programmatically, the conceptual elements can be implemented by extending the
 following classes:
 
-- :code:`BaseElement`: for elements without states and parameters;
+- :code:`BaseElement`: for elements without states and parameters (e.g.,
+  junctions);
 
 - :code:`StateElement`: for elements with states but without parameters;
 
-- :code:`ParameterizedElement`: for elements with parameters but without states;
+- :code:`ParameterizedElement`: for elements with parameters but without states
+  (e.g., junctions);
 
-- :code:`StateParameterizedElement`: for elements with states and parameters.
+- :code:`StateParameterizedElement`: for elements with states and parameters
+  (e.g., reservoirs and lag functions).
 
-To facilitate the building of the conceptual elements, SuperflexPy provides some
-specific classes that implement already most of the code needed to solve
+For example, the conceptual element "junction", which sums the fluxes coming
+from multiple elements upstream without needing states or parameters, can be
+built by extending the class :code:`BaseElement` to implement the method that
+sums the fluxes.
+
+To facilitate usage, SuperflexPy provides a set of "pre-packaged" classes that
+already implement already most of the functionality needed to specify
 reservoirs, lag functions, and connections. The next sections focus on these
-elements.
+classes.
 
 .. _reservoirs:
 
 Reservoirs
 **********
 
-A reservoir is a storage element described by the differential equation
+A reservoir is a storage element described by the differential equation (or,
+more generally, a system of differential equations)
 
 .. math::
    \frac{\textrm{d}\mathbf{S}}{\textrm{d}t}=\mathbf{I}(\mathbf{\theta}, t)-\mathbf{O}(\mathbf{S}, \mathbf{\theta}, t)
 
-where :math:`\mathbf{S}` is the internal states of the reservoir,
+where :math:`\mathbf{S}` represents the internal states of the reservoir,
 :math:`\mathbf{I}` represents the sum of all input fluxes (usually independent
 from the states), :math:`\mathbf{O}` represents the sum of all output fluxes,
 and :math:`\mathbf{\theta}` represents the parameters that control the behavior
-of the reservoir.
+of the reservoir. In most conceptual models, reservoir elements have a single
+state variable (representing water storage) however multiple state variables can
+be accommodated when necessary (e.g., to represent transport).
 
 SuperflexPy provides the class :code:`ODEsElement` that contains all the logic
-needed to solve an element controlled by a differential equation. The user needs
+needed to represent an element controlled by a differential equation. The user needs
 only to specify the equations defining input and output fluxes.
 
 The differential equation is solved numerically; the choice of approximation
 (e.g. the implicit Euler scheme) is made by the user when initializing the
-reservoir.
+reservoir element.
 
-SuperflexPy provides several "numerical approximators", including implicit or
-explicit Euler. The user can either employ the numerical routines provided by
-the framework, or implement the interface necessary to use an external solver
-(e.g. from scipy), which may be needed when the numerical problem becomes more
-complex (e.g. coupled differential equations). For more information about the
-numerical solver refer to the page :ref:`numerical_solver`.
+SuperflexPy provides several "numerical approximators" to solve decoupled ODEs,
+including the implicit and the explicit Euler schemes. The user can either
+employ the numerical routines provided by the framework, or implement the
+interface necessary to use an external solver (e.g. from :code:`scipy`), which
+may be needed when the numerical problem becomes more complex (e.g. coupled
+differential equations). For more information about the numerical solver refer
+to the page :ref:`numerical_solver`.
 
 Lag functions
 *************
 
-A lag function is an element that applies a delay to the incoming faxes;
-mathematically, the lag function applies a convolution to the incoming fluxes.
-Here, this result is usually achieved distributing the fluxes at each time step
-into the following time steps, according to a weight array.
+A lag function is an element that applies a delay to the incoming fluxes. In
+mathematical terms, the lag function applies a convolution to the incoming
+fluxes. Here, the convolution is implemented by distributing the fluxes at a
+given time step into the subsequent time steps, according to a weight array.
+The same procedure is then repeated over multiple time steps.
 
 SuperflexPy provides the class :code:`LagElement` that implements all the
-methods needed to represent a lag function, leaving to user only to define the
+methods needed to represent a lag function. The user only needs to define the
 weight array.
 
 .. _connections:
@@ -97,15 +115,16 @@ weight array.
 Connections
 ***********
 
-Connection elements are needed to link together different elements, when
-building a unit. For example, if an element has several elements downstream, its
-fluxes need to be split using a :code:`Splitter`; on the other hand, when the
-outflow of several elements is collected by a single element, a :code:`Junction`
-element is used.
+Connection elements are used to link together multiple elements when building a
+unit.
 
-SuperflexPy provides several types of connection elements. These elements are
-designed to operate with an arbitrarily number of fluxes and upstream/downstream
-elements (depending on the element type).
+SuperflexPy provides several types of connection elements. For example, a
+:code:`Splitter` is used to split the output flux from a single upstream element
+and distribute the respective portions to multiple downstream elements. On the
+other hand, a :code:`Junction` is used to collect the output fluxes from
+multiple upstream elements and feed them into a single downstream element.
+Connection elements are designed to operate with an arbitrarily number of fluxes
+and upstream/downstream elements.
 
 Splitter
 ........
@@ -117,59 +136,66 @@ A :code:`Splitter` is an element that takes the outputs of a single upstream
 element and distributes them to several downstream elements.
 
 The behavior of a splitter in SuperflexPy is controlled by two matrices:
-direction and weight. The "direction" controls which of the input fluxes each
-downstream element receives, and in which order. The "weight" defines the
-proportion of each of the input fluxes that goes into each the downstream
-element.
+"direction" and "weight". The direction specifies *which* input fluxes
+contribute (even fractionally) to the downstream elements and in which order.
+The weight defines the *proportion* of each of the input fluxes that goes into
+each the downstream element.
 
-Looking at the picture, S receives 3 input fluxes, which are indexed based on
-their order: red (index 0), black (index 1), and blue (index 2). E2 receives the
-black flux as first input, and the blue flux as second input, and does not
-receive the third flux. E3 receives the blue flux as first input, the red flux
-as second input, and does not receive the black flux. This information is
-represented by the direction matrix D, which is represented as follows:
+Looking at the picture, element S receives 3 input fluxes, which are coloured
+and indexed according to their order: red (index 0), black (index 1), and blue
+(index 2). Element E2 receives the black flux as first input (index 0), and the
+blue flux as second input (index 1), and does not receive any portion of the
+third flux. Element E3 receives the blue flux as first input (index 0), the red
+flux as second input (index 1), and does not receive any portion of the black
+flux.
+
+This information is represented by the direction matrix :math:`\mathbf{D}` as
+follows:
 
 .. math::
-   D=
+   \mathbf{D}=
    \begin{pmatrix}
    1 & 2 & \textrm{None}\\
    2 & 0 & \textrm{None}
    \end{pmatrix}
 
-The direction matrix is a 2D matrix that has as many columns as the number of
-fluxes and as many rows as the number of downstream elements. The row index
-refers to the downstream element (in this case row 1 refers to E2, and row 2 to
-E3), whereas the column index refers to the input flux to the element, which
-should be in the order the element is expected to receive the inputs (e.g. if an
-element is supposed to receive black and red flux as input in a prescribed
-order, the inputs should respect this order).
+The direction matrix is a 2D matrix with as many columns as the number of fluxes
+and as many rows as the number of downstream elements. The row index refers to a
+downstream element (in this case the first row refers to element E2, and the
+second row to element E3). The column index refers to the input fluxes received
+by to the downstream element. Note that care must be taken when indexing the
+elements and fluxes to correctly reflect the intended model structure.
 
-The value of the matrix element can be an integer referring to the index of the
-input flux to S, or :code:`None`, if an input flux to S does not reach a
-downstream element.
+The values of :math:`\mathbf{D}` can be an integer referring to the index of the
+input flux to the splitter S, or :code:`None` if an input flux to the splitter S
+does not reach a downstream element.
 
 As such, the direction matrix can be used to select the fluxes and change the
 order in which they are transmitted to downstream elements.
 
-The red flux is taken entirely by element E3, the black flux is taken entirely
-by element E2, and the blue flux is split at 30% to E2 and 70% to E3. This
-information is represented by the weight matrix W, which is represented as
-follows:
+Next, we consider the weight matrix, which describes the fraction of each flux
+directed to each downstream element. The red flux is taken entirely by element
+E3, the black flux is taken entirely by element E2, and the blue flux is split
+at 30% to E2 and 70% to E3. This information is represented by the weight
+matrix :math:`\mathbf{W}` as follows:
 
 .. math::
-   W=
+   \mathbf{W}=
    \begin{pmatrix}
    0 & 1.0 & 0.3\\
    1.0 & 0 & 0.7
    \end{pmatrix}
 
-The weight matrix has the same dimensionality of the direction matrix. The row
-index refers to the downstream element, in the same order as the D matrix,
-whereas the column index refers to the input flux to S. The value of the matrix
-elements represents the weight of each input flux to S in the downstream
-element. In the example, the first downstream element (first row of the matrix
-W) receives 0% of the first (red) flux, 100% of the second (black) flux, and 30%
-of the third (blue) flux.
+The weight matrix has the same shape as the direction matrix. The row
+index refers to the downstream element, in the same order as in the direction
+matrix :code:`\mathbf{D}`, whereas the column index refers to the input flux to
+the splitter S.
+
+The value of the matrix elements represents the fraction of each input flux
+received by the splitter S and directed to the downstream element. In the
+example, the first downstream element (first row of the matrix W) receives 0% of
+the first (red) flux, 100% of the second (black) flux, and 30% of the third
+(blue) flux.
 
 Note that, as a quick check, the columns of the weight matrix should sum up to 1
 to ensure conservation of mass.
@@ -184,18 +210,18 @@ A :code:`Junction` is an element that takes the outputs of several upstream
 elements and directs them into a single downstream element.
 
 The behavior of a junction in SuperflexPy is controlled by direction matrix that
-defines how the incoming fluxes have to be aggregated (summed) to feed the
+defines how the incoming fluxes are to be combined (summed) to feed the
 downstream element.
 
-Looking at the picture, E3 receives 3 input fluxes, which are indexed based on
-their order: red (index 0), black (index 1), and blue (index 2). The red flux
+In the schematic, element E3 receives 3 input fluxes, which are indexed based
+on their order: red (index 0), black (index 1), and blue (index 2). The red flux
 comes from both upstream elements (index 0 and 1, respectively); the black flux
-comes only from E1 (index 1); the blue flux comes only from E2 (index 2). This
-information is represented by the direction matrix D, which is represented as
-follows:
+comes only from element E1 (index 1); the blue flux comes only from element E2
+(index 2). This information is represented by the direction matrix
+:math:`\mathbf{D}` as follows:
 
 .. math::
-   D=
+   \mathbf{D}=
    \begin{pmatrix}
    0 & 1\\
    1 & \textrm{None}\\
@@ -204,13 +230,14 @@ follows:
 
 The direction matrix is a 2D matrix that has as many rows as the number of
 fluxes and as many columns as number of upstream elements. The row index refers
-to the flux (in this case row 1 refers to the red flux, row 2 to the black, and
-row 3 to the blue), whereas the column index refers to the upstream element
-input flux to the element (in this case column 1 refers to E1, column 2 do E2).
+to the flux (in this case the first row refers to the red flux, the second row
+to the black flux, and the third row to the blue flux). The column index refers
+to the upstream element input flux to the junction (in this case the first
+column refers to element E1, the second column to element E2).
 
 The value of the matrix element can be an integer referring to the index of the
-input flux to J coming from the specific element, or :code:`None`, if an input
-flux to J does not come from the upstream element.
+input flux to junction J coming from the specific upstream element, or
+:code:`None` if an input flux to junction J does not come from the upstream element.
 
 
 Linker
@@ -222,13 +249,13 @@ Linker
 A :code:`Linker` is an element that can be used to connect multiple elements
 upstream to multiple elements downstream without mixing fluxes.
 
-Its usefulness is due to the fact that in SuperflexPy the structure of the unit
-is defined as an ordered list of elements. This means that if we want to connect
-the first element of a layer with the second element of the following layer
-(e.g., E1 with E4, in the example above) we have to put an additional layer in
-between that contains a linker that direct the fluxes to the proper downstream
-element. Further details on the organization of the units in layers are
-presented in section :ref:`unit`.
+Linkers are useful in SuperflexPy because the structure of the unit is defined
+as an ordered list of elements. This means that if we want to connect the first
+element of a layer to the second element of the following layer (e.g., direct
+the output from upstream element E1 to downstream element E4, in the example
+above) we have to insert an additional intermediate layer with a linker that
+directs the fluxes to the correct downstream element. Further details on the
+organization of the units in layers are presented in section :ref:`unit`.
 
 Transparent
 ...........
@@ -237,8 +264,11 @@ Transparent
    :align: center
 
 A transparent element is an element that returns, as output, the same fluxes
-that it takes as input. It is needed to fill gaps in the structure defined in
-the unit (refer to :ref:`unit`).
+that it takes as input. This element is needed to fill "gaps" in the structure
+defining a unit (refer to :ref:`unit`).
+
+An example is shown in the schematic above where the transparent element is used
+to make the two rows have the same number of elements.
 
 .. _unit:
 
@@ -252,12 +282,48 @@ A unit is a collection of multiple connected elements. The unit can be used
 either alone, when intended to represent a lumped catchment model, or as part
 of a :ref:`components_node`, to create a semi-distributed model.
 
-Elements are *copied* into the unit: this means that an element that belongs
-to a unit is completely independent from the originally defined element and
-from any other copy of the same element in other units. Therefore, changes to
-the state or to the parameters of an element inside a unit will not affect any
-element outside the unit. The code below lustrates the implications of this
-behavior:
+As shown in the schematic, elements are organized as a succession of layers,
+from left (upstream) to right (downstream).
+
+The first and last layers must contain only a single element, since the
+inputs of the unit are "given" to the first element and the outputs of the unit
+are "taken" from the last element.
+
+The order of elements inside each layer defines how they are connected: the
+first element of a layer (e.g. E2 in the schematic) will transfer its outputs to
+the first element of the downstream layer (e.g. E4); the second element of a
+layer (e.g. E3) will transfer its outputs to the second element of the
+downstream layer (e.g. T), and so on.
+
+When the output of an element is split between multiple downstream elements
+(e.g. E1 is intended to provide its outputs to E2 and E3) an additional
+intermediate layer with a splitter is needed. In this case the splitter S has
+two downstream elements (E2 and E3); the framework will route the first group of
+outputs of the splitter to E2 and the second group of outputs to E3.
+
+Whenever there is a "gap" in the structure, a transparent element should be used
+to fill the gap. In the example, the output of E3 is combined with the output
+of E4. Since these elements belong to different layers, making this connection
+directly would create a gap in Layer 3. This problem is solved by specifying a
+transparent element in Layer 3, i.e., in the same layer as element E4.
+
+Finally, since the unit must have a single element in its last layer, the
+outputs of E4 and T must be collected using a Junction.
+
+Each element is aware of its expected number of upstream and downstream
+elements. For example, a reservoir must have a single upstream element and a
+single downstream element, a splitter must have a single upstream element and
+potentially multiple downstream elements, and so on. A unit is valid only if all
+layers connect to each other using the expected number of elements. In the
+example, Layer 1 must have two downstream elements that is consistent with the
+configuration of Layer 2.
+
+Elements are *copied* into the unit. This means that an element that belongs to
+a unit is completely independent from the originally defined element and from
+any other copy of the same element in other units. This SuperflexPy design
+choice ensures that, changes to the state or to the parameters of an element
+within a given unit will not affect any element outside of that unit. The code
+below illustrates this behavior:
 
 .. literalinclude:: components_code.py
    :language: python
@@ -270,43 +336,7 @@ at the element level and at the unit level. Since elements are *copied* into a
 unit, these changes apply to different elements (in the sense of different
 Python objects in memory).
 
-As shown in the picture, elements are organized as a succession of layers,
-from left (upstream) to right (downstream).
-
-The first and last layers must contain only a single element, since the
-inputs of the unit are transferred to the first element and the outputs of the
-unit are taken from the last element.
-
-The order of elements inside each layer defines how they are connected: the
-first element of a layer (e.g. E2 in the picture) will transfer its outputs to
-the first element of the downstream layer (e.g. E4); the second element of a
-layer (e.g. E3) will transfer its outputs to the second element of the
-downstream layer (e.g. T), and so on.
-
-When the output of an element is split between multiple downstream elements
-(e.g. E1) an additional intermediate layer with a splitter is needed: in the
-example, the splitter S has two downstream elements (E2 and E3); the framework
-will route the first group of outputs of the splitter to E2 and the second group
-of outputs to E3.
-
-Whenever there is a gap in the structure, a transparent element should be used
-to fill the gap. In the example, the output of E3 is aggregated with the output
-of E4; since these elements belong to different layers, making this connection
-directly would create a gap in Layer 3. Such problem is solved specifying a
-transparent element in Layer 3, parallel to E4.
-
-Since the unit must have a single element in the last layer, the outputs of E4
-and T must be collected using a Junction.
-
-Each element is aware of its expected number of upstream and downstream
-elements. For example, a reservoir must have an upstream element and a
-downstream element, a splitter must have a single upstream element and
-potentially multiple downstream elements, and so on. A unit is valid only if all
-layers connect to each other using the expected number of elements. In the
-example, Layer 1 must have two downstream elements that is consistent with the
-configuration of Layer 2.
-
-For more information on how to define a unit structure in SuperflexPy refer to
+For more information on how to define a unit structure in SuperflexPy, refer to
 the page :ref:`popular_models`, where the framework is used to reproduce some
 existing lumped models.
 
@@ -324,21 +354,21 @@ the units represent multiple landscape elements (areas) within the catchment.
 The node can be run either alone or as part of a bigger
 :ref:`components_network`.
 
-The default behavior of the nodes is that parameters are shared between elements
-of the same unit, even if it belongs to multiple nodes. This SuperflexPy design
-choice is motivated by the fact that the unit is supposed to represent areas
-that have the same hydrological response. The idea is that the hydrological
-response is controlled by the parameters and, therefore, elements of the same
-unit (e.g. HRU) belonging to multiple nodes should have the same parameter
-values.
+The default behavior of the nodes is that parameters are *shared* between
+elements of the same unit, even if it belongs to multiple nodes. This
+SuperflexPy design choice is motivated by the unit being intended to represent
+areas that have the same hydrological response. The idea is that the
+hydrological response is controlled by the parameters, and therefore elements of
+the same unit (e.g. HRU) belonging to multiple nodes should have the *same*
+parameter values.
 
 On the other hand, each node has its own states that are tracked separately
 from the states of other nodes. In particular, when multiple nodes that share
 the same parameter values receive different inputs (e.g., rainfall), their
 states will evolve differently.
 
-This design choice can support the most common use of nodes, which is the
-discretisation of a catchment into potentially overlapping HRUs and
+This SuperflexPy design choice supports the most common use of nodes, which is
+the discretisation of a catchment into potentially overlapping HRUs and
 subcatchments. Parameters are then assumed constant within HRUs (units), and
 inputs are assumed to be constant within subcatchments (nodes).
 
@@ -354,7 +384,7 @@ at the initialization of the node. In this case, all parameters become
 node-specific, with no sharing of parameter values even within the same unit.
 
 Refer to the section :ref:`demo_mult_nodes` for details on how to incorporate
-the units inside the node.
+units into node.
 
 Routing
 *******
@@ -363,17 +393,18 @@ Routing
    :align: center
 
 A node can include routing functions that delay the fluxes. As shown in the
-picture, two types of routing are possible:
+schematic, two types of routing are possible:
 
 - internal routing;
 
 - external routing.
 
-A typical usage of these routing functions, in semi-distributed hydrological
-modelling, is to represent delays due to the routing of fluxes across the
-catchment to the river network (internal routing) and/or the delay that derives
-from the routing of the fluxes within the river network (external routing),
-from the outlets of the present node to the inlet of the downstream node.
+A typical usage of these routing functions in semi-distributed hydrological
+modelling is as follows. Internal routing is used to represent delays associated
+with the routing of fluxes across the catchment towards the river network.
+External routing is used to represent delays associated with the routing of
+fluxes within the river network, i.e., from the outlets of the given node to the
+inlet of the downstream node.
 
 More generally, routing functions can be used for representing any type of delay
 between the units and the node, and between nodes.
@@ -393,25 +424,26 @@ Network
 
 A network connects multiple nodes into a tree structure, and is typically
 intended to develop a distributed model that generates predictions at internal
-subcatchment locations (e.g. to reflect a nested catchment setup.
+subcatchment locations (e.g. to reflect a "nested" catchment setup).
 
 The connectivity of the network is defined by assigning to each node the
-information about its downstream node. The network will then solve the nodes,
-starting from the inlets and then moving downstream, solving the remaining nodes
-and routing the fluxes towards the outlet.
+information about its downstream node. The network will then compute the node
+output fluxes, starting from the inlets and then moving downstream, calculating
+the outflows of the remaining nodes and routing the fluxes towards the outlet.
 
 The network is the only component of SuperflexPy that does not have the
-:code:`set_input` method (see :ref:`generalities`) since the input, which is
-node-specific, has to be assigned to each node within the network.
+:code:`set_input` method (see :ref:`generalities`), because inputs are assumed
+to be node-specific and hence has to be assigned to each node within the
+network.
 
-A node is *inserted* (rather than *copied*) in the network. In other words, we
+A node is *inserted* (rather than *copied*) into the network. In other words, we
 initialize a node object and then insert it into the network. This node can then
 be configured either directly or through the network. Any changes occurring
 within the node as part of the network affect also the node *outside* the
-network because they are the same Python object.
+network (because they are the same Python object).
 
-The output of the network is a dictionary that contains the output of all the
-nodes of the network.
+The output of the network is a dictionary that contains the output of all nodes
+within the network.
 
 .. _generalities:
 
@@ -425,8 +457,8 @@ All components share the following methods.
 
 -  **Parameters and states**: each component has its own parameters and/or
    states with unique identifiers. Each component of SuperflexPy has methods to
-   set and get states and parameters of the component, and of the components
-   contained in it:
+   set and get the states and parameters of the component itself as well as the
+   states and parameters of its contained components:
 
     - :code:`set_parameters`: change the current parameter values
 
@@ -443,19 +475,19 @@ All components share the following methods.
     - :code:`reset_states`: reset the states to their initialization value
 
 -  **Time step**: as common in hydrological modeling, inputs and outputs are
-   assumed to have the same time resolution (i.e. data must share the same
-   timestamps), which is then used to generate outputs. There is no requirement
-   for timestamps to be uniformly distributed, meaning that time series can have
-   irregular time steps. In SuperflexPy, all components that require the
-   definition of a time step (e.g. reservoirs described by a differential
-   equation) contain methods that enable to set and get the time step. In case
-   of not uniform time resolution, an array of time steps is required.
+   assumed to have the same time resolution, i.e., the input and output data
+   must share the same time stamps. There is no requirement for timestamps to be
+   uniformly spaced, meaning that the time series can have irregular time step
+   sizes. In SuperflexPy, all components that require the definition of a time
+   step (e.g. reservoirs described by a differential equation) contain methods
+   that set and get the time step size. In case of non-uniform time resolution,
+   an array of time steps needs to be provided by the user.
 
-    - :code:`set_timestep`: set the time step used in the model; all components
+    - :code:`set_timestep`: set the time step used in the model. All components
       at a higher level (e.g. units) have this method; when called, it applies
       the change to all elements within the component;
 
-    - :code:`get_timestep`: returns the time step used in the model.
+    - :code:`get_timestep`: returns the time step size used in the model.
 
 - **Inputs and outputs**: all components have functionalities to receive inputs
   and generate outputs.
@@ -467,13 +499,13 @@ All components share the following methods.
 
 .. _identifier:
 
-Usage of the identifier
-***********************
+Component identifiers
+*********************
 
-Parameters, states, and components (except for the network) in SuperflexPy are
-identified using an identifier string. The identifier string can have an
-arbitrary length, with the only restriction that it cannot contain the
-underscore :code:`_`.
+All parameters, states, and components (except for the network) in SuperflexPy
+are identified using an identifier string assigned by the user. The identifier
+string can have an arbitrary length, with the only restriction that it cannot
+contain the underscore :code:`_`.
 
 When an element is inserted into a unit or when the unit is inserted into the
 node, the identifier of the component is prepended to the name of the parameter
@@ -481,53 +513,53 @@ using the underscore :code:`_` as separator.
 
 For example, if the element with identifier :code:`e1` has the parameter
 :code:`par1`, the name of the parameter becomes, at initialization,
-:code:`e1_par1`. When the element :code:`e1` is inserted into unit  :code:`u1`,
-the parameter name becomes :code:`u1_e1_par1`, and so on.
+:code:`e1_par1`. If element :code:`e1` is inserted into unit :code:`u1`, the
+parameter name becomes :code:`u1_e1_par1`, and so on.
 
 In this way, every parameter and state of the model has its own unique
-identifier that can be used to change its value from any component of
-SuperflexPy.
+identifier that can be used to change its value from within any component of
+the model.
 
-Time variant parameters
+Time varying parameters
 ***********************
 
-In hydrological modelling, time variant parameters can be useful for
-representing seasonal phenomena or stochasticity.
+In hydrological modelling, time varying parameters can be useful for
+representing certain types of model variability, e.g., seasonal phenomena
+and/or stochasticity.
 
-SuperflexPy is designed to operate both with constant and time variant
-parameters. Parameters, in fact, can be either scalar float numbers or
-Numpy 1D arrays of the same length as the input fluxes. In the first case, the
-parameter will be interpreted as time constant, while, in the second case, the
-parameter will be considered as time variant and may have a different value for
-each time step.
+SuperflexPy can be used with both constant and time varying parameters.
+Parameters can be specified as either scalar float numbers or as Numpy 1D arrays
+of the same length as the input fluxes. In the first case, the parameter will be
+interpreted as time constant. In the second case, the parameter will be
+considered as time varying and may have a different value at each time step.
 
 .. _timestep:
 
 Length of the simulation
 ************************
 
-It has been decided to not have a parameter of the model fixing the length of
-the simulation (i.e. the number of time steps that needs to be run); this will
-be inferred at runtime from the length of the input fluxes that, for this
-reason, must all have the same length.
+In SuperflexPy, there is no model parameter controlling the length of the
+simulation. The number of model time steps that need to be run is determined
+automatically at runtime from the length of the input fluxes. For this reason,
+all input data time series must have the same length.
 
 Format of inputs and outputs
 ****************************
 
-Input and output fluxes of SuperflexPy components are represented using 1D
+The input and output fluxes of SuperflexPy components are represented using 1D
 Numpy arrays.
 
 For the inputs, regardless of the number of fluxes, the method :code:`set_input`
-takes a list of Numpy arrays (one array per flux); the order of the arrays
-inside the list is relevant and must follow the indications of the docstring of
-the method. All input fluxes must have the same length because the number of t
-ime steps in the model simulation is determined by the length of the input time
+takes a list of Numpy arrays (one array per flux). The order of arrays inside
+the list is relevant and must follow the indications of the docstring of the
+method. All input fluxes must have the same length because the number of time
+steps in the model simulation is determined by the length of the input time
 series; see also :ref:`timestep`.
 
-The outputs are also returned as a list of Numpy 1D arrays, from the
+The outputs are also returned as a list of Numpy 1D arrays, using the
 :code:`get_output` method.
 
-Only for the :ref:`connections`, whenever the number of upstream or downstream
-elements is different from one, the :code:`set_input` or the :code:`get_output`
-methods will use 2D lists of Numpy arrays: this solution is used to route fluxes
-between multiple elements.
+Note an important exception for :ref:`connections`, whenever the number of
+upstream or downstream elements is different from one, the :code:`set_input` or
+the :code:`get_output` methods will use 2D lists of Numpy arrays. This solution
+is used to route fluxes between multiple elements.

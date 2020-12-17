@@ -10,8 +10,9 @@ interfaced with other tools to perform this task.
 SuperflexPy + SPOTPY
 --------------------
 
-.. attention:: This example does not represent a recommendation towards the use
-               of SPOTPY or of the specific calibration algorithm proposed.
+.. attention:: This example is for illustration purposes only, does not
+               represent a recommendation towards the use of SPOTPY or of the
+               specific calibration algorithm proposed.
 
 `SPOTPY <https://spotpy.readthedocs.io/en/latest/>`_ is a Python framework for
 calibration, uncertainty, and sensitivity analysis.
@@ -37,16 +38,17 @@ and implements the following methods:
    :linenos:
 
 The class is initialized defining the SuperflexPy :code:`model` that is used.
-The :code:`model`, that can be any SuperflexPy component (from reservoir to
-network), must be initialized before; this class sets only the :code:`inputs` and the :code:`dt`.
+The :code:`model`, which can be any SuperflexPy component (from reservoir to
+network), must be initialized before; this class sets only the :code:`inputs`
+and the :code:`dt`.
 
 Other variables necessary to initialize the class are:
 
-- :code:`parameters` and :code:`parameters_names` that define the parameters
+- :code:`parameters` and :code:`parameters_names`, which define the parameters
   considered in the calibration; the first is a list of :code:`spotpy.parameter`
   objects, the second is a list of the names of the SuperflexPy parameters;
-- :code:`observations` that is an array of observed output values;
-- :code:`output_index` that is the index of the output flux to be considered
+- :code:`observations`, which is an array of observed output values;
+- :code:`output_index`, which is the index of the output flux to be considered
   when evaluating the SuperflexPy simulation (this is particularly important in
   the case of multiple output fluxes, e.g. chemistry)
 
@@ -90,13 +92,13 @@ The method returns the observed flux, used to evaluate the model.
    :lines: 68-73
    :linenos:
 
-The method defines the objective function used to evaluate the model; in this
-case, Nash-Sutcliffe efficiency.
+The method defines the objective function used to evaluate the model. In this
+case, the Nash-Sutcliffe efficiency is used.
 
 Example of use
 ..............
 
-We show now how to exploit the implementation above to calibrate a lumped model
+We now show how to exploit the implementation above to calibrate a lumped model
 composed by 2 reservoirs.
 
 First, we initialize the SuperflexPy model. This is done with the following code
@@ -116,8 +118,8 @@ Then, we initialize an instance of the :code:`spotpy_model` class
 
 :code:`P` and :code:`Q_obs` in lines 3 and 5 are arrays of precipitation (input)
 and observed streamflow. In this example, we calibrate only 2 parameters
-(:code:`model_FR1_k` and :code:`model_FR2_k`) out of the 4 that the SuperflexPy
-model has.
+(:code:`model_FR1_k` and :code:`model_FR2_k`) out of the 4 parameters of the
+SuperflexPy model.
 
 Now we can perform the calibration
 

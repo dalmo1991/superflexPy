@@ -15,8 +15,8 @@ with Python 2.
 SuperflexPy is available as a Python package at
 `PyPI repository <https://pypi.org/project/superflexpy>`_
 
-The simplest way to install SuperflexPy is using the package installer for
-Python (pip) running the command
+The simplest way to install SuperflexPy is to use the package installer for
+Python (pip). Open the operating system command prompt and run the command
 
 .. code-block:: bash
 

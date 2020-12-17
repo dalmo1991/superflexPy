@@ -9,9 +9,9 @@ in specific applications.
 Publications on SuperflexPy
 ---------------------------
 
-- Dal Molin, M., Kavetski, D., and Fenicia, F.: **SuperflexPy: an open source**
-  **framework for building, testing and improving conceptual hydrological**
-  **models**, Geosci. Model Dev., *in preparation*, 2020.
+- Dal Molin, M., Kavetski, D., and Fenicia, F.: **SuperflexPy 1.2.0: an open**
+  **source framework for building, testing and improving conceptual**
+  **hydrological models**, Geosci. Model Dev., *under review*, 2020.
 
 Publications using SuperflexPy
 ------------------------------

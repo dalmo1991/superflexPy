@@ -108,7 +108,7 @@ Note that all nodes incorporate the information about their :code:`area`, which
 is used by the network to calculate their contribution to the total outflow.
 
 There is no requirement for a node to contain all units. If a unit is not
-present in a node (e.g. unconsolidated in Mosnang, line 50) it is simply
+present in a node (e.g. unconsolidated in Mosnang, line 50), it is simply
 omitted from the node initialization.
 
 Initializing the network
@@ -128,8 +128,8 @@ Running the model
 We can now run the model.
 
 The first step is to assign the input fluxes to the single nodes (catchments).
-For this we assume that the data is available as a Pandas DataFrame and that the
-columns are named :code:`P_name_of_the_catchment`,
+For this we assume that the data is available as a Pandas DataFrame, and that
+the columns are named :code:`P_name_of_the_catchment`,
 :code:`T_name_of_the_catchment`, and :code:`PET_name_of_the_catchment`.
 
 The inputs can be set using a :code:`for` loop
@@ -139,8 +139,9 @@ The inputs can be set using a :code:`for` loop
    :lines: 253-258
    :linenos:
 
-Finally, we set the model time step. This can be done directly at the network
-level, which automatically sets it to all lower-level model components.
+Finally, we set the model time step size. This can be done directly at the
+network level, which automatically sets the time step size to all lower-level
+model components.
 
 .. literalinclude:: model_thur_hess2020.py
    :language: python

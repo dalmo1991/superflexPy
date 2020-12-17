@@ -5,10 +5,10 @@
 Automated testing
 =================
 
-Current testing consists of validating the numerical results of SuperflexPy
+Current testing of Superflex consists of validating its numerical results
 against the original implementation of
-`Superflex <https://doi.org/10.1029/2010WR010174>`_ for selected model
-configurations and sets of parameters and inputs.
+`Superflex <https://doi.org/10.1029/2010WR010174>`_. This testing is done for
+selected model configurations, and sets of parameters and inputs.
 
 This testing strategy implicitly checks auxiliary methods (e.g. setting
 parameters and states, retrieving the internal fluxes of the model, setting
@@ -37,7 +37,7 @@ Current testing does not cover:
 - Usage of the Explicit Euler solver;
 - Edge cases (e.g. extreme values of parameters and states)
 
-Users contributing to SuperflexPy creating new elements should provide reference
+Users contributing new elements of SuperflexPy should provide reference
 results and the code that tests them (including input data and model parameter
 values).
 

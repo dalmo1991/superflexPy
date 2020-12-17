@@ -27,9 +27,9 @@ set to simply return the incoming fluxes without any transformation.
 
 To implement the routing, we need to implement a customized node that implements
 those two methods for given lag functions. The object-oriented design of
-SuperflexPy simplifies this operation, since the new node class inherits all the
-methods from the original class, and has to overwrite only the two methods that
-are responsible for the routing.
+SuperflexPy simplifies this operation, because the new node class inherits all
+the methods from the original class, and has to overwrite only the two methods
+that are responsible for the routing.
 
 In this example, we illustrate an implementation of routing with a lag function
 in the shape of an isosceles triangle with base :code:`t_internal` and
@@ -66,7 +66,7 @@ The method is implemented as follows
    :linenos:
 
 Note that the code in this block is similar to the code implemented in
-:ref:`build_lag`.  The methods in this last block are "support methods" used
+:ref:`build_lag`.  The methods in this last block are "support" methods used
 only to make the code more organized and easier to maintain. A similar result
 can be obtained by moving the functionality of these methods into
 :code:`_internal_routing` and :code:`external_routing`.

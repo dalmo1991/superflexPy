@@ -28,26 +28,24 @@ code.
 Constructing a hydrological model is straightforward with SuperflexPy:
 
 - inputs and outputs are handled directly by the modeler using common Python
-  libraries (e.g. Numpy or Pandas). This means that the modeller can use data
-  files of his/her own design, without the need to pre- and/or post- process
+  libraries (e.g. Numpy or Pandas). The modeller can use hence data files of
+  their own design, without the need to pre- and/or post- process
   data into text formats prescribed by the framework itself;
 
-- the components of the framework are declared and initialized through a Python
-  script;
+- the framework components are declared and initialized through a Python script;
 
-- all the components of the framework are classes with built-in functionalities
-  for handling parameters and states, routing the fluxes, and solving common
-  structures present in conceptual models (e.g. reservoirs, lag functions,
-  etc.);
+- the framework components are classes with built-in functionalities for
+  handling parameters and states, routing fluxes, and solving the model
+  equations (e.g. describing reservoirs, lag functions, etc.);
 
 - the numerical implementation is separated from the conceptual model, allowing
-  for testing different numerical methods for solving differential equations;
+  the use of different numerical methods for solving the model equations;
 
 - the framework can be run at multiple levels of complexity, from a single
   bucket to an entire river network;
 
 - the framework is available as an open source Python package from
-  `Github <https://github.com/dalmo1991/superflexPy>`_.
+  `Github <https://github.com/dalmo1991/superflexPy>`_;
 
 - the framework can be easily interfaced with other Python modules for
   calibration and uncertainty analysis.
@@ -55,10 +53,10 @@ Constructing a hydrological model is straightforward with SuperflexPy:
 Team
 ----
 
-SuperflexPy is actively developed at `Eawag <https://www.eawag.ch>`_,
-by researchers in the `Hydrological modelling group
-<https://www.eawag.ch/en/department/siam/main-focus/hydrological-modelling/>`_,
-with the support of external collaborators.
+SuperflexPy is actively developed by researchers in the
+`Hydrological Modelling Group
+<https://www.eawag.ch/en/department/siam/main-focus/hydrological-modelling/>`_
+at `Eawag <https://www.eawag.ch>`_, with the support of external collaborators.
 
 The core team consists of:
 
@@ -77,9 +75,9 @@ If you wish to receive e-mails about future developments of the framework,
 please subscribe to our mailing list `clicking here
 <https://forms.gle/utLbF6KWqvqS7LHZ7>`_.
 
-.. note:: Before starting to use SuperflexPy you should have a general knowledge
-          of Python and Numpy. Other Python libraries may be needed for pre- and
-          post- processing of the data.
+.. note:: Using SuperflexPy requires a general knowledge of Python and Numpy.
+          Other Python libraries may be needed for pre- and post- processing of
+          the data.
 
           In line with the Python terminology, we will use the word **define**
           when referring to the definition of a class, and **initialize** when

@@ -4,20 +4,21 @@ Sharing model configurations
 ============================
 
 The ultimate goal of SuperflexPy is to facilitate collaboration between research
-groups and help compare and improve modelling solutions. To this end, users can
-share model configurations that can be imported and run by other users. Note
+groups, and to help compare and improve modelling solutions. To this end, users
+can share model configurations that can be imported and run by other users. Note
 that, models built with SuperflexPy are Python objects that, once initialized,
 can be imported in other scripts.
 
-A user who wants to share their model configuration with the community can
+A user who wishes to share their model configuration with the community can
 create a Python script (with a meaningful name) that initializes the model
 (without running it) and "upload" it to the GitHub repository in the folder
-:code:`superflexpy/implementation/models/`. This can be done (1) forking the
-`SuperflexPy <https://github.com/dalmo1991/superflexPy>`_ repository, (2) adding
-the script to the local fork of the repository, and (3) making a pull request to
-the original repository (see :ref:`contribute` for further details). The
-contributed code will be incorporated in the following release of SuperflexPy
-and, therefore, other users will be able to import it.
+:code:`superflexpy/implementation/models/`. This can be done as follows (1)
+forking the `SuperflexPy <https://github.com/dalmo1991/superflexPy>`_
+repository, (2) adding the script to the local fork of the repository, and (3)
+making a pull request to the original repository (see :ref:`contribute` for
+further details). The contributed code will be checked, and assuming all checks
+are passed,incorporated in the following release of SuperflexPy and, therefore,
+other users will be able to import it.
 
 The user will maintain authorship on the contributed code, which will be
 released with the same :ref:`license` of SuperflexPy. It is good practice to add
@@ -27,8 +28,8 @@ correctness.
 Practical example with M4
 -------------------------
 
-We illustrate of how to distribute SuperflexPy models using as an example the
-model :ref:`M4_example`.
+We illustrate of how to distribute SuperflexPy models to colleagues using as an
+example the model :ref:`M4_example`.
 
 First, we create the file :code:`m4_sf_2011.py` that contains the code to
 initialize the model
@@ -38,7 +39,7 @@ initialize the model
    :lines: 1-29
    :linenos:
 
-Then we incorporate it in the SuperflexPy repository in the folder
+Then we incorporate it into the SuperflexPy repository in the folder
 :code:`superflexpy/implementation/models/` following the procedure illustrated
 in the previous section (fork, change, and pull request).
 
