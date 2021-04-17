@@ -112,7 +112,7 @@ class TestStructureElements(unittest.TestCase):
 
         # Define the network
         net = Network(nodes = [cat1, cat2, cat3],
-                      topography = {
+                      topology = {
                         'Cat1' : 'Cat3',
                         'Cat2' : 'Cat3',
                         'Cat3' : None,

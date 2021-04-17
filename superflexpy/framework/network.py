@@ -36,7 +36,7 @@ class Network(GenericComponent):
     tree.
     """
 
-    def __init__(self, nodes, topography):
+    def __init__(self, nodes, topology):
         """
         This is the initializer of the class Network.
 
@@ -45,8 +45,8 @@ class Network(GenericComponent):
         nodes : list(superflexpy.framework.node.Node)
             List of nodes that belongs to the network. The order is not
             important.
-        topography : dict(str : str)
-            Topography of the network. Keys are the id of the nodes and values
+        topology : dict(str : str)
+            Topology of the network. Keys are the id of the nodes and values
             are the id of the downstream node the key. Since the network must
             be a tree, each key has only one downstream element
         """
@@ -60,7 +60,7 @@ class Network(GenericComponent):
                 raise TypeError(message)
 
         self._content = nodes
-        self._downstream = topography
+        self._downstream = topology
 
         self._build_network()
 
@@ -69,7 +69,7 @@ class Network(GenericComponent):
     def get_output(self, solve=True):
         """
         This method solves the network, solving each node and putting together
-        their outputs according to the topography of the network.
+        their outputs according to the topology of the network.
 
         Parameters
         ----------

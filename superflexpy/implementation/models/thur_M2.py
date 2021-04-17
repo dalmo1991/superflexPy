@@ -237,7 +237,7 @@ model = Network(
         stgallen,
         waengi,
     ],
-    topography={
+    topology={
         'andelfingen': None,
         'appenzell': 'stgallen',
         'frauenfeld': 'andelfingen',
