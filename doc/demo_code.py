@@ -196,7 +196,7 @@ node_3 = Node(
 # Create the network
 net = Network(
     nodes=[node_1, node_2, node_3],
-    topography={
+    topology={
         'node-1': 'node-3',
         'node-2': 'node-3',
         'node-3': None

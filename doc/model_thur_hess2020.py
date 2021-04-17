@@ -206,7 +206,7 @@ thur_catchment = Network(
         stgallen,
         waengi,
     ],
-    topography={
+    topology={
         'andelfingen': None,
         'appenzell': 'stgallen',
         'frauenfeld': 'andelfingen',

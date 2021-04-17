@@ -6,8 +6,11 @@
 
 .. _numerical_solver:
 
+Numerical implementation
+========================
+
 Numerical routines for solving ODEs
-===================================
+-----------------------------------
 
 :ref:`reservoirs` are the most common elements in conceptual hydrological
 models. Reservoirs are controlled by one (or more) ordinary differential
@@ -35,10 +38,13 @@ These steps can be performed using two SuperflexPy components:
 :code:`NumericalApproximator` and :code:`RootFinder`.
 
 SuperflexPy provides two built-in numerical approximators (implicit and explicit
-Euler) and a root finder (Pegasus method).
+Euler) and a root finder (Pegasus method). These methods are best suited when
+dealing with smooth flux functions. If a user wants to experiment with
+discontinuous flux functions, other ODE solution algorithms should be
+considered.
 
-Other ODE solution algorithms, e.g. Runge-Kutta, can be accommodated
-by extending the classes :code:`NumericalApproximator` and/or
+The implementation of other ODE solution algorithms, e.g. Runge-Kutta, can be
+done by  extending the classes :code:`NumericalApproximator` and/or
 :code:`RootFinder`. Even more generally, ODE solvers from external libraries
 could be used within SuperflexPy by incorporating them in a class that respects
 the interface expected by the :code:`NumericalApproximator`.
@@ -47,7 +53,7 @@ The following sections describe the standard approach to create customized
 numerical approximators and root finders.
 
 Numerical approximator
-----------------------
+......................
 
 A customized numerical approximator can be implemented by extending the class
 :code:`NumericalApproximator` and implementing two methods: :code:`_get_fluxes`
@@ -77,7 +83,7 @@ For further details, please see the implementation of :code:`ImplicitEuler` and
 :code:`ExplicitEuler`.
 
 Root finder
------------
+...........
 
 A customized root finder can implemented by extending the class
 :code:`RootFinder` implementing the method :code:`solve`.
@@ -94,10 +100,34 @@ the fluxes, :code:`S0` is the initial state, :code:`dt` is the time step,
 :code:`fluxes`, and :code:`ind` is the index of the input arrays to use.
 
 The method :code:`solve` is responsible for finding the numerical solution of
-the approximated ODE.
+the approximated ODE. In case of failure, the method should either raise a
+:code:`RuntimeError` (Python implementation) or return :code:`numpy.nan` (this
+is not ideal but, since Numba does not support raising exceptions, is the
+solution that should be adopted with the Numba implementation).
 
 To understand better how this method works, please see the implementation of
 :code:`Pegasus`.
+
+Sequential solution of the elements
+-----------------------------------
+
+The SuperflexPy framework is built on a model representation that maps to a
+directional acyclic graph. Model elements are solved sequentially from upstream
+to downstream, with the output from each element being used as input to
+its downstream elements.
+
+When fixed-step solvers are used (e.g. implicit Euler), this
+"one-element-at-a-time" strategy is equivalent to applying the same (fixed-step)
+solver to the entire ODE system simultaneously.
+
+When more advanced solvers use internal substepping, then the
+"one-element-at-a-time" strategy does introduces additional approximation error.
+This additional approximation error is due to treating the fluxes as constant
+over the time step, whereas the exact solution would have varying fluxes within
+the time step. However, in most practical applications, this "uniform flux"
+approximation is already applied to the meteorological inputs (precipitation and
+PET), hence applying it to internal fluxes does not represent a large additional
+approximation.
 
 Computational efficiency with Numpy and Numba
 ---------------------------------------------

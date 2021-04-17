@@ -83,7 +83,11 @@ done with the following code, where the default settings of the solver are used
    :lines: 20, 18, 21
    :linenos:
 
-The element is initialized next
+Note that the :code:`approximator`, while being an object, it does not have
+internal states and, therefore, the same instance can be assigned to multiple
+elements and, in terms of functioning, it can be seen as a function.
+
+   The element is initialized next
 
 .. literalinclude:: demo_code.py
    :language: python

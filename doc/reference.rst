@@ -14,6 +14,14 @@ classes that should be customized to extend SuperflexPy. Particular
 implementations of  components (i.e. the content of
 :code:`superflexpy/implementation/`) are not included.
 
+The following diagram follows the standards of
+`UML <https://en.wikipedia.org/wiki/Class_diagram>`_ and shows the organization
+of the classes composing the framework. All the classes in the diagram can be
+extended through inheritance to create customized components.
+
+.. image:: pics/reference/class_uml.png
+   :align: center
+
 superflexpy.framework.element
 -----------------------------
 

@@ -492,7 +492,10 @@ All components share the following methods.
 - **Inputs and outputs**: all components have functionalities to receive inputs
   and generate outputs.
 
-    - :code:`set_input`: set the input fluxes of the component;
+    - :code:`set_input`: set the inputs of the component; inputs can be fluxes
+      (e.g., precipitation) or other variables that influence the behavior of
+      the component (e.g., temperature influencing the behavior of a snow
+      element).
 
     - :code:`get_output`: run the component (and all components contained in it)
       and return the output fluxes.
