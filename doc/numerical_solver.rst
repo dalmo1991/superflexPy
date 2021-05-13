@@ -22,17 +22,18 @@ equations (ODEs) of the form
 and associated initial conditions.
 
 Such differential equations are usually difficult or impossible to solve
-analytically, therefore, numerical approximations are employed.
+analytically, therefore, numerical approximations are employed. These numerical
+approximations take the form of time stepping schemes.
 
-Many robust numerical approximations (e.g. implicit Euler) require an iterative
+Moreover, many robust numerical approximations (e.g. implicit Euler) require an iterative
 root-finding procedure at each time step.
 
-Therefore, the current implementation of SuperflexPy conceptualizes the solution
+The current implementation of SuperflexPy conceptualizes the solution
 of the ODE as a two-step procedure:
 
 1. Construct the discrete-time equations defining the numerical approximation of
-   the ODEs
-2. Solve the numerical approximation
+   the ODEs at a single time step
+2. Solve the numerical approximation for the storage(s)
 
 These steps can be performed using two SuperflexPy components:
 :code:`NumericalApproximator` and :code:`RootFinder`.
@@ -43,10 +44,10 @@ dealing with smooth flux functions. If a user wants to experiment with
 discontinuous flux functions, other ODE solution algorithms should be
 considered.
 
-The implementation of other ODE solution algorithms, e.g. Runge-Kutta, can be
-done by  extending the classes :code:`NumericalApproximator` and/or
+Other ODE solution algorithms, e.g. Runge-Kutta, can be
+implemented by  extending the classes :code:`NumericalApproximator` and/or
 :code:`RootFinder`. Even more generally, ODE solvers from external libraries
-could be used within SuperflexPy by incorporating them in a class that respects
+can be used within SuperflexPy by incorporating them in a class that respects
 the interface expected by the :code:`NumericalApproximator`.
 
 The following sections describe the standard approach to create customized
@@ -71,11 +72,11 @@ by the functions in :code:`fluxes`, and :code:`ind` is the index of the input
 arrays to use.
 
 The method :code:`_get_fluxes` is responsible for calculating the fluxes after
-the ODE has been solved and operates with a vector of states.
+the ODE has been solved. This method operates with a vector of states.
 
 The method :code:`_differential_equation` calculates the approximation of the
-ODE, returning the value of the numerical approximation of the  differential
-equation given a value of :code:`S` and the minimum and maximum boundary for the
+ODE. It returns the residual of the approximated mass balance equations for a
+given value of :code:`S` and the minimum and maximum bounds for the
 search of the solution. This method is designed to be interfaced with the root
 finder.
 
@@ -85,7 +86,7 @@ For further details, please see the implementation of :code:`ImplicitEuler` and
 Root finder
 ...........
 
-A customized root finder can implemented by extending the class
+A customized root finder can constructed by extending the class
 :code:`RootFinder` implementing the method :code:`solve`.
 
 .. literalinclude:: numerical_solver_code.py
@@ -102,11 +103,12 @@ the fluxes, :code:`S0` is the initial state, :code:`dt` is the time step,
 The method :code:`solve` is responsible for finding the numerical solution of
 the approximated ODE. In case of failure, the method should either raise a
 :code:`RuntimeError` (Python implementation) or return :code:`numpy.nan` (this
-is not ideal but, since Numba does not support raising exceptions, is the
-solution that should be adopted with the Numba implementation).
+is not ideal but it is the suggested workaround because Numba does not support
+exceptions handling).
 
-To understand better how this method works, please see the implementation of
-:code:`Pegasus`.
+To understand better how the method :code:`solve` works, please see the
+implementation of the Pegasus root finder that is currently used in the SuperflexPy
+applications.
 
 Sequential solution of the elements
 -----------------------------------
@@ -120,11 +122,11 @@ When fixed-step solvers are used (e.g. implicit Euler), this
 "one-element-at-a-time" strategy is equivalent to applying the same (fixed-step)
 solver to the entire ODE system simultaneously.
 
-When more advanced solvers use internal substepping, then the
+When solvers with internal substepping are used, the
 "one-element-at-a-time" strategy does introduces additional approximation error.
-This additional approximation error is due to treating the fluxes as constant
-over the time step, whereas the exact solution would have varying fluxes within
-the time step. However, in most practical applications, this "uniform flux"
+This additional approximation error is due to treating all fluxes as constant
+over the time step, whereas in reality fluxes vary within
+the time step. In most practical applications, this "uniform flux"
 approximation is already applied to the meteorological inputs (precipitation and
 PET), hence applying it to internal fluxes does not represent a large additional
 approximation.
@@ -137,37 +139,42 @@ contexts, such as parameter calibration and uncertainty quantification, which
 require many model runs (thousands or even millions). Computational efficiency
 is therefore an important requirement of SuperflexPy.
 
-Computational efficiency is not the greatest strength of pure Python, but
+Computational efficiency is a potential limitation of pure Python, but
 libraries like Numpy and Numba can help in pushing the performance closer to
 traditionally fast languages such as Fortran and C.
 
 Numpy provides highly efficient arrays for vectorized operations (i.e.
 elementwise operations between arrays). Numba provides a “just-in-time compiler”
 that can be used to compile (at runtime) a normal Python method to machine code
-that interacts efficiently with Numpy arrays. The combined use of Numpy and
-Numba is extremely effective when solving ODEs, where the method loops through a
+that operates efficiently with Numpy arrays. The combined use of Numpy and
+Numba is extremely effective when solving ODEs using time stepping schemes, where the method loops through a
 vector to perform elementwise operations.
 
-For this reason we provide Numba-optimized versions of
+SuperflexPy includes Numba-optimized versions of
 :code:`NumericalApproximator` and :code:`RootFinder`, which enable efficient
 solution of ODEs describing the reservoir elements.
 
 The figure below compares the execution times of pure Python vs. the Numba
 implementation, as a function of the length of the time series (upper panel) and
-the number of model runs (lower panel).
+the number of model runs (lower panel). Simulations were run on a laptop (single
+thread), using the :ref:`hymod` model, solved using the implicit Euler numerical solver.
 
 The plot clearly shows the tradeoff between compilation time (which is zero for
 Python and around 2 seconds for Numba) versus run time (where Numba is 30 times
-faster than Python). For example, a single run of 1000 time steps of the
-:ref:`hymod` model solved using the implicit Euler numerical solver takes 0.11
-seconds with Python and 1.85 with Numba. In contrast, if the same model is run
+faster than Python). For example, a single run of 1000 time steps takes 0.11
+seconds with Python and 1.85 seconds with Numba. In contrast, if the same model is run
 100 times (e.g., as part of a calibration) the Python version takes 11.75
 seconds while the Numba version takes 2.35 seconds.
+
+.. note:: The objective of these plots is to give an idea of time that is topically
+          required to perform common modelling applications (e.g., calibration) with SuperflexPy,
+          to show the impact of the Numba implementation, and to explain the
+          tradeoff between compilation and run time. The results do not
+          have to be considered as accurate measurements of the performance
+          of SuperflexPy (i.e., rigorous benchmarking).
 
 .. image:: pics/numerical_solver/bench_all.png
    :align: center
 
-The SuperflexPy user can choose between the available
-:code:`NumericalApproximator` implementations (which offer pure Python and Numba
-implementations of the Implicit Euler and Pegasus methods), or build their own
-implementations.
+The green line "net numba" in the lower panel express the run time of the Numba
+implementation, i.e., excluding the compilation time.

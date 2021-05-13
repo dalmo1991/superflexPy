@@ -9,22 +9,23 @@
 List of currently implemented elements
 ======================================
 
-SuperflexPy provides a large variety of components (i.e., elements, units, nodes
+SuperflexPy provides four levels of components (elements, units, nodes
 and network) for constructing conceptual hydrological models. The components
 presented in the page :ref:`components` represent the core of SuperflexPy.
-However, such components must be extended to create customized models.
+These components can be extended to create customized models.
 
 Most of the customization efforts will be required for elements (i.e.,
-reservoirs, lag, and connection elements). This page contains all the elements
-implemented by extending the classes provided by SuperflexPy, and made available
-to the users to help them construct their own models. The elements are divided
-in three categories
+reservoirs, lag, and connection elements). This page describes all elements
+that have been created and shared by the community of SuperflexPy. These
+elements can be used to construct a wide range of model structures.
+
+This section lists elements according to their type, namely
 
 - Reservoir
 - Lag elements
 - Connections
 
-The elements are listed in alphabetical order.
+Within each section, the elements are listed in alphabetical order.
 
 Reservoirs
 ----------
@@ -65,7 +66,7 @@ Governing equations
 Linear reservoir
 ****************
 
-This reservoir assumes a very simple linear storage-discharge relationship. It
+This reservoir assumes a linear storage-discharge relationship. It
 represents arguably the simplest hydrological model. For example, it is used in
 the model HYMOD to simulate channel routing and lower-zone storage processes.
 Further details are provided in the page :ref:`hymod`.
@@ -95,8 +96,8 @@ Power reservoir
 ***************
 
 This reservoir assumes that the storage-discharge relationship is described by a
-power function. This type of reservoir is common in hydrological models, in
-particular in the HBV family of models where it is used to represent the fast
+power function. This type of reservoir is common in hydrological models. For
+example, it is used in the HBV family of models to represent the fast
 response of a catchment.
 
 .. code-block:: python
@@ -189,7 +190,7 @@ Snow reservoir
 **************
 
 This reservoir is used to simulate snow processes based on temperature. Further
-details are provided in the page :ref:`thur_case_study`.
+details are provided in the section :ref:`thur_case_study`.
 
 .. code-block:: python
 
@@ -221,7 +222,7 @@ Unsaturated reservoir (inspired to HBV)
 This reservoir specifies the actual evapotranspiration as a smoothed threshold
 function of storage, in combination with the storage-discharge relationship
 being set to a power function. It is inspired by the HBV family of models, where
-a similar (but non-smooth) approach is used to represent unsaturated soil
+a similar approach (but without smoothing) is used to represent unsaturated soil
 dynamics.
 
 .. code-block:: python
@@ -253,10 +254,10 @@ Governing equations
    & E_{\textrm{act}}=C_{\textrm{e}}E_{\textrm{pot}}\left(\frac{\overline{S}(1+m)}{\overline{S}+m}\right) \\
    & Q=P\left(\overline{S}\right)^{\beta}
 
-Upper zone (Hymod)
+Upper zone (HYMOD)
 ******************
 
-This reservoir is part of the Hymod model and is used to simulate the upper soil
+This reservoir is part of the HYMOD model and is used to simulate the upper soil
 zone. Further details are provided in the page :ref:`hymod`.
 
 .. code-block:: python
@@ -291,11 +292,11 @@ Governing equations
 Lag elements
 ------------
 
-All lag elements implemented in SuperflexPy are designed to take an arbitrary
+All lag elements implemented in SuperflexPy can accommodate an arbitrary
 number of input fluxes, and apply a convolution based on a weight array that
 defines the shape of the lag function.
 
-Different lag elements differ solely in the values of the weight array. The
+Lag elements differ solely in the definition of the weight array. The
 nature (i.e., number and order) of inputs and outputs depend on the element
 upstream of the lag element.
 

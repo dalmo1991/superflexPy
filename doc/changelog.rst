@@ -69,7 +69,7 @@ Minor changes to existing components
   network that the components that they contain are of the right type (e.g. a
   node must contain units)
 
-- Some minor changes to the :code:`RootFinder` to accommodate the new numerical
+- Minor changes to :code:`RootFinder` to accommodate the new numerical
   implementation.
 
 - Added Numba implementation of GR4J elements

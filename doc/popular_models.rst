@@ -12,8 +12,8 @@
 Application: implementation of existing conceptual models
 =========================================================
 
-This page describes the implementation of existing conceptual hydrological
-models using SuperflexPy. The translation of a model in SuperflexPy requires the
+This page describes the SuperflexPy implementation of several existing conceptual hydrological
+models. The "translation" of a model into SuperflexPy requires the
 following steps:
 
 1. Design of a structure that reflects the original model but satisfies the
@@ -21,14 +21,14 @@ following steps:
    between elements, see :ref:`unit`);
 2. Extension of the framework, coding the required elements (as explained in
    the page :ref:`build_element`)
-3. Construction of the model structure using the elements implemented at point 2
+3. Construction of the model structure using the elements implemented at step 2
 
 .. _M4_example:
 
 Model M4 from Kavetski and Fenicia, WRR, 2011
 ---------------------------------------------
 
-M4 is a simple conceptual model presented, as part of a model comparison study,
+M4 is a simple lumped conceptual model presented, as part of a model comparison study,
 in the article
 
     Kavetski, D., and F. Fenicia (2011), **Elements of a flexible approach for**
@@ -38,15 +38,15 @@ in the article
 Design of the model structure
 .............................
 
-The structure of M4 is simple and can be implemented directly in SuperflexPy
+M4 has a simple structure that can be implemented in SuperflexPy
 without using connection elements. The figure shows, on the left, the structure
-as presented in the original M4 publication; on the right, the SuperflexPy
+as presented in the original M4 publication; on the right, a schematic of the SuperflexPy
 implementation is shown.
 
 .. image:: pics/popular_models/M4.png
    :align: center
 
-The upstream element, i.e., the unsaturated reservoir (UR), is intended to represent
+The upstream element, namely, the unsaturated reservoir (UR), is intended to represent
 runoff generation processes (e.g. separation between evaporation and runoff). It
 is controlled by the differential equation
 
@@ -56,7 +56,7 @@ is controlled by the differential equation
    E_{\textrm{P}} \left( \frac{\overline{S} \left(1+m\right)}{\overline{S} + m} \right) -
    P \left(\overline{S}\right)^\beta \\
 
-The downstream element, the fast reservoir (FR), is intended to represent runoff
+The downstream element, namely, the fast reservoir (FR), is intended to represent runoff
 propagation processes (e.g. routing). It is controlled by the differential
 equation
 
@@ -71,13 +71,14 @@ potential evapotranspiration (a model input), and :math:`S_{\textrm{max}}`,
 Element creation
 .................
 
-We now show the code used to implement the elements designed in the
-previous section. Instruction on how to use the framework to build new
+We now show how to use SuperflexPy to implement the elements described in the
+previous section. A detailed explanation of how to use the framework to build new
 elements can be found in the page :ref:`build_element`.
 
-Note that some elements have already been implemented in SuperflexPy (refer to
-the page :ref:`elements_list`) and, therefore, the modeller does not need to
-implement them.
+Note that, most of the times, when implementing a model structure with SuperflexPym
+the elements have already been implemented in SuperflexPy and, therefore, the modeller does not need to
+implement them. A list of the currently implemented elements is provided in the page
+:ref:`elements_list`.
 
 Unsaturated reservoir
 *********************
@@ -102,7 +103,7 @@ This element can be implemented by extending the class :code:`ODEsElement`.
 Model initialization
 ....................
 
-Now that all elements are implemented, we can put them together to build the
+Now that all elements are implemented, they can be combined to build the
 model structure. For details refer to :ref:`demo`.
 
 First, we initialize all elements.
@@ -149,8 +150,8 @@ al., 2003; on the right, the adaptation to SuperflexPy is shown.
    :align: center
 
 The potential evaporation and the precipitation are "filtered" by an
-interception element, which sets the smallest of the two fluxes to zero and the
-largest of the fluxes to the difference between the two.
+interception element, that calculates the net fluxes by setting the smallest to zero and the
+largest to the difference between the two fluxes.
 
 .. math::
    & \textrm{if } P > E_{\textrm{POT}}:  \\
@@ -192,15 +193,15 @@ actual evaporation, and the third term represents the output of the reservoir,
 which here corresponds to "percolation".
 
 Once the reservoir is solved (i.e. the values of :math:`S_{\textrm{UR}}` that
-solve the discretized differential equation are found), the element outputs the
+solve the discretized differential equation over a time step are found), the element outputs the
 sum of percolation and bypassing precipitation (:math:`P_b`).
 
-The flux is then divided between two lag functions (referred to as "unit
-hydrographs" and abbreviated UH): 90% of the flux goes to UH1 and 10% goes to
+The flux is then divided between two lag functions, referred to as "unit
+hydrographs" and abbreviated UH: 90% of the flux goes to UH1 and 10% goes to
 UH2. In this part of the model structure the correspondence between the elements
 of GR4J and their SuperflexPy implementation is quite clear.
 
-The output of UH1 provides the input of the routing store, that is a reservoir
+The output of UH1 provides the input of the routing store, which is a reservoir
 controlled by the differential equation
 
 .. math::
@@ -216,7 +217,7 @@ The gain/loss term :math:`Q_{\textrm{RF}}`, which is a function of the state
 UH2. In SuperflexPy, this operation cannot be done in the same unit layer as the
 solution of the routing store, and instead it is done afterwards. For this
 reason, the SuperflexPy implementation of GR4J has an additional element (called
-"flux aggregator") that collects (through a junction element) the output of the
+"flux aggregator") that uses a junction element to combine the output of the
 routing store, the gain/loss term, and the output of UH2. The flux aggregator
 then computes the outflow of the model using the equation
 
@@ -226,13 +227,14 @@ then computes the outflow of the model using the equation
 Elements creation
 .................
 
-We now show the code to implement the elements designed in the
-previous section. Instruction on how to use the framework to build new
+We now show how to use SuperflexPy to implement the elements described in the
+previous section. A detailed explanation of how to use the framework to build new
 elements can be found in the page :ref:`build_element`.
 
-Note that some elements have already been implemented (refer to the page
-:ref:`elements_list`) and, therefore, the modeller does not need to
-implement them, as shown in this section.
+Note that, most of the times, when implementing a model structure with SuperflexPym
+the elements have already been implemented in SuperflexPy and, therefore, the modeller does not need to
+implement them. A list of the currently implemented elements is provided in the page
+:ref:`elements_list`.
 
 Interception
 ************
@@ -343,10 +345,10 @@ the upper zone (soil dynamics), channel routing (surface runoff), and lower zone
 
 As can be seen in the figure, the original structure of HYMOD already meets the
 design constrains of SuperflexPy (it does not contains feedbacks between
-elements). Therefore HYMOD can be implemented in SuperflexPy in a more
-straightforward way than GR4J.
+elements). Therefore the SuperflexPy implementation of HYMOD is more
+straightforward than for GR4J.
 
-The first element (upper zone) is a reservoir intended to represent streamflow
+The upper zone is a reservoir intended to represent streamflow
 generation processes and evaporation. It is controlled by the differential
 equation
 
@@ -380,26 +382,27 @@ The outputs of these two flowpaths are collected by a junction, which generates
 the final model output.
 
 Comparing the two panels in the figure, the only difference is the presence of
-the two transparent elements that are needed to fill the "gaps" that, otherwise,
-will be present in the structure (see :ref:`unit`).
+the two transparent elements that are needed to fill the "gaps" in the
+SuperflexPy structure (see :ref:`unit`).
 
 Elements creation
 .................
 
-We now show the code to implement the elements designed in the previous section.
-Instruction on how to use the framework to build new elements can be found in
-the page :ref:`build_element`.
+We now show how to use SuperflexPy to implement the elements described in the
+previous section. A detailed explanation of how to use the framework to build new
+elements can be found in the page :ref:`build_element`.
 
-Note that some elements have already been implemented (refer to the page
-:ref:`elements_list`) and, therefore, the modeller does not need to
-implement them, as shown in this section.
+Note that, most of the times, when implementing a model structure with SuperflexPym
+the elements have already been implemented in SuperflexPy and, therefore, the modeller does not need to
+implement them. A list of the currently implemented elements is provided in the page
+:ref:`elements_list`.
 
 Upper zone
 **********
 
 The code used to simulate the upper zone present a change in the equation used
 to calculate the actual evaporation. In the original version (Wagener et al.,
-2001) the equation is "described" in the text
+1)    the equation is "described" in the text
 
    *The actual evapotranspiration is equal to the potential value if*
    *sufficient soil moisture is available; otherwise it is equal to the*
@@ -414,7 +417,7 @@ which translates to the equation
    & \quad E=0 \\
 
 Note that this solution is not smooth and the resulting sharp threshold can
-cause some computational problems. A smooth version of this equation is given by
+cause problematic discontinuities in the model behavior. A smooth version of this equation is given by
 
 .. math::
    & \overline{S} = \frac{S_{\textrm{UR}}}{S_{\textrm{max}}} \\

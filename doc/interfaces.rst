@@ -4,15 +4,15 @@ Interfacing SuperflexPy with other frameworks
 =============================================
 
 SuperflexPy does not integrate tools for calibration or uncertainty analysis. In
-this page we show an example on how a model built with SuperflexPy can be
+this page we show an example on how a model built using SuperflexPy can be
 interfaced with other tools to perform this task.
 
 SuperflexPy + SPOTPY
 --------------------
 
-.. attention:: This example is for illustration purposes only, does not
-               represent a recommendation towards the use of SPOTPY or of the
-               specific calibration algorithm proposed.
+.. note:: This example is for illustration purposes only, and as such does not
+          represent a specific recommendation of SPOTPY or of any specific
+          calibration algorithm.
 
 `SPOTPY <https://spotpy.readthedocs.io/en/latest/>`_ is a Python framework for
 calibration, uncertainty, and sensitivity analysis.
@@ -29,79 +29,79 @@ and implements the following methods:
 - :code:`objectivefunction`: defines the objective function to use to evaluate
   the simulation results.
 
-:code:`__init__`
-................
+Method :code:`__init__`
+.......................
 
 .. literalinclude:: interfaces_code.py
    :language: python
    :lines: 5, 7, 29-40
    :linenos:
 
-The class is initialized defining the SuperflexPy :code:`model` that is used.
-The :code:`model`, which can be any SuperflexPy component (from reservoir to
-network), must be initialized before; this class sets only the :code:`inputs`
+The class :code:`spotpy_model` is initialized defining the SuperflexPy :code:`model` that is used.
+The :code:`model`, which can be any SuperflexPy component (from element to
+network), must be defined before; the :code:`spotpy_model` class sets only the :code:`inputs`
 and the :code:`dt`.
 
-Other variables necessary to initialize the class are:
+Other variables necessary to initialize the class :code:`spotpy_model` are:
 
 - :code:`parameters` and :code:`parameters_names`, which define the parameters
-  considered in the calibration; the first is a list of :code:`spotpy.parameter`
-  objects, the second is a list of the names of the SuperflexPy parameters;
+  considered in the calibration. The first variable is a list of :code:`spotpy.parameter`
+  objects, the second variable is a list of the names of the SuperflexPy parameters;
 - :code:`observations`, which is an array of observed output values;
 - :code:`output_index`, which is the index of the output flux to be considered
-  when evaluating the SuperflexPy simulation (this is particularly important in
-  the case of multiple output fluxes, e.g. chemistry)
+  when evaluating the SuperflexPy simulation. This specification is necessary in
+  the case of multiple output fluxes.
 
-:code:`parameters`
-..................
+Method :code:`parameters`
+.........................
 
 .. literalinclude:: interfaces_code.py
    :language: python
    :lines: 44-45
    :linenos:
 
-The method generates a new parameter set using SPOTPY functionalities.
+The method :code:`parameters` generates a new parameter set using the SPOTPY functionalities.
 
-:code:`simulation`
-..................
+Method :code:`simulation`
+.........................
 
 .. literalinclude:: interfaces_code.py
    :language: python
    :lines: 49-59
    :linenos:
 
-The method sets the parameters (lines 3-7), resets the states to their initial
-value (line 8), runs the SuperflexPy model (line 9), and returns the the output
-flux for the evaluation (line 11).
+The method :code:`simulation` sets the parameters (lines 3-7), resets the states to their initial
+value (line 8), runs the SuperflexPy model (line 9), and returns the output
+flux for the evaluation of the objective function (line 11).
 
-:code:`evaluation`
-..................
+Method :code:`evaluation`
+.........................
 
 .. literalinclude:: interfaces_code.py
    :language: python
    :lines: 63-64
    :linenos:
 
-The method returns the observed flux, used to evaluate the model.
+The method :code:`evaluation` returns the observed flux, used for the evaluation of the objective function.
 
-:code:`objectivefunction`
-.........................
+Method :code:`objectivefunction`
+................................
 
 .. literalinclude:: interfaces_code.py
    :language: python
    :lines: 68-73
    :linenos:
 
-The method defines the objective function used to evaluate the model. In this
+The method :code:`objectivefunction` defines the objective function used to measure the model fit to the observed data. In this
 case, the Nash-Sutcliffe efficiency is used.
 
 Example of use
 ..............
 
-We now show how to exploit the implementation above to calibrate a lumped model
-composed by 2 reservoirs.
+We now show how to employ the implementation above to calibrate a lumped model
+composed of 2 reservoirs.
 
-First, we initialize the SuperflexPy model. This is done with the following code
+First, we initialize the SuperflexPy model, as follows
 (see :ref:`demo` for more details on how to set-up a model).
 
 .. literalinclude:: interfaces_code.py
@@ -116,12 +116,12 @@ Then, we initialize an instance of the :code:`spotpy_model` class
    :lines: 81-92
    :linenos:
 
-:code:`P` and :code:`Q_obs` in lines 3 and 5 are arrays of precipitation (input)
-and observed streamflow. In this example, we calibrate only 2 parameters
-(:code:`model_FR1_k` and :code:`model_FR2_k`) out of the 4 parameters of the
-SuperflexPy model.
+The arrays :code:`P` and :code:`Q_obs` in lines 3 and 5 contain time series of precipitation (input)
+and observed streamflow (output). In this example, lines 6-10 indicate the two parameters that we calibrate
+(:code:`model_FR1_k` and :code:`model_FR2_k`) together with their range of
+variability.
 
-Now we can perform the calibration
+We can now call the SPOTPY method to calibrate the model. Here, the SCE algorithm option is used.
 
 .. literalinclude:: interfaces_code.py
    :language: python

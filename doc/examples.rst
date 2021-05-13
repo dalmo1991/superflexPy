@@ -5,7 +5,7 @@
 Examples
 ========
 
-The following examples are available as Jupyter notebooks, and can be either
+The following examples are available as Jupyter notebooks. All examples can be either
 visualized on GitHub or run in a sandbox environment.
 
 - Run a simple model `visualize <https://github.com/dalmo1991/superflexPy/blob/master/examples/01_run_simple_model.ipynb>`_ - `run <https://mybinder.org/v2/gh/dalmo1991/superflexPy/master?filepath=examples%2F01_run_simple_model.ipynb>`_

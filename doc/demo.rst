@@ -12,14 +12,14 @@
 How to build a model with SuperflexPy
 =====================================
 
-This page shows how to build a complete semi-distributed conceptual model with
+This page shows how to build a complete semi-distributed conceptual model using
 SuperflexPy, including:
 
 1. how the elements are initialized, configured, and run
 2. how to use the model at any level of complexity, from single element to
    multiple nodes.
 
-All the models presented in this section are available as runnable examples (see
+All models presented in this page are available as runnable examples (see
 :ref:`examples`).
 
 Examples of the implementation of more realistic models are given in the pages
@@ -30,17 +30,17 @@ Importing SuperflexPy
 
 Assuming that SuperflexPy is already installed (see :ref:`installation_label`
 guide), the elements needed to build the model are imported from the SuperflexPy
-package. For this demo, this is done with the following lines
+package. In this demo, the import is done with the following lines
 
 .. literalinclude:: demo_code.py
    :language: python
    :lines: 8-14
    :linenos:
 
-Lines 1-2 import the two elements that we will use (a reservoir and a lag
+Lines 1-2 import two elements (a reservoir and a lag
 function), lines 3-4 import the numerical solver used to solve the reservoir
-equation, and lines 5-7 import the components of SuperflexPy needed to make the
-model spatially distributed.
+equation, and lines 5-7 import the SuperflexPy components needed to implement
+spatially distributed model.
 
 A complete list of the elements already implemented in SuperflexPy, including
 their equations and import path, is available in page :ref:`elements_list`. If
@@ -83,60 +83,59 @@ done with the following code, where the default settings of the solver are used
    :lines: 20, 18, 21
    :linenos:
 
-Note that the :code:`approximator`, while being an object, it does not have
-internal states and, therefore, the same instance can be assigned to multiple
-elements and, in terms of functioning, it can be seen as a function.
+Note that the object :code:`approximator` does not have
+internal states. Therefore, the same instance can be assigned to multiple
+elements.
 
-   The element is initialized next
+The element is initialized next
 
 .. literalinclude:: demo_code.py
    :language: python
    :lines: 24-29
    :linenos:
 
-During initialization, parameters (line 2) and initial state (line 3) are
-defined, together with the numerical approximator and the identifier (the
+During initialization, the two parameters (line 2) and the single initial state (line 3) are
+defined, together with the numerical approximator and the identifier. The
 identifier must be unique and cannot contain the character :code:`_`, see
-:ref:`identifier`).
+:ref:`identifier`.
 
-After initialization, the time step used to solve the differential equation and
-the inputs of the element are specified.
+After initialization, we specify the time step used to solve the differential equation and
+the inputs of the element.
 
 .. literalinclude:: demo_code.py
    :language: python
    :lines: 31, 38
    :linenos:
 
-:code:`precipitation` is a Numpy array containing the precipitation time series.
-Note that the length of the simulation (i.e., the number of time steps to run
+Here, :code:`precipitation` is a Numpy array containing the precipitation time series.
+The length of the simulation (i.e., the number of time steps to run
 the model) is automatically set to the length of the input arrays.
 
-At this point, the element can be run, calling the method :code:`get_output`
+The element can now be run
 
 .. literalinclude:: demo_code.py
    :language: python
    :lines: 41
    :linenos:
 
-The method will run the element for all the time steps, solving the differential
-equation and returning a list containing all output arrays of the element (in
-this specific case there is only one output array, i.e., the flow time series
-:math:`Q`).
+The method :code:`get_output` will run the element for all the time steps (solving the differential
+equation) and return a list containing all output arrays of the element. In
+this specific case there is only one output array, namely., the flow time series
+:math:`Q`.
 
-The state of the reservoir at all time steps is saved in the :code:`state_array`
-attribute of the element and can be accessed as follows
+The state of the reservoir at all time steps is saved in the attribute :code:`state_array`
+of the element and can be accessed as follows
 
 .. literalinclude:: demo_code.py
    :language: python
    :lines: 42
    :linenos:
 
-:code:`state_array` is a 2D array with the number of rows equal to the number of
+Here, :code:`state_array` is a 2D array with the number of rows equal to the number of
 time steps, and the number of columns equal to the number of states. The order
 of states is defined in the docstring of the element.
 
-With the following code we can create a plot showing the outputs of the
-simulation.
+Finally, the simulation outputs can be plotted using standard Matplotlib functions, as follows
 
 .. literalinclude:: demo_code.py
    :language: python
@@ -147,11 +146,11 @@ simulation.
    :align: center
 
 Note that the method :code:`get_output` also sets the element states to their
-value at the final time step (in this case 8.98). This is done because it may be
-necessary to continue the simulation afterwards (e.g. real time applications
-with new inputs coming in time). As a consequence, if the method is called
-again, it will use this value as initial state instead of the one defined at
-initialization. The states of the model can be reset using the method
+value at the final time step (in this case 8.98). As a consequence, if the method
+is called again, it will use this value as initial state instead of the one
+defined at initialization. This enables the modeler to continue the simulation
+at a later time, which can be useful in applications where new inputs arrive in
+real time. The states of the model can be reset using the method
 :code:`reset_states`.
 
 .. literalinclude:: demo_code.py
@@ -167,18 +166,17 @@ Lumped model structure with 2 elements
 .. image:: pics/demo/SingleUnit_scheme.png
    :align: center
 
-We now move to a more complex model structure where multiple elements are
+We now move to a more complex model structure, where multiple elements are
 connected in a unit. For simplicity, we limit the complexity to two elements;
 more complex configurations can be found in the :ref:`popular_models` page.
 
 The unit structure comprises a reservoir that feeds a lag function. The lag
-function convolves the incoming flux using the function
+function applies a convolution operation on the incoming fluxes
 
 .. math::
-   Q_{\textrm{out}}=Q_{\textrm{in}} \left(\frac{t}{t_{\textrm{lag}}}\right)^
-   {\frac{5}{2}} \qquad \textrm{for }t<t_{\textrm{lag}}
+   Q_{\textrm{out}}(t)= \int_{0}^{t} Q_{\textrm{in}}(t-\tau)h(\tau, t_{\textrm{lag}})\textrm{d}\tau
 
-and its behavior is controlled by parameter :math:`t_{\textrm{lag}}`.
+The behavior of the lag function is controlled by parameter :math:`t_{\textrm{lag}}`.
 
 First, we initialize the two elements that compose the unit structure
 
@@ -188,9 +186,9 @@ First, we initialize the two elements that compose the unit structure
    :linenos:
 
 Note that the initial state of the lag function is set to :code:`None`
-(line 10); in this case the element will initialize the state to an arrays of
-zeros of appropriate length, depending on the value of :math:`t_{\textrm{lag}}`
-(in this specific case, :code:`ceil(2.3) = 3`).
+(line 10). The element will then initialize the state to an arrays of
+zeros of appropriate length, depending on the value of :math:`t_{\textrm{lag}}`;
+in this specific case, :code:`ceil(2.3) = 3`.
 
 Next, we initialize the unit that combines the elements
 
@@ -219,8 +217,8 @@ The unit can now be run
    :lines: 86
    :linenos:
 
-The unit will call the :code:`get_output` method of all its elements (from
-upstream to downstream) set the inputs of the downstream elements to the output
+In this code, the unit will call the :code:`get_output` method of all its elements (from
+upstream to downstream), set the inputs of the downstream elements to the output
 of their respective upstream elements, and return the output of the last
 element.
 
@@ -233,7 +231,7 @@ elements can be retrieved as follows
    :linenos:
 
 Note that in line 2 we pass the argument :code:`solve=False` to the function
-:code:`get_output`  in order to access the computed states and outputs without
+:code:`get_output`, in order to access the computed states and outputs without
 re-running the reservoir element.
 
 The plot shows the output of the simulation (obtained by plotting
@@ -242,7 +240,7 @@ The plot shows the output of the simulation (obtained by plotting
 .. image:: pics/demo/SingleUnit.png
    :align: center
 
-The elements of the unit can be re-set to their initial state
+If we wish to re-run the model, the elements of the unit can be re-set to their initial state
 
 .. literalinclude:: demo_code.py
    :language: python
@@ -258,8 +256,8 @@ Simple semi-distributed model
    :align: center
 
 This model is intended to represent a spatially semi-distributed configuration.
-A node is used to represent a catchment that is composed by different areas that
-react differently to the same inputs. For example, suppose we represent 70% of
+A node is used to represent a catchment with multiple areas that
+react differently to the same inputs. In this example, we represent 70% of
 the catchment using the structure described in :ref:`demo_unit`, and the
 remaining 30% using a single reservoir.
 
@@ -273,9 +271,10 @@ way as in the previous sections.
    :lines: 24-30, 69-74, 76-80, 130-133
    :linenos:
 
-Note that, once the elements are added to a unit, they become independent (see
-:ref:`unit`), meaning that any change to the reservoir contained in
-:code:`unit-1` does not affect the reservoir contained in :code:`unit-2`.
+Note that, once the elements are added to a unit, they become independent,
+meaning that any change to the reservoir contained in
+:code:`unit_1` does not affect the reservoir contained in :code:`unit_2` (see
+:ref:`unit`).
 
 The next step is to initialize the node, which combines the two units
 
@@ -328,6 +327,7 @@ All elements within the node can be re-set to their initial states
    :lines: 178
    :linenos:
 
+.. _demo_network:
 Semi-distributed model with multiple nodes
 ------------------------------------------
 
@@ -335,9 +335,10 @@ Semi-distributed model with multiple nodes
    :align: center
 
 A catchment can be composed by several subcatchments (nodes) connected in a
-network, where each subcatchment receives its own inputs, but may share
-parameter values with other subcatchments with the same units. This
-semi-distributed configuration can be implemented in SuperflexPy by creating a
+network. Each subcatchment receives its own inputs, but may share
+parameter values with other subcatchments with the same units.
+
+This semi-distributed configuration can be implemented in SuperflexPy by creating a
 network with multiple nodes.
 
 First, we initialize the nodes
@@ -347,27 +348,28 @@ First, we initialize the nodes
    :lines: 24-30, 69-74, 76-80, 130-134, 136-142, 182-194
    :linenos:
 
-:code:`node-1` and :code:`node-2` contain both units but in different
-proportions. :code:`node-3` contains only :code:`unit-2`.
+Here, nodes :code:`node_1` and :code:`node_2` contain both units, :code:`unit_1` and :code:`unit_2`, but in different
+proportions. Node :code:`node_3` contains only a single unit, :code:`unit_2`.
 
-When units are added to a node, the states of the elements belonging to them
-remain independent while the parameters stay linked, meaning that the change of
-a parameter in :code:`unit-1` in :code:`node-1` is applied also to
-:code:`unit-1` in :code:`node-2`. As noted in section :ref:`components_node`,
-different behavior can be achieved by setting the parameter
-:code:`shared_parameters` to :code:`False` when initializing the nodes.
+When units are added to a node, the states of the elements within the units
+remain independent while the parameters stay linked. In this example the change of
+a parameter in :code:`unit_1` in :code:`node_1` is applied also to
+:code:`unit_1` in :code:`node_2`. This
+"shared parameters" behavior can be disabled by setting the parameter
+:code:`shared_parameters` to :code:`False` when initializing the nodes (see
+:ref:`components_node`)
 
-At this point, the network can be initialized
+The network is initialized as follows
 
 .. literalinclude:: demo_code.py
    :language: python
    :lines: 197-204
    :linenos:
 
-Line 2 lists the nodes belonging to the network. Lines 4-6 define the
+Line 2 provides the list of the nodes belonging to the network. Lines 4-6 define the
 connectivity of the network; this is done using a dictionary with the keys given
 by the node identifiers and values given by the single downstream node. The
-most downstream node has value :code:`None`.
+most downstream node has, by convention, its value set to :code:`None`.
 
 The inputs are catchment-specific and must be provided to each node.
 
@@ -393,7 +395,7 @@ We can now run the network and get the output values
 The network runs the nodes from upstream to downstream, collects their outputs,
 and routes them to the outlet. The output of the network is a dictionary, with
 keys given by the node identifiers and values given by the list of output
-fluxes. It is also possible to retrieve the internals (e.g. fluxes, states,
+fluxes of the nodes. It is also possible to retrieve the internals (e.g. fluxes, states,
 etc.) of the nodes.
 
 .. literalinclude:: demo_code.py

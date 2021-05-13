@@ -10,8 +10,8 @@
 Principles of SuperflexPy
 =========================
 
-Hydrological models are widely used in engineering and science for prediction
-and process understanding.
+Hydrological models are widely used in environmental science and engineering for
+process understanding and prediction.
 
 Models can differ depending on how the processes are represented (conceptual
 vs. physical based models), and how the physical domain is discretized (from
@@ -66,10 +66,10 @@ model structure to help achieve their application objectives.
 Although several flexible modeling frameworks have been proposed in the last
 decade, there are still some notable challenges. For example:
 
-- implementation constraint can limit the originally envisaged flexibility of
+- implementation constraints can limit the originally envisaged flexibility of
   the framework;
 
-- the choice of the numerical model can be fixed;
+- the choice of numerical model can be fixed;
 
 - the spatial organization can be limited to lumped configurations;
 
@@ -83,7 +83,8 @@ a framework suitable for a wide range of research and operational applications.
 Spatial organization
 --------------------
 
-Hydrologist may need to model large catchments where spatial heterogeneity
+Hydrologists are increasingly interested in modeling
+large catchments where spatial heterogeneity
 becomes important. The following categories of spatial model organization can be
 distinguished:
 
@@ -91,7 +92,7 @@ distinguished:
   uniform;
 
 - **semi-distributed configuration**, where the physical domain is subdivided
-  into (usually coarse) areal fractions that have the same hydrological response
+  into (usually coarse) areal fractions that are assumed to have the same hydrological response
   and operate in parallel (usually without connectivity between them);
 
 - **fully-distributed configuration**, where the physical domain is subdivided
@@ -101,7 +102,7 @@ distinguished:
 The lumped approach yields the simplest models, with a low number of parameters
 and often sufficiently good predictions. However, the obvious limitation is that
 if the catchment properties vary substantially in space, the lumped model will
-not capture these variations. Nor can a lumped model produce distributed
+not capture these variations. Nor can a lumped model produce spatially distributed
 streamflow predictions.
 
 The fully-distributed approach typically yields models with a large number of
@@ -154,7 +155,7 @@ vegetation, topography, etc).
 
 The fourth level is represented by the "network", which connects multiple nodes
 and routes the fluxes from upstream to downstream nodes. This level enables the
-representation of large watersheds and river networks that comprised by several
+representation of large watersheds and river networks that comprise several
 subcatchments with substantial flow routing delays. A SuperflexPy model
 configuration can contain only a single network.
 

@@ -2,8 +2,8 @@
 ..              and existing ones modified. Once the guide will reach its final
 ..              version, this box will disappear.
 
-.. image:: pics/logo_transparent_2.png
-   :align: center
+.. .. image:: pics/logo_transparent_2.png
+..    :align: center
 
 ===========
 SuperflexPy
@@ -17,7 +17,7 @@ application of `Superflex <https://doi.org/10.1029/2010WR010174>`_, including
 collaborations with colleagues at the Eawag (Switzerland), TU-Delft
 (Netherlands), LIST (Luxembourg), University of Adelaide (Australia), and
 others. The SuperflexPy framework offers a brand new implementation of
-Superflex, allowing to build fully customized, spatially-distributed
+Superflex, allowing the modeler to build fully customized, spatially-distributed
 hydrological models.
 
 Thanks to its object-oriented architecture, SuperflexPy can be easily
@@ -34,15 +34,15 @@ Constructing a hydrological model is straightforward with SuperflexPy:
 
 - the framework components are declared and initialized through a Python script;
 
-- the framework components are classes with built-in functionalities for
+- the framework components are implemented as classes with built-in functionalities for
   handling parameters and states, routing fluxes, and solving the model
   equations (e.g. describing reservoirs, lag functions, etc.);
 
 - the numerical implementation is separated from the conceptual model, allowing
   the use of different numerical methods for solving the model equations;
 
-- the framework can be run at multiple levels of complexity, from a single
-  bucket to an entire river network;
+- the framework can be run at multiple levels of complexity, from a
+  single-bucket model to a model that represents an entire river network;
 
 - the framework is available as an open source Python package from
   `Github <https://github.com/dalmo1991/superflexPy>`_;
@@ -71,7 +71,7 @@ The core team consists of:
 Stay in touch
 -------------
 
-If you wish to receive e-mails about future developments of the framework,
+If you wish to receive e-mails about future SuperflexPy developments\,
 please subscribe to our mailing list `clicking here
 <https://forms.gle/utLbF6KWqvqS7LHZ7>`_.
 

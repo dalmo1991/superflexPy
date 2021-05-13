@@ -22,7 +22,7 @@ Python (pip). Open the operating system command prompt and run the command
 
    pip install superflexpy
 
-To upgrade to a newer version (when available), run the following command
+To upgrade to a newer SuperflexPy version (when available), run the following command
 
 .. code-block:: bash
 
@@ -36,7 +36,7 @@ SuperflexPy requires the following Python packages
 - `Numpy <https://docs.scipy.org/doc/numpy/user/install.html>`_
 - `Numba <https://numba.pydata.org/numba-doc/dev/user/installing.html>`_
 
-All the packages are available through pip and will be installed automatically
+All dependencies are available through pip and will be installed automatically
 when installing SuperflexPy.
 
 Note that Numba is required only if the modeler wishes to use the Numba

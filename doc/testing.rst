@@ -5,30 +5,30 @@
 Automated testing
 =================
 
-Current testing of Superflex consists of validating its numerical results
+Current testing of SuperflexPy consists of validating its numerical results
 against the original implementation of
 `Superflex <https://doi.org/10.1029/2010WR010174>`_. This testing is done for
-selected model configurations, and sets of parameters and inputs.
+selected model configurations and selected sets of parameters and inputs.
 
-This testing strategy implicitly checks auxiliary methods (e.g. setting
+This testing strategy implicitly checks auxiliary methods, including setting
 parameters and states, retrieving the internal fluxes of the model, setting
-inputs and getting outputs, etc.).
+inputs and getting outputs, etc..
 
-The testing code is contained in folder :code:`test/` and uses the Python module
-:code:`unittest`. The folder contains :code:`reference_results/` (so far only
-from Superflex) and :code:`unittest/` containing the scripts that run the tests.
+The testing code is contained in folder :code:`test` and uses the Python module
+:code:`unittest`. The folder contains :code:`reference_results`
+and :code:`unittest` containing the scripts that run the tests.
 
 Current testing covers:
 
-- Correct functionality of specific elements (reservoirs and lag functions) that
+- Specific elements (reservoirs and lag functions) that
   are implemented in Superflex (e.g. :code:`01_FR.py`, :code:`02_UR.py`);
-- Correct functionality of multiple elements in a unit (e.g.
+- Multiple elements in a unit (e.g.
   :code:`03_UR_FR.py`, :code:`04_UR_FR_SR.py`);
-- Correct functionality of multiple units in a node (e.g. :code:`05_2HRUs.py`);
-- Correct functionality of multiple nodes inside a network (e.g.
+- Multiple units in a node (e.g. :code:`05_2HRUs.py`);
+- Multiple nodes inside a network (e.g.
   :code:`06_3Cats_2HRUs.py`);
-- Correct functionality of auxiliary methods (implicit testing, i.e. in case of
-  malfunctioning errors propagate to the results).
+- Auxiliary methods, which are tested implicitly, i.e. assuming that
+  errors in the auxiliary methods propagate to the results.
 
 Current testing does not cover:
 
@@ -37,7 +37,7 @@ Current testing does not cover:
 - Usage of the Explicit Euler solver;
 - Edge cases (e.g. extreme values of parameters and states)
 
-Users contributing new elements of SuperflexPy should provide reference
+Users contributing SuperflexPy extensions should provide reference
 results and the code that tests them (including input data and model parameter
 values).
 
