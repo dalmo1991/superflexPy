@@ -1,4 +1,4 @@
-.. note:: Last update 01/09/2020
+.. note:: Last update 04/05/2021
 
 .. _examples:
 

@@ -1,4 +1,4 @@
-.. note:: Last update 13/10/2020
+.. note:: Last update 04/05/2021
 
 Interfacing SuperflexPy with other frameworks
 =============================================

@@ -1,7 +1,15 @@
-.. note:: Last update 18/11/2020
+.. note:: Last update 24/05/2021
 
 Change log
 ==========
+
+Version 1.2.1
+-------------
+
+Minor changes
+.............
+
+- The network attribute :code:`topography` has been changed to :code:`topology`.
 
 Version 1.2.0
 -------------
