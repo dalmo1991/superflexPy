@@ -33,8 +33,8 @@ hydrological model: the case study of the Thur catchment, Hydrol. Earth Syst.
 Sci., 24, 1319–1345, https://doi.org/10.5194/hess-24-1319-2020, 2020.
 """
 
-from superflexpy.implementation.computation.pegasus_root_finding import PegasusPython
-from superflexpy.implementation.computation.implicit_euler import ImplicitEulerPython
+from superflexpy.implementation.root_finders.pegasus import PegasusPython
+from superflexpy.implementation.numerical_approximators.implicit_euler import ImplicitEulerPython
 from superflexpy.implementation.elements.thur_model_hess import SnowReservoir, UnsaturatedReservoir, PowerReservoir, HalfTriangularLag
 from superflexpy.implementation.elements.structure_elements import Transparent, Junction, Splitter
 from superflexpy.framework.unit import Unit

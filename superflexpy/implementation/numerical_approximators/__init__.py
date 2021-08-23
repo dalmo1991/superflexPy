@@ -23,4 +23,4 @@ CODED BY: Marco Dal Molin
 DESIGNED BY: Marco Dal Molin, Fabrizio Fenicia, Dmitri Kavetski
 """
 
-from . import pegasus_root_finding, implicit_euler, explicit_euler
+from . import explicit_euler, implicit_euler, runge_kutta_4

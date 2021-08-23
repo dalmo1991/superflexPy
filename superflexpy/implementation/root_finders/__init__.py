@@ -23,4 +23,4 @@ CODED BY: Marco Dal Molin
 DESIGNED BY: Marco Dal Molin, Fabrizio Fenicia, Dmitri Kavetski
 """
 
-from . import elements, models, numerical_approximators, root_finders
+from . import explicit, newton, pegasus

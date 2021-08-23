@@ -29,6 +29,7 @@ found, for example, in the HBV model.
 
 from ...framework.element import ODEsElement
 import numba as nb
+import numpy as np
 
 
 class PowerReservoir(ODEsElement):
@@ -135,11 +136,15 @@ class PowerReservoir(ODEsElement):
                     - k[ind] * S**alpha[ind],
                 ],
                 0.0,
-                S0 + P[ind] * dt[ind]
+                S0 + P[ind] * dt[ind],
+                [
+                    0.0,
+                    - k[ind] * alpha[ind] * S**(alpha[ind] - 1)
+                ]
             )
 
     @staticmethod
-    @nb.jit('Tuple((UniTuple(f8, 2), f8, f8))(optional(f8), f8, i4, f8[:], f8[:], f8[:], f8[:])',
+    @nb.jit('Tuple((UniTuple(f8, 2), f8, f8, UniTuple(f8, 2)))(optional(f8), f8, i4, f8[:], f8[:], f8[:], f8[:])',
             nopython=True)
     def _fluxes_function_numba(S, S0, ind, P, k, alpha, dt):
         # This method is used only when solving the equation
@@ -150,7 +155,11 @@ class PowerReservoir(ODEsElement):
                 - k[ind] * S**alpha[ind],
             ),
             0.0,
-            S0 + P[ind] * dt[ind]
+            S0 + P[ind] * dt[ind],
+            (
+                0.0,
+                - k[ind] * alpha[ind] * S**(alpha[ind] - 1)
+            )
         )
 
 
@@ -293,11 +302,16 @@ class UnsaturatedReservoir(ODEsElement):
                     - P[ind] * (S / Smax[ind])**beta[ind],
                 ],
                 0.0,
-                S0 + P[ind] * dt[ind]
+                S0 + P[ind] * dt[ind],
+                [
+                    0.0,
+                    - (Ce[ind] * PET[ind] * m[ind] * (m[ind] + 1) * Smax[ind])/((S + m[ind] * Smax[ind])**2),
+                    - (P[ind] * beta[ind] / Smax[ind]) * (S / Smax[ind])**(beta[ind] - 1),
+                ]
             )
 
     @staticmethod
-    @nb.jit('Tuple((UniTuple(f8, 3), f8, f8))(optional(f8), f8, i4, f8[:], f8[:], f8[:], f8[:], f8[:], f8[:], f8[:])',
+    @nb.jit('Tuple((UniTuple(f8, 3), f8, f8,UniTuple(f8, 3)))(optional(f8), f8, i4, f8[:], f8[:], f8[:], f8[:], f8[:], f8[:], f8[:])',
             nopython=True)
     def _fluxes_function_numba(S, S0, ind, P, Smax, Ce, m, beta, PET, dt):
         # TODO: handle time variable parameters (Smax) -> overflow
@@ -309,5 +323,10 @@ class UnsaturatedReservoir(ODEsElement):
                 - P[ind] * (S / Smax[ind])**beta[ind],
             ),
             0.0,
-            S0 + P[ind] * dt[ind]
+            S0 + P[ind] * dt[ind],
+            (
+                0.0,
+                - (Ce[ind] * PET[ind] * m[ind] * (m[ind] + 1) * Smax[ind])/((S + m[ind] * Smax[ind])**2),
+                - (P[ind] * beta[ind] / Smax[ind]) * (S / Smax[ind])**(beta[ind] - 1),
+            )
         )

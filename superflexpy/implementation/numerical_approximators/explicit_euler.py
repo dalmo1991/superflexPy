@@ -48,8 +48,7 @@ class ExplicitEulerPython(NumericalApproximator):
             Solver used to find the root of the differential equation.
         """
 
-        NumericalApproximator.__init__(self,
-                                        root_finder=root_finder)
+        super().__init__(root_finder=root_finder)
 
         self.architecture = 'python'
         self._error_message = 'module : superflexPy, solver : explicit Euler'
@@ -60,34 +59,35 @@ class ExplicitEulerPython(NumericalApproximator):
             raise ValueError(message)
 
     @staticmethod
-    def _get_fluxes(fluxes, S, S0, args):
+    def _get_fluxes(fluxes, S, S0, args, dt):
 
         # Calculate the state used to calculate the fluxes
         S = S[:-1]
         S = np.insert(S, 0, S0)
 
-        flux = fluxes(S, S0, *args)  # If different method we would provide a different first argument. S0 not used.
+        flux = fluxes(S, S0, None, *args)  # If different method we would provide a different first argument. S0 not used.
 
         return np.array(flux[0])  # It is a list of vectors
 
     @staticmethod
-    def _differential_equation(fluxes, S, S0, dt, args):
+    def _differential_equation(fluxes, S, S0, dt, args, ind):
 
         # Specify a state in case None
         if S is None:
             S = S0
 
         # Call the function that calculates the fluxes
-        fluxes_out = fluxes(S0, S0, *args)
+        fluxes_out = fluxes(S0, S0, ind, *args)
 
         fl = fluxes_out[0]
 
         # Calculate the numerical approximation of the differential equation
-        diff_eq = (S - S0) / dt - sum(fl)
+        diff_eq = (S - S0) / dt[ind] - sum(fl)
 
-        return (diff_eq,           # Fun to set to zero
+        return (diff_eq,          # Fun to set to zero
                 fluxes_out[1],    # Min search
-                fluxes_out[2])    # Max search
+                fluxes_out[2],    # Max search
+                None)             # Derivative
 
 
 class ExplicitEulerNumba(NumericalApproximator):
@@ -106,8 +106,7 @@ class ExplicitEulerNumba(NumericalApproximator):
             Solver used to find the root of the differential equation.
         """
 
-        NumericalApproximator.__init__(self,
-                                        root_finder=root_finder)
+        super().__init__(root_finder=root_finder)
 
         self.architecture = 'numba'
         self._error_message = 'module : superflexPy, solver : explicit Euler'
@@ -118,7 +117,7 @@ class ExplicitEulerNumba(NumericalApproximator):
             raise ValueError(message)
 
     @staticmethod
-    def _get_fluxes(fluxes, S, S0, args):
+    def _get_fluxes(fluxes, S, S0, args, dt):
 
         # Calculate the state used to calculate the fluxes. In this way S becomes S0
         S = S[:-1]
@@ -142,8 +141,9 @@ class ExplicitEulerNumba(NumericalApproximator):
         fl = fluxes_out[0]
 
         # Calculate the numerical approximation of the differential equation
-        diff_eq = (S - S0) / dt - sum(fl)
+        diff_eq = (S - S0) / dt[ind] - sum(fl)
 
-        return (diff_eq,           # Fun to set to zero
+        return (diff_eq,          # Fun to set to zero
                 fluxes_out[1],    # Min search
-                fluxes_out[2])    # Max search
+                fluxes_out[2],    # Max search
+                None)             # Derivative

@@ -49,7 +49,7 @@ class ImplicitEulerPython(NumericalApproximator):
         """
 
         NumericalApproximator.__init__(self,
-                                        root_finder=root_finder)
+                                       root_finder=root_finder)
 
         self.architecture = 'python'
         self._error_message = 'module : superflexPy, solver : implicit Euler'
@@ -60,7 +60,7 @@ class ImplicitEulerPython(NumericalApproximator):
             raise ValueError(message)
 
     @staticmethod
-    def _get_fluxes(fluxes, S, S0, args):
+    def _get_fluxes(fluxes, S, S0, args, dt):
 
         flux = fluxes(S, S0, None, *args)  # If different method we would provide a different first argument. S0 not used.
 
@@ -76,14 +76,22 @@ class ImplicitEulerPython(NumericalApproximator):
         # Call the function that calculates the fluxes
         fluxes_out = fluxes(S, S0, ind, *args)
 
-        fl = fluxes_out[0]
-
         # Calculate the numerical approximation of the differential equation
+        fl = fluxes_out[0]
         diff_eq = (S - S0) / dt[ind] - sum(fl)
 
+        # Calculate its derivative
+        try:
+            d_fl = fluxes_out[3]
+            d_diff_eq = (1 / dt[ind]) - sum(d_fl)
+        except IndexError:
+            # in case the element does not calculate derivatives
+            d_diff_eq = np.nan
+
         return (diff_eq,           # Fun to set to zero
-                fluxes_out[1],    # Min search
-                fluxes_out[2])    # Max search
+                fluxes_out[1],     # Min search
+                fluxes_out[2],     # Max search
+                d_diff_eq)         # Derivative of fun
 
 
 class ImplicitEulerNumba(NumericalApproximator):
@@ -103,7 +111,7 @@ class ImplicitEulerNumba(NumericalApproximator):
         """
 
         NumericalApproximator.__init__(self,
-                                        root_finder=root_finder)
+                                       root_finder=root_finder)
 
         self.architecture = 'numba'
         self._error_message = 'module : superflexPy, solver : implicit Euler'
@@ -114,7 +122,7 @@ class ImplicitEulerNumba(NumericalApproximator):
             raise ValueError(message)
 
     @staticmethod  # I do not use numba. Do not need it
-    def _get_fluxes(fluxes, S, S0, args):
+    def _get_fluxes(fluxes, S, S0, args, dt):
 
         flux = fluxes(S, S0, None, *args)  # If different method we would provide a different first argument. S0 not used.
 
@@ -131,16 +139,23 @@ class ImplicitEulerNumba(NumericalApproximator):
         # Call the function that calculates the fluxes
         fluxes_out = fluxes(S, S0, ind, *args)
 
-        fl = fluxes_out[0]
-
         # Calculate the numerical approximation of the differential equation
-        # Need to loop because of numba
+        fl = fluxes_out[0]
         sum_flux = 0
         for f in fl:
             sum_flux += f
 
         diff_eq = (S - S0) / dt[ind] - sum_flux
 
+        # Calculate its derivative
+        d_fl = fluxes_out[3]
+        sum_d_flux = 0
+        for df in d_fl:
+            sum_d_flux += df
+
+        d_diff_eq = (1 / dt[ind]) - sum_d_flux
+
         return (diff_eq,           # Fun to set to zero
-                fluxes_out[1],    # Min search
-                fluxes_out[2])    # Max search
+                fluxes_out[1],     # Min search
+                fluxes_out[2],     # Max search
+                d_diff_eq)         # Derivative of fun

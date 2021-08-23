@@ -76,7 +76,7 @@ class SnowReservoir(ODEsElement):
         if approximation.architecture == 'numba':
             self._fluxes = [self._flux_function_numba]
         elif approximation.architecture == 'python':
-            self._fluxes = [self._flux_function_numba]
+            self._fluxes = [self._flux_function_python]
 
     def set_input(self, input):
         """
@@ -165,10 +165,14 @@ class SnowReservoir(ODEsElement):
                 ],
                 0.0,
                 S0 + snow[ind] * dt[ind],
+                [
+                    0.0,
+                    - melt_potential * np.exp(-(S / m[ind])) / m[ind]
+                ]
             )
 
     @staticmethod
-    @nb.jit('Tuple((UniTuple(f8, 2), f8, f8))(optional(f8), f8, i4, f8[:], f8[:], f8[:], f8[:], f8[:], f8[:])',
+    @nb.jit('Tuple((UniTuple(f8, 2), f8, f8, UniTuple(f8, 2)))(optional(f8), f8, i4, f8[:], f8[:], f8[:], f8[:], f8[:], f8[:])',
             nopython=True)
     def _flux_function_numba(S, S0, ind, snow, T, t0, k, m, dt):
 
@@ -185,6 +189,10 @@ class SnowReservoir(ODEsElement):
             ),
             0.0,
             S0 + snow[ind] * dt[ind],
+            (
+                0.0,
+                - melt_potential * np.exp(-(S / m[ind])) / m[ind]
+            )
         )
 
 

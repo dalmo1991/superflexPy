@@ -25,8 +25,8 @@ DESIGNED BY: Marco Dal Molin, Fabrizio Fenicia, Dmitri Kavetski
 This file implements a version of the model Hymod
 """
 
-from superflexpy.implementation.computation.pegasus_root_finding import PegasusPython
-from superflexpy.implementation.computation.implicit_euler import ImplicitEulerPython
+from superflexpy.implementation.root_finders.pegasus import PegasusPython
+from superflexpy.implementation.numerical_approximators.implicit_euler import ImplicitEulerPython
 from superflexpy.implementation.elements.hymod import UpperZone, LinearReservoir
 from superflexpy.implementation.elements.structure_elements import Junction, Splitter, Transparent
 from superflexpy.framework.unit import Unit

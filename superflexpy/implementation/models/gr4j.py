@@ -25,8 +25,8 @@ DESIGNED BY: Marco Dal Molin, Fabrizio Fenicia, Dmitri Kavetski
 This file implements a version of the model GR4J
 """
 
-from superflexpy.implementation.computation.pegasus_root_finding import PegasusPython
-from superflexpy.implementation.computation.implicit_euler import ImplicitEulerPython
+from superflexpy.implementation.root_finders.pegasus import PegasusPython
+from superflexpy.implementation.numerical_approximators.implicit_euler import ImplicitEulerPython
 from superflexpy.implementation.elements.gr4j import InterceptionFilter, ProductionStore, UnitHydrograph1, UnitHydrograph2, RoutingStore, FluxAggregator
 from superflexpy.implementation.elements.structure_elements import Transparent, Splitter, Junction
 from superflexpy.framework.unit import Unit

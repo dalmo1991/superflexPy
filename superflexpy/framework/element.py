@@ -504,6 +504,8 @@ class ODEsElement(StateParameterizedElement):
     float
         Maximum value of the state. Used, sometimes, by the numerical solver
         to search for the solution.
+    list(floats)
+        Values of the derivatives of the fluxes w.r.t. the states.
     """
 
     def __init__(self, parameters, states, approximation, id):

@@ -190,7 +190,8 @@ class NumericalApproximator():
             output.append(self._get_fluxes(fluxes=f,
                                            S=S[:, i],  # S is a 2d np array
                                            S0=s_zero,
-                                           args=args))
+                                           args=args,
+                                           dt=kwargs['dt']))
 
         return output
 
@@ -244,5 +245,5 @@ class NumericalApproximator():
         raise NotImplementedError('The method _differential_equation must be implemented')
 
     @staticmethod
-    def _get_fluxes(fluxes, S, S0, args):
+    def _get_fluxes(fluxes, S, S0, args, dt):
         raise NotImplementedError('The method _get_fluxes must be implemented')
