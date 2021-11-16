@@ -15,6 +15,7 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     classifiers=[
         'Development Status :: 5 - Production/Stable',  # https://martin-thoma.com/software-development-stages/
+        'Topic :: Scientific/Engineering :: Hydrology',
     ],
     install_requires=[
         'numpy>=1.19.*',
