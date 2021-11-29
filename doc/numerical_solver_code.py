@@ -10,7 +10,7 @@ from ...superflexpy.utils.root_finder import RootFinder
 
 class CustomRootFinder(RootFinder):
 
-    def solve(self, diff_eq, fluxes, S0, dt, ind, args):
+    def solve(self, diff_eq_fun, fluxes_fun, S0, dt, ind, args):
 
         # Some code here
 
@@ -20,15 +20,32 @@ class CustomRootFinder(RootFinder):
 class CustomNumericalApproximator(NumericalApproximator):
 
     @staticmethod
-    def _get_fluxes(fluxes, S, S0, args):
+    def _get_fluxes(fluxes_fun, S, S0, args, dt):
 
         # Some code here
 
         return fluxes
 
     @staticmethod
-    def _differential_equation(fluxes, S, S0, dt, args, ind):
+    def _differential_equation(fluxes_fun, S, S0, dt, args, ind):
 
         # Some code here
 
-        return [diff_eq, min_val, max_val]
+        return [diff_eq, min_val, max_val, d_diff_eq]
+
+
+class CustomODESolver():
+
+    # The class may implement other methods
+
+    def solve(self, fluxes_fun, S0, dt, args):
+
+        # Some code here
+
+        return states
+
+    def get_fluxes(self, fluxes_fun, S, S0, dt, args):
+
+        # Some code here
+
+        return fluxes

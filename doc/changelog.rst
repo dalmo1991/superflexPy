@@ -1,7 +1,38 @@
-.. note:: Last update 24/05/2021
+.. note:: Last update 29/11/2021
 
 Change log
 ==========
+
+Version 1.3.1
+-------------
+
+Minor changes
+.............
+
+- Added the classifier :code:`Topic :: Scientific/Engineering :: Hydrology`
+
+Version 1.3.0
+-------------
+
+Major changes to existing components
+....................................
+
+- :code:`ODEsElements` can now return the derivative of the fluxes together with
+  the fluxes. This enables the usage of numerical solvers that use the
+  derivatives (e.g., Newton methods).
+- Folder structure improved. The numerical approximators and the root finders
+  have been moved from the folder :code:`implementation/computation` to
+  :code:`implementation/numerical_approximators` and
+  :code:`implementation/root_finders`, respectively. Names of the files have
+  been slightly modified to be coherent with this new folder organization.
+
+New code
+........
+
+- Implemented a new numerical approximator implementing Runge Kutta 4
+- Implemented a new root finder implementing a Newton-bisection method
+- Implemented a new root finder implementing a trivial algorithm to solve
+  explicit algebraic equations.
 
 Version 1.2.1
 -------------

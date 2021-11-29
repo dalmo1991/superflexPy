@@ -7,8 +7,8 @@ from matplotlib.lines import Line2D
 # Import SuperflexPy
 from superflexpy.implementation.elements.hbv import PowerReservoir
 from superflexpy.implementation.elements.gr4j import UnitHydrograph1
-from superflexpy.implementation.computation.pegasus_root_finding import PegasusPython
-from superflexpy.implementation.computation.implicit_euler import ImplicitEulerPython
+from superflexpy.implementation.root_finders.pegasus import PegasusPython
+from superflexpy.implementation.numerical_approximators.implicit_euler import ImplicitEulerPython
 from superflexpy.framework.unit import Unit
 from superflexpy.framework.node import Node
 from superflexpy.framework.network import Network

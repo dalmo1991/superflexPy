@@ -106,7 +106,11 @@ class LinearReservoir(ODEsElement):
                     - k[ind] * S,
                 ],
                 0.0,
-                S0 + P[ind] * dt[ind]
+                S0 + P[ind] * dt[ind],
+                [
+                    0.0,
+                    - k[ind]
+                ]
             )
 
     @staticmethod
@@ -120,7 +124,11 @@ class LinearReservoir(ODEsElement):
                 - k[ind] * S,
             ),
             0.0,
-            S0 + P[ind] * dt[ind]
+            S0 + P[ind] * dt[ind],
+            (
+                0.0,
+                - k[ind]
+            )
         )
 
 # Implement lag function

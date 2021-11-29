@@ -1,7 +1,7 @@
 .. TODO:
 .. - Final check of correspondence with the paper
 
-.. note:: Last update 04/05/2021
+.. note:: Last update 21/07/2021
 
 .. .. warning:: This guide is still work in progress. New pages are being written
 ..              and existing ones modified. Once the guide will reach its final
@@ -87,7 +87,7 @@ This element can be implemented by extending the class :code:`ODEsElement`.
 
 .. literalinclude:: popular_models_code.py
    :language: python
-   :lines: 581-679
+   :lines: 619-727
    :linenos:
 
 Fast reservoir
@@ -97,7 +97,7 @@ This element can be implemented by extending the class :code:`ODEsElement`.
 
 .. literalinclude:: popular_models_code.py
    :language: python
-   :lines: 681-758
+   :lines: 729-815
    :linenos:
 
 Model initialization
@@ -110,7 +110,7 @@ First, we initialize all elements.
 
 .. literalinclude:: popular_models_code.py
    :language: python
-   :lines: 762-777
+   :lines: 818-833
    :linenos:
 
 Next, the elements can be put together to create a :code:`Unit` that reflects
@@ -118,7 +118,7 @@ the structure presented in the figure.
 
 .. literalinclude:: popular_models_code.py
    :language: python
-   :lines: 779-785
+   :lines: 835-840
    :linenos:
 
 .. _gr4j_example:
@@ -255,7 +255,7 @@ can be constructed by extending the class :code:`ODEsElement`
 
 .. literalinclude:: popular_models_code.py
    :language: python
-   :lines: 29-130
+   :lines: 29-140
    :linenos:
 
 Unit hydrographs
@@ -266,12 +266,12 @@ implemented as follows
 
 .. literalinclude:: popular_models_code.py
    :language: python
-   :lines: 236-264
+   :lines: 256-284
    :linenos:
 
 .. literalinclude:: popular_models_code.py
    :language: python
-   :lines: 267-298
+   :lines: 287-318
    :linenos:
 
 Routing store
@@ -281,7 +281,7 @@ The routing store is an :code:`ODEsElement`
 
 .. literalinclude:: popular_models_code.py
    :language: python
-   :lines: 133-215
+   :lines: 143-235
    :linenos:
 
 Flux aggregator
@@ -291,7 +291,7 @@ The flux aggregator can be implemented by extending a :code:`BaseElement`
 
 .. literalinclude:: popular_models_code.py
    :language: python
-   :lines: 218-233
+   :lines: 238-253
    :linenos:
 
 Model initialization
@@ -304,7 +304,7 @@ First, we initialize all elements.
 
 .. literalinclude:: popular_models_code.py
    :language: python
-   :lines: 300-338
+   :lines: 320-358
    :linenos:
 
 The elements are then put together to define a :code:`Unit` that reflects the
@@ -312,7 +312,7 @@ GR4J structure presented in the figure.
 
 .. literalinclude:: popular_models_code.py
    :language: python
-   :lines: 340-347
+   :lines: 360-367
    :linenos:
 
 .. _hymod:
@@ -428,7 +428,7 @@ The upper zone reservoir can be implemented by extending the class
 
 .. literalinclude:: popular_models_code.py
    :language: python
-   :lines: 352-450
+   :lines: 372-480
    :linenos:
 
 Channel routing and lower zone
@@ -439,7 +439,7 @@ reservoirs that can be implemented by extending the class :code:`ODEsElement`.
 
 .. literalinclude:: popular_models_code.py
    :language: python
-   :lines: 453-530
+   :lines: 483-568
    :linenos:
 
 Model initialization
@@ -453,7 +453,7 @@ First, we initialize all elements.
 
 .. literalinclude:: popular_models_code.py
    :language: python
-   :lines: 533-570
+   :lines: 571-608
    :linenos:
 
 The elements are now combined to define a :code:`Unit` that reflects the
@@ -461,5 +461,5 @@ structure shown in the figure.
 
 .. literalinclude:: popular_models_code.py
    :language: python
-   :lines: 572-578
+   :lines: 610-616
    :linenos:

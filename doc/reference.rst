@@ -1,4 +1,4 @@
-.. note:: Last update 08/04/2021
+.. note:: Last update 20/07/2021
 
 .. .. warning:: This guide is still work in progress. New pages are being written
 ..              and existing ones modified. Once the guide will reach its final
@@ -122,7 +122,5 @@ superflexpy.utils.numerical_approximator
 
 .. autoclass:: superflexpy.utils.numerical_approximator.NumericalApproximator
     :members:
-    :undoc-members:
-    :private-members:
     :special-members: __init__
     :show-inheritance:

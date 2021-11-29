@@ -1,7 +1,7 @@
 .. TODO
 .. - review the conde inserted
 
-.. note:: Last update 04/05/2021
+.. note:: Last update 21/07/2021
 
 .. .. warning:: This guide is still work in progress. New pages are being written
 ..              and existing ones modified. Once the guide will reach its final
@@ -120,11 +120,11 @@ from the Numba optimization.
 
 The last methods to implement are :code:`_fluxes_function_python` (pure Python)
 and :code:`_fluxes_function_numba` (Numba optimized), which calculate the
-reservoir fluxes.
+reservoir fluxes and their derivatives.
 
 .. literalinclude:: build_element_code.py
    :language: python
-   :lines: 90-124
+   :lines: 90-132
    :linenos:
 
 :code:`_fluxes_function_python` and :code:`_fluxes_function_numba` are both
@@ -142,11 +142,15 @@ The output is a tuple containing three elements:
   (e.g. streamflow, :code:`- k * S`);
 - lower bound for the search of the state;
 - upper bound for the search of the state;
+- tuple with the computed values of the derivatives of fluxes w.r.t. the state :code:`S`;
+  we maintain the convention of positive sign for incoming
+  fluxes (e.g. derivative of the precipitation, :code:`0`), negative sign  for outgoing fluxes
+  (e.g. derivative of the streamflow, :code:`- k`);
 
 The implementation for the Numba solver differs from the pure Python implementation in two aspects:
 
 - the usage of the Numba decorator that defines the types of input variables
-  (lines 24-25)
+  (lines 28-29)
 - the method works only for a single time step and not for the vectorized
   solution. For the vectorized solution the Python implementation (with Numpy)
   is considered sufficient, and hence a Numba implementation is not pursued.
@@ -176,7 +180,7 @@ implement only the methods needed to compute the weight array.
 
 .. literalinclude:: build_element_code.py
    :language: python
-   :lines: 2, 128, 129
+   :lines: 2, 136, 137
    :linenos:
 
 The only method requiring implementation is the private method used to
@@ -184,14 +188,14 @@ calculate the :code:`weight` array.
 
 .. literalinclude:: build_element_code.py
    :language: python
-   :lines: 146-160
+   :lines: 154-168
    :linenos:
 
 The method :code:`_build_weight` makes use of a secondary private static method
 
 .. literalinclude:: build_element_code.py
    :language: python
-   :lines: 162-172
+   :lines: 170-180
    :linenos:
 
 This method returns the area :math:`A_i` of the red triangle in the figure,
@@ -228,7 +232,7 @@ the new functionality.
 
 .. literalinclude:: build_element_code.py
    :language: python
-   :lines: 5, 176, 177
+   :lines: 5, 184, 185
    :linenos:
 
 First, we define two private attributes that specify the number of upstream and
@@ -237,7 +241,7 @@ constructing the model structure.
 
 .. literalinclude:: build_element_code.py
    :language: python
-   :lines: 194-195
+   :lines: 202-203
    :linenos:
 
 We then define the method that receives the inputs, and the method that calculates
@@ -245,7 +249,7 @@ the outputs.
 
 .. literalinclude:: build_element_code.py
    :language: python
-   :lines: 197, 208-211, 227-233
+   :lines: 205, 216-219, 235-241
    :linenos:
 
 The two methods have the same structure as the ones implemented as part of the earlier

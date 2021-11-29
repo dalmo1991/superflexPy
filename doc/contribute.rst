@@ -1,4 +1,4 @@
-.. note:: Last update 03/05/2021
+.. note:: Last update 22/07/2021
 
 .. .. warning:: This guide is still work in progress. New pages are being written
 ..              and existing ones modified. Once the guide will reach its final
@@ -42,8 +42,8 @@ GitHub and is published online in
 `Read the Docs <https://superflexpy.readthedocs.io/>`_.
 
 Examples are available on GitHub as Jupyter notebooks. These examples can be
-visualized statically or run in a sandbox environment (see :ref:`examples` for
-further details).
+visualized statically or run in a sandbox environment (Binder). Refer to :ref:`examples` for
+a list of the available examples.
 
 The scientific publication introducing SuperflexPy has been submitted to
 *Geoscientific Model Development* and is currently under review. The draft is
