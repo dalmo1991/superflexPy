@@ -22,7 +22,7 @@ copyright = '2021, Marco Dal Molin, Dmitri Kavetski, Fabrizio Fenicia'
 author = 'Marco Dal Molin, Dmitri Kavetski, Fabrizio Fenicia'
 
 # The full version, including alpha/beta/rc tags
-release = '1.2.1'
+release = '1.3.0'
 
 
 # -- General configuration ---------------------------------------------------
