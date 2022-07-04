@@ -1,6 +1,7 @@
 .. note:: Last update 24/05/2021
 
 .. _sfpy_lit:
+
 SuperflexPy in the scientific literature
 ========================================
 
