@@ -5,7 +5,8 @@
 ..              version, this box will disappear.
 
 .. tip:: If interested in reading more about SuperflexPy, please check our
-         `publication <https://doi.org/10.5194/gmd-2020-409>`_
+         `publication <https://doi.org/10.5194/gmd-14-7047-2021>`_ and the page
+         :ref:`sfpy_lit`
 
 Principles of SuperflexPy
 =========================

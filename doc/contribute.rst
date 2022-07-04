@@ -45,9 +45,8 @@ Examples are available on GitHub as Jupyter notebooks. These examples can be
 visualized statically or run in a sandbox environment (Binder). Refer to :ref:`examples` for
 a list of the available examples.
 
-The scientific publication introducing SuperflexPy has been submitted to
-*Geoscientific Model Development* and is currently under review. The draft is
-available `here <https://doi.org/10.5194/gmd-2020-409>`_.
+The scientific publication introducing SuperflexPy has been published in
+*Geoscientific Model Development* (`link <https://doi.org/10.5194/gmd-14-7047-2021>`_).
 
 Contributions
 -------------
