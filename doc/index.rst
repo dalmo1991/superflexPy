@@ -60,7 +60,7 @@ at `Eawag <https://www.eawag.ch>`_, with the support of external collaborators.
 
 The core team consists of:
 
-- `Dr. Marco Dal Molin <www.linkedin.com/in/dalmolma>`_ (implementation and design)
+- `Dr. Marco Dal Molin <https://www.linkedin.com/in/dalmolma>`_ (implementation and design)
 
 - `Dr. Fabrizio Fenicia <https://www.eawag.ch/en/aboutus/portrait/organisation/staff/profile/fabrizio-fenicia/show/>`_
   (design and supervision)
