@@ -53,14 +53,14 @@ Constructing a hydrological model is straightforward with SuperflexPy:
 Team
 ----
 
-SuperflexPy is actively developed by researchers in the
+SuperflexPy is developed and maintained by researchers in the
 `Hydrological Modelling Group
 <https://www.eawag.ch/en/department/siam/main-focus/hydrological-modelling/>`_
 at `Eawag <https://www.eawag.ch>`_, with the support of external collaborators.
 
 The core team consists of:
 
-- `Marco Dal Molin <https://www.eawag.ch/~dalmolma>`_ (implementation and design)
+- `Dr. Marco Dal Molin <https://www.linkedin.com/in/dalmolma>`_ (implementation and design)
 
 - `Dr. Fabrizio Fenicia <https://www.eawag.ch/en/aboutus/portrait/organisation/staff/profile/fabrizio-fenicia/show/>`_
   (design and supervision)
@@ -71,9 +71,8 @@ The core team consists of:
 Stay in touch
 -------------
 
-If you wish to receive e-mails about future SuperflexPy developments\,
-please subscribe to our mailing list `clicking here
-<https://forms.gle/utLbF6KWqvqS7LHZ7>`_.
+If you wish to receive emails about ongoing SuperflexPy developments\,
+please `subscribe <https://forms.gle/utLbF6KWqvqS7LHZ7>`_ to our mailing list.
 
 .. note:: Using SuperflexPy requires a general knowledge of Python and Numpy.
           Other Python libraries may be needed for pre- and post- processing of
