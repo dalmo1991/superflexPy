@@ -8,13 +8,14 @@ SuperflexPy in the scientific literature
 This page lists the scientific publications presenting SuperflexPy or using it
 in specific applications.
 
-If you use SuperflexPy for your publication, please `open an issue <https://github.com/dalmo1991/superflexPy/issues>` in the GitHub
-repository so we will add it to this page.
+.. tip::
+   If you use SuperflexPy for your publication, please `open an issue <https://github.com/dalmo1991/superflexPy/issues>`_ in the GitHub
+   repository so we will add it to this page.
 
 Previous publications on FLEX and Superflex
 -------------------------------------------
 
-- Fenicia, F.,Savenije, H. H. G.,Matgen, P., and Pfister, L.: **Understanding catchment behavior through stepwise model concept improvement**, Water Resources Research, 44, W01402, https://doi.org/10.1029/2006WR005563, 2008.
+- Fenicia, F., Savenije, H. H. G.,Matgen, P., and Pfister, L.: **Understanding catchment behavior through stepwise model concept improvement**, Water Resources Research, 44, W01402, https://doi.org/10.1029/2006WR005563, 2008.
 - Fenicia, F., Kavetski D., and Savenije H. H. G.: **Elements of a flexible approach for conceptual hydrological modeling: 1. Motivation and theoretical development**, Water Resources Research, 47(11), W11510, https://doi.org/10.1029/2010wr010174, 2011
 - Kavetski, D., and Fenicia F.: **Elements of a flexible approach for conceptual hydrological modeling: 2. Application and experimental insights**, Water Resources Research, 47(11), W11511, https://doi.org/10.1029/2011wr010748, 2011
 
