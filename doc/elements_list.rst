@@ -154,7 +154,7 @@ Governing equations
    & \frac{\textrm{d}S}{\textrm{d}{t}}=P_{\textrm{s}}-E_{\textrm{act}}-Q_{\textrm{perc}} \\
    & P_{\textrm{s}}=P\left(1-\left(\frac{S}{x_1}\right)^\alpha\right) \\
    & E_{\textrm{act}}=E_{\textrm{pot}}\left(2\frac{S}{x_1}-\left(\frac{S}{x_1}\right)^\alpha\right) \\
-   & Q_{\textrm{perc}} = \frac{x^{1-\beta}}{(\beta-1)}\nu^{\beta-1}S^{\beta} \\
+   & Q_{\textrm{perc}} = \frac{{x_1}^{1-\beta}}{(\beta-1)}\nu^{\beta-1}S^{\beta} \\
    & P_{\textrm{r}}=P - P_{\textrm{s}} + Q_{\textrm{perc}}
 
 Routing store (GR4J)
