@@ -167,7 +167,7 @@ class NumericalApproximator():
                                       args=args,
                                       root_settings=root_settings))
 
-        return np.array(output).reshape((-1, len(fun)))
+        return np.array(output).reshape((len(fun), -1)).T
 
     def get_fluxes(self, fluxes, S, S0, **kwargs):
 
