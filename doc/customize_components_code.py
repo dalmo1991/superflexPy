@@ -1,5 +1,6 @@
-from superflexpy.framework.node import Node
 import numpy as np
+
+from superflexpy.framework.node import Node
 
 
 class RoutedNone(Node):
@@ -11,8 +12,7 @@ class RoutedNone(Node):
     """
 
     def _internal_routing(self, flux):
-
-        t_internal = self.get_parameters(names=[self._prefix_local_parameters + 't_internal'])
+        t_internal = self.get_parameters(names=[self._prefix_local_parameters + "t_internal"])
         flux_out = []
 
         for f in flux:
@@ -21,8 +21,7 @@ class RoutedNone(Node):
         return flux_out
 
     def external_routing(self, flux):
-
-        t_external = self.get_parameters(names=[self._prefix_local_parameters + 't_external'])
+        t_external = self.get_parameters(names=[self._prefix_local_parameters + "t_external"])
         flux_out = []
 
         for f in flux:
@@ -31,7 +30,6 @@ class RoutedNone(Node):
         return flux_out
 
     def _route(self, flux, time):
-
         state = np.zeros(int(np.ceil(time)))
         weight = self._calculate_weight(time)
 
@@ -45,20 +43,17 @@ class RoutedNone(Node):
         return np.array(out)
 
     def _calculate_weight(self, time):
-
         weight = []
 
         array_length = np.ceil(time)
 
         for i in range(int(array_length)):
-            weight.append(self._calculate_lag_area(i + 1, time)
-                          - self._calculate_lag_area(i, time))
+            weight.append(self._calculate_lag_area(i + 1, time) - self._calculate_lag_area(i, time))
 
         return weight
 
     @staticmethod
     def _calculate_lag_area(portion, time):
-
         half_time = time / 2
 
         if portion <= 0:
@@ -66,7 +61,7 @@ class RoutedNone(Node):
         elif portion < half_time:
             value = 2 * (portion / time) ** 2
         elif portion < time:
-            value = 1 - 2 * ((time - portion) / time)**2
+            value = 1 - 2 * ((time - portion) / time) ** 2
         else:
             value = 1
 

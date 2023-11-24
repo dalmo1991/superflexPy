@@ -60,12 +60,12 @@ class GenericComponent(object):
     to the component, at initialization.
     """
 
-    _prefix_local_parameters = ''
+    _prefix_local_parameters = ""
     """
     Prefix applied to local parameters
     """
 
-    _prefix_local_states = ''
+    _prefix_local_states = ""
     """
     Prefix applied to local states
     """
@@ -113,7 +113,12 @@ class GenericComponent(object):
                         try:
                             cont_pars = self._content[position].get_parameters([n])
                             break
-                        except (AttributeError, KeyError):  # Attribute error because the content may not have the method, Key error because the parameter may not belong to the content
+                        except (
+                            AttributeError,
+                            KeyError,
+                        ):
+                            # Attribute error because the content may not have the method,
+                            # Key error because the parameter may not belong to the content
                             continue
                 elif position == -1:  # it means local
                     cont_pars = {n: self._local_parameters[n]}
@@ -153,7 +158,7 @@ class GenericComponent(object):
             Index of the component in self._content
         """
 
-        splitted_name = name.split('_')
+        splitted_name = name.split("_")
 
         try:
             class_id = self.id
@@ -251,7 +256,12 @@ class GenericComponent(object):
                         try:
                             cont_st = self._content[position].get_states([n])
                             break
-                        except (AttributeError, KeyError):  # Attribute error because the content may not have the method, Key error because the parameter may not belong to the content
+                        except (
+                            AttributeError,
+                            KeyError,
+                        ):
+                            # Attribute error because the content may not have the method,
+                            # Key error because the parameter may not belong to the content
                             continue
                 elif position == -1:
                     cont_st = {n: self._local_states[n]}
@@ -336,7 +346,7 @@ class GenericComponent(object):
                 if i == local_id and self._init_local_states:
                     self.set_states(states=self._init_local_states)
                 elif i != local_id:
-                    i += '_X'  # Needed to work with find_content_from_name
+                    i += "_X"  # Needed to work with find_content_from_name
                     position = self._find_content_from_name(i)
 
                     self._content[position].reset_states()

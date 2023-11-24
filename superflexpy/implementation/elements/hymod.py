@@ -41,9 +41,9 @@ https://doi.org/10.5194/hess-5-13-2001, 2001.
 """
 
 
-from ...framework.element import ODEsElement
-import numpy as np
 import numba as nb
+
+from ...framework.element import ODEsElement
 
 
 class UpperZone(ODEsElement):
@@ -73,17 +73,13 @@ class UpperZone(ODEsElement):
             have an id.
         """
 
-        ODEsElement.__init__(self,
-                             parameters=parameters,
-                             states=states,
-                             approximation=approximation,
-                             id=id)
+        ODEsElement.__init__(self, parameters=parameters, states=states, approximation=approximation, id=id)
 
         self._fluxes_python = [self._fluxes_function_python]
 
-        if approximation.architecture == 'numba':
+        if approximation.architecture == "numba":
             self._fluxes = [self._fluxes_function_numba]
-        elif approximation.architecture == 'python':
+        elif approximation.architecture == "python":
             self._fluxes = [self._fluxes_function_python]
 
     def set_input(self, input):
@@ -99,8 +95,7 @@ class UpperZone(ODEsElement):
             2. PET
         """
 
-        self.input = {'P': input[0],
-                      'PET': input[1]}
+        self.input = {"P": input[0], "PET": input[1]}
 
     def get_output(self, solve=True):
         """
@@ -115,20 +110,21 @@ class UpperZone(ODEsElement):
         """
 
         if solve:
-            self._solver_states = [self._states[self._prefix_states + 'S0']]
+            self._solver_states = [self._states[self._prefix_states + "S0"]]
 
             self._solve_differential_equation()
 
             # Update the state
-            self.set_states({self._prefix_states + 'S0': self.state_array[-1, 0]})
+            self.set_states({self._prefix_states + "S0": self.state_array[-1, 0]})
 
-        fluxes = self._num_app.get_fluxes(fluxes=self._fluxes_python,
-                                          S=self.state_array,
-                                          S0=self._solver_states,
-                                          dt=self._dt,
-                                          **self.input,
-                                          **{k[len(self._prefix_parameters):]: self._parameters[k] for k in self._parameters},
-                                          )
+        fluxes = self._num_app.get_fluxes(
+            fluxes=self._fluxes_python,
+            S=self.state_array,
+            S0=self._solver_states,
+            dt=self._dt,
+            **self.input,
+            **{k[len(self._prefix_parameters) :]: self._parameters[k] for k in self._parameters},
+        )
 
         return [-fluxes[0][2]]
 
@@ -145,19 +141,20 @@ class UpperZone(ODEsElement):
         try:
             S = self.state_array
         except AttributeError:
-            message = '{}get_aet method has to be run after running '.format(self._error_message)
-            message += 'the model using the method get_output'
+            message = "{}get_aet method has to be run after running ".format(self._error_message)
+            message += "the model using the method get_output"
             raise AttributeError(message)
 
-        fluxes = self._num_app.get_fluxes(fluxes=self._fluxes_python,
-                                          S=S,
-                                          S0=self._solver_states,
-                                          dt=self._dt,
-                                          **self.input,
-                                          **{k[len(self._prefix_parameters):]: self._parameters[k] for k in self._parameters},
-                                          )
+        fluxes = self._num_app.get_fluxes(
+            fluxes=self._fluxes_python,
+            S=S,
+            S0=self._solver_states,
+            dt=self._dt,
+            **self.input,
+            **{k[len(self._prefix_parameters) :]: self._parameters[k] for k in self._parameters},
+        )
 
-        return [- fluxes[0][1]]
+        return [-fluxes[0][1]]
 
     # PROTECTED METHODS
 
@@ -169,47 +166,50 @@ class UpperZone(ODEsElement):
             return (
                 [
                     P,
-                    - PET * ((S / Smax) * (1 + m)) / ((S / Smax) + m),
-                    - P * (1 - (1 - (S / Smax))**beta),
+                    -PET * ((S / Smax) * (1 + m)) / ((S / Smax) + m),
+                    -P * (1 - (1 - (S / Smax)) ** beta),
                 ],
                 0.0,
-                S0 + P * dt
+                S0 + P * dt,
             )
         else:
             return (
                 [
                     P[ind],
-                    - PET[ind] * ((S / Smax[ind]) * (1 + m[ind])) / ((S / Smax[ind]) + m[ind]),
-                    - P[ind] * (1 - (1 - (S / Smax[ind]))**beta[ind]),
+                    -PET[ind] * ((S / Smax[ind]) * (1 + m[ind])) / ((S / Smax[ind]) + m[ind]),
+                    -P[ind] * (1 - (1 - (S / Smax[ind])) ** beta[ind]),
                 ],
                 0.0,
                 S0 + P[ind] * dt[ind],
                 [
                     0.0,
-                    - PET[ind] * m[ind] * Smax[ind] * (1 + m[ind]) / ((S + Smax[ind] * m[ind])**2),
-                    - P[ind] * beta[ind] * ((1 - (S / Smax[ind]))**(beta[ind] - 1)) / Smax[ind],
-                ]
+                    -PET[ind] * m[ind] * Smax[ind] * (1 + m[ind]) / ((S + Smax[ind] * m[ind]) ** 2),
+                    -P[ind] * beta[ind] * ((1 - (S / Smax[ind])) ** (beta[ind] - 1)) / Smax[ind],
+                ],
             )
 
     @staticmethod
-    @nb.jit('Tuple((UniTuple(f8, 3), f8, f8, UniTuple(f8, 3)))(optional(f8), f8, i4, f8[:], f8[:], f8[:], f8[:], f8[:], f8[:])',
-            nopython=True)
+    @nb.jit(
+        "Tuple((UniTuple(f8, 3), f8, f8, UniTuple(f8, 3)))"
+        "(optional(f8), f8, i4, f8[:], f8[:], f8[:], f8[:], f8[:], f8[:])",
+        nopython=True,
+    )
     def _fluxes_function_numba(S, S0, ind, P, Smax, m, beta, PET, dt):
         # TODO: handle time variable parameters (Smax) -> overflow
 
         return (
             (
                 P[ind],
-                - PET[ind] * ((S / Smax[ind]) * (1 + m[ind])) / ((S / Smax[ind]) + m[ind]),
-                - P[ind] * (1 - (1 - (S / Smax[ind]))**beta[ind]),
+                -PET[ind] * ((S / Smax[ind]) * (1 + m[ind])) / ((S / Smax[ind]) + m[ind]),
+                -P[ind] * (1 - (1 - (S / Smax[ind])) ** beta[ind]),
             ),
             0.0,
             S0 + P[ind] * dt[ind],
             (
                 0.0,
-                - PET[ind] * m[ind] * Smax[ind] * (1 + m[ind]) / ((S + Smax[ind] * m[ind])**2),
-                - P[ind] * beta[ind] * ((1 - (S / Smax[ind]))**(beta[ind] - 1)) / Smax[ind],
-            )
+                -PET[ind] * m[ind] * Smax[ind] * (1 + m[ind]) / ((S + Smax[ind] * m[ind]) ** 2),
+                -P[ind] * beta[ind] * ((1 - (S / Smax[ind])) ** (beta[ind] - 1)) / Smax[ind],
+            ),
         )
 
 
@@ -238,17 +238,13 @@ class LinearReservoir(ODEsElement):
             have an id.
         """
 
-        ODEsElement.__init__(self,
-                             parameters=parameters,
-                             states=states,
-                             approximation=approximation,
-                             id=id)
+        ODEsElement.__init__(self, parameters=parameters, states=states, approximation=approximation, id=id)
 
         self._fluxes_python = [self._fluxes_function_python]  # Used by get fluxes, regardless of the architecture
 
-        if approximation.architecture == 'numba':
+        if approximation.architecture == "numba":
             self._fluxes = [self._fluxes_function_numba]
-        elif approximation.architecture == 'python':
+        elif approximation.architecture == "python":
             self._fluxes = [self._fluxes_function_python]
 
     # METHODS FOR THE USER
@@ -265,7 +261,7 @@ class LinearReservoir(ODEsElement):
             1. Rainfall
         """
 
-        self.input = {'P': input[0]}
+        self.input = {"P": input[0]}
 
     def get_output(self, solve=True):
         """
@@ -280,65 +276,60 @@ class LinearReservoir(ODEsElement):
         """
 
         if solve:
-            self._solver_states = [self._states[self._prefix_states + 'S0']]
+            self._solver_states = [self._states[self._prefix_states + "S0"]]
             self._solve_differential_equation()
 
             # Update the state
-            self.set_states({self._prefix_states + 'S0': self.state_array[-1, 0]})
+            self.set_states({self._prefix_states + "S0": self.state_array[-1, 0]})
 
-        fluxes = self._num_app.get_fluxes(fluxes=self._fluxes_python,  # I can use the python method since it is fast
-                                          S=self.state_array,
-                                          S0=self._solver_states,
-                                          dt=self._dt,
-                                          **self.input,
-                                          **{k[len(self._prefix_parameters):]: self._parameters[k] for k in self._parameters},
-                                          )
+        fluxes = self._num_app.get_fluxes(
+            fluxes=self._fluxes_python,  # I can use the python method since it is fast
+            S=self.state_array,
+            S0=self._solver_states,
+            dt=self._dt,
+            **self.input,
+            **{k[len(self._prefix_parameters) :]: self._parameters[k] for k in self._parameters},
+        )
 
-        return [- fluxes[0][1]]
+        return [-fluxes[0][1]]
 
     # PROTECTED METHODS
 
     @staticmethod
     def _fluxes_function_python(S, S0, ind, P, k, dt):
-
         if ind is None:
             return (
                 [
                     P,
-                    - k * S,
+                    -k * S,
                 ],
                 0.0,
-                S0 + P * dt
+                S0 + P * dt,
             )
         else:
             return (
                 [
                     P[ind],
-                    - k[ind] * S,
+                    -k[ind] * S,
                 ],
                 0.0,
                 S0 + P[ind] * dt[ind],
-                [
-                    0.0,
-                    - k[ind]
-                ]
+                [0.0, -k[ind]],
             )
 
     @staticmethod
-    @nb.jit('Tuple((UniTuple(f8, 2), f8, f8, UniTuple(f8, 2)))(optional(f8), f8, i4, f8[:], f8[:], f8[:])',
-            nopython=True)
+    @nb.jit(
+        "Tuple((UniTuple(f8, 2), f8, f8, UniTuple(f8, 2)))(optional(f8), f8, i4, f8[:], f8[:], f8[:])", nopython=True
+    )
     def _fluxes_function_numba(S, S0, ind, P, k, dt):
         # This method is used only when solving the equation
 
         return (
             (
                 P[ind],
-                - k[ind] * S,
+                -k[ind] * S,
             ),
             0.0,
             S0 + P[ind] * dt[ind],
-            (
-                0.0,
-                - k[ind]
-            )
+            (0.0, -k[ind]),
         )

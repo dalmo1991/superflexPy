@@ -26,8 +26,9 @@ This file contains the implementation of the Newton method for root finding. The
 solution is forced to be bounded by the limits of acceptability.
 """
 
-import numpy as np
 import numba as nb
+import numpy as np
+
 from ...utils.root_finder import RootFinder
 
 
@@ -52,13 +53,11 @@ class NewtonPython(RootFinder):
             Maximum number of iteration of the solver. After this value it
             raises a runtime error
         """
-        super().__init__(tol_F=tol_F,
-                         tol_x=tol_x,
-                         iter_max=iter_max)
-        self._name = 'NewtonPython'
-        self.architecture = 'python'
-        self._error_message = 'module : superflexPy, solver : {},'.format(self._name)
-        self._error_message += ' Error message : '
+        super().__init__(tol_F=tol_F, tol_x=tol_x, iter_max=iter_max)
+        self._name = "NewtonPython"
+        self.architecture = "python"
+        self._error_message = "module : superflexPy, solver : {},".format(self._name)
+        self._error_message += " Error message : "
 
     def solve(self, diff_eq, fluxes, S0, dt, ind, args):
         """
@@ -116,14 +115,13 @@ class NewtonPython(RootFinder):
             need_solve = False
 
         if fa * fb > 0:
-            message = '{}fa and fb have the same sign: {} vs {}'.format(self._error_message, fa, fb)
+            message = "{}fa and fb have the same sign: {} vs {}".format(self._error_message, fa, fb)
             raise ValueError(message)
 
         if need_solve:
             root = (a_orig + b_orig) / 2
 
             for j in range(self._iter_max):
-
                 f, *_, df = diff_eq(fluxes=fluxes, S=root, S0=S0, dt=dt, args=args, ind=ind)
 
                 if np.abs(f) < self._tol_F:
@@ -139,7 +137,7 @@ class NewtonPython(RootFinder):
                     a = root
 
                 # Calculate new root
-                dx = - f / df
+                dx = -f / df
                 root = root + dx
 
                 if np.abs(dx) < self._tol_x:
@@ -163,7 +161,7 @@ class NewtonPython(RootFinder):
                         root = (a + b) / 2
 
                 if j + 1 == self._iter_max:
-                    message = '{}not converged. iter_max : {}'.format(self._error_message, self._iter_max)
+                    message = "{}not converged. iter_max : {}".format(self._error_message, self._iter_max)
                     raise RuntimeError(message)
 
             return output
@@ -190,18 +188,15 @@ class NewtonNumba(RootFinder):
             Maximum number of iteration of the solver. After this value it
             raises a runtime error
         """
-        super().__init__(tol_F=tol_F,
-                         tol_x=tol_x,
-                         iter_max=iter_max)
-        self._name = 'NewtonNumba'
-        self.architecture = 'numba'
-        self._error_message = 'module : superflexPy, solver : {},'.format(self._name)
-        self._error_message += ' Error message : '
+        super().__init__(tol_F=tol_F, tol_x=tol_x, iter_max=iter_max)
+        self._name = "NewtonNumba"
+        self.architecture = "numba"
+        self._error_message = "module : superflexPy, solver : {},".format(self._name)
+        self._error_message += " Error message : "
 
     @staticmethod
     @nb.jit(nopython=True)
     def solve(diff_eq, fluxes, S0, dt, ind, args, tol_F, tol_x, iter_max):
-
         a_orig, b_orig = diff_eq(fluxes=fluxes, S=None, S0=S0, dt=dt, args=args, ind=ind)[1:3]
 
         # Swap if a_orig > b_orig
@@ -231,7 +226,6 @@ class NewtonNumba(RootFinder):
             root = (a_orig + b_orig) / 2
 
             for j in range(iter_max):
-
                 f, *_, df = diff_eq(fluxes=fluxes, S=root, S0=S0, dt=dt, args=args, ind=ind)
 
                 if np.abs(f) < tol_F:
@@ -247,7 +241,7 @@ class NewtonNumba(RootFinder):
                     a = root
 
                 # Calculate new root
-                dx = - f / df
+                dx = -f / df
                 root = root + dx
 
                 if np.abs(dx) < tol_x:
