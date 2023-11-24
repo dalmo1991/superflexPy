@@ -26,6 +26,7 @@ This file contains the implementation of the Unit class.
 """
 
 from copy import copy, deepcopy
+
 from ..utils.generic_component import GenericComponent
 
 
@@ -55,8 +56,8 @@ class Unit(GenericComponent):
             shared among the different Units.
         """
 
-        self._error_message = 'module : superflexPy, Unit : {},'.format(id)
-        self._error_message += ' Error message : '
+        self._error_message = "module : superflexPy, Unit : {},".format(id)
+        self._error_message += " Error message : "
 
         # Handle local parameters and states
         if parameters is not None:
@@ -69,9 +70,9 @@ class Unit(GenericComponent):
         if copy_pars:
             # Deep-copy the elements
             self._layers = []
-            for l in layers:
+            for layer in layers:
                 self._layers.append([])
-                for el in l:
+                for el in layer:
                     self._layers[-1].append(deepcopy(el))
         else:
             self._layers = layers
@@ -233,27 +234,27 @@ class Unit(GenericComponent):
         """
 
         # Add prefix to local parameters
-        if '_' in id:
-            message = '{}The prefix cannot contain \'_\''.format(self._error_message)
+        if "_" in id:
+            message = "{}The prefix cannot contain '_'".format(self._error_message)
             raise ValueError(message)
 
         if self._local_parameters:  # the following block runs only if the dictionary is not empty
             # Extract the prefixes in the parameters name
-            splitted = list(self._local_parameters.keys())[0].split('_')
+            splitted = list(self._local_parameters.keys())[0].split("_")
 
             if id not in splitted:
                 # Apply the prefix
                 for k in list(self._local_parameters.keys()):
                     value = self._local_parameters.pop(k)
-                    self._local_parameters['{}_{}'.format(id, k)] = value
+                    self._local_parameters["{}_{}".format(id, k)] = value
 
                 # Save the prefix for furure uses
-                self._prefix_local_parameters = '{}_{}'.format(id, self._prefix_local_parameters)
+                self._prefix_local_parameters = "{}_{}".format(id, self._prefix_local_parameters)
 
-        for l in self._layers:
-            for el in l:
+        for layer in self._layers:
+            for element in layer:
                 try:
-                    el.add_prefix_parameters(id)
+                    element.add_prefix_parameters(id)
                 except AttributeError:
                     continue
 
@@ -269,28 +270,28 @@ class Unit(GenericComponent):
         """
 
         # Add prefix to local states
-        if '_' in id:
-            message = '{}The prefix cannot contain \'_\''.format(self._error_message)
+        if "_" in id:
+            message = "{}The prefix cannot contain '_'".format(self._error_message)
             raise ValueError(message)
 
         if self._local_states:  # the following block runs only if the dictionary is not empty
             # Extract the prefixes in the parameters name
-            splitted = list(self._local_states.keys())[0].split('_')
+            splitted = list(self._local_states.keys())[0].split("_")
 
             if id not in splitted:
                 # Apply the prefix
                 for k in list(self._local_states.keys()):
                     value = self._local_states.pop(k)
-                    self._local_states['{}_{}'.format(id, k)] = value
+                    self._local_states["{}_{}".format(id, k)] = value
                     value = self._init_local_states.pop(k)
-                    self._init_local_states['{}_{}'.format(id, k)] = value
+                    self._init_local_states["{}_{}".format(id, k)] = value
 
                 # Save the prefix for furure uses
-                self._prefix_local_states = '{}_{}'.format(id, self._prefix_local_states)
+                self._prefix_local_states = "{}_{}".format(id, self._prefix_local_states)
 
         # add the Prefix to the elements
-        for l in self._layers:
-            for el in l:
+        for layer in self._layers:
+            for el in layer:
                 try:
                     el.add_prefix_states(id)
                 except AttributeError:
@@ -308,7 +309,7 @@ class Unit(GenericComponent):
         for i in range(len(self._layers)):
             for j in range(len(self._layers[i])):
                 if self._layers[i][j].id in self._content_pointer:
-                    message = '{}The element {} already exist.'.format(self._error_message, self._layers[i][j].id)
+                    message = "{}The element {} already exist.".format(self._error_message, self._layers[i][j].id)
                     raise KeyError(message)
                 self._content_pointer[self._layers[i][j].id] = (i, j)
 
@@ -343,7 +344,7 @@ class Unit(GenericComponent):
         try:
             method = getattr(element, function)
         except AttributeError:
-            message = '{}the method {} does not exist.'.format(self._error_message, function)
+            message = "{}the method {} does not exist.".format(self._error_message, function)
             raise AttributeError(message)
 
         return method
@@ -356,11 +357,13 @@ class Unit(GenericComponent):
 
         # Check layer 0
         if len(self._layers[0]) != 1:
-            message = '{}layer 0 has {} elements.'.format(self._error_message, len(self._layers[0]))
+            message = "{}layer 0 has {} elements.".format(self._error_message, len(self._layers[0]))
             raise ValueError(message)
 
         if self._layers[0][0].num_upstream != 1:
-            message = '{}The element in layer 0 has {} upstream elements.'.format(self._error_message, len(self._layers[0][0].num_upstream))
+            message = "{}The element in layer 0 has {} upstream elements.".format(
+                self._error_message, len(self._layers[0][0].num_upstream)
+            )
             raise ValueError(message)
 
         # Check the other layers
@@ -373,70 +376,67 @@ class Unit(GenericComponent):
                 num_upstream += el.num_upstream
 
             if num_downstream != num_upstream:
-                message = '{}Downstream : {}, Upstream : {}'.format(self._error_message, num_downstream, num_upstream)
+                message = "{}Downstream : {}, Upstream : {}".format(self._error_message, num_downstream, num_upstream)
                 raise ValueError(message)
 
         # Check last layer
         if len(self._layers[-1]) != 1:
-            message = '{}last layer has {} elements.'.format(self._error_message, len(self._layers[-1]))
+            message = "{}last layer has {} elements.".format(self._error_message, len(self._layers[-1]))
             raise ValueError(message)
 
         if self._layers[-1][0].num_downstream != 1:
-            message = '{}The element in the last layer has {} downstream elements.'.format(self._error_message, len(self._layers[-1][0].num_downstream))
+            message = "{}The element in the last layer has {} downstream elements.".format(
+                self._error_message, len(self._layers[-1][0].num_downstream)
+            )
             raise ValueError(message)
 
     # MAGIC METHODS
 
     def __copy__(self):
         layers = []
-        for l in self._layers:
+        for layer in self._layers:
             layers.append([])
-            for el in l:
+            for el in layer:
                 layers[-1].append(copy(el))
 
         p = self._local_parameters
         s = deepcopy(self._local_states)
 
-        unit = self.__class__(layers=layers,
-                              id=self.id,
-                              parameters=p,
-                              states=s,
-                              copy_pars=False)  # False because the copy is customized here
+        unit = self.__class__(
+            layers=layers, id=self.id, parameters=p, states=s, copy_pars=False
+        )  # False because the copy is customized here
         unit._prefix_local_parameters = self._prefix_local_parameters
         unit._prefix_local_states = self._prefix_local_states
 
         return unit
 
     def __deepcopy__(self, memo):
-
         p = deepcopy(self._local_parameters)
         s = deepcopy(self._local_states)
 
-        unit = self.__class__(layers=self._layers,
-                              id=self.id,
-                              parameters=p,
-                              states=s,
-                              copy_pars=True)  # init already implements deepcopy
+        unit = self.__class__(
+            layers=self._layers, id=self.id, parameters=p, states=s, copy_pars=True
+        )  # init already implements deepcopy
         unit._prefix_local_parameters = self._prefix_local_parameters
         unit._prefix_local_states = self._prefix_local_states
 
         return unit
 
     def __repr__(self):
-        str = 'Module: superflexPy\nUnit: {}\n'.format(self.id)
-        str += 'Layers:\n'
+        str = "Module: superflexPy\nUnit: {}\n".format(self.id)
+        str += "Layers:\n"
         id_layer = []
-        for l in self._layers:
+        for layer in self._layers:
             id_layer.append([])
-            for el in l:
+            for el in layer:
                 id_layer[-1].append(el.id)
 
-        str += '\t{}\n'.format(id_layer)
+        str += "\t{}\n".format(id_layer)
 
-        for l in self._layers:
-            for el in l:
-                str += '********************\n'
+        for layer in self._layers:
+            for el in layer:
+                str += "********************\n"
                 str += el.__repr__()
-                str += '\n'
+                str += "\n"
 
         return str

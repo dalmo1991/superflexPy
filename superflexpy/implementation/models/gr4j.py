@@ -25,57 +25,69 @@ DESIGNED BY: Marco Dal Molin, Fabrizio Fenicia, Dmitri Kavetski
 This file implements a version of the model GR4J
 """
 
-from superflexpy.implementation.root_finders.pegasus import PegasusPython
-from superflexpy.implementation.numerical_approximators.implicit_euler import ImplicitEulerPython
-from superflexpy.implementation.elements.gr4j import InterceptionFilter, ProductionStore, UnitHydrograph1, UnitHydrograph2, RoutingStore, FluxAggregator
-from superflexpy.implementation.elements.structure_elements import Transparent, Splitter, Junction
 from superflexpy.framework.unit import Unit
+from superflexpy.implementation.elements.gr4j import (
+    FluxAggregator,
+    InterceptionFilter,
+    ProductionStore,
+    RoutingStore,
+    UnitHydrograph1,
+    UnitHydrograph2,
+)
+from superflexpy.implementation.elements.structure_elements import (
+    Junction,
+    Splitter,
+    Transparent,
+)
+from superflexpy.implementation.numerical_approximators.implicit_euler import (
+    ImplicitEulerPython,
+)
+from superflexpy.implementation.root_finders.pegasus import PegasusPython
 
 x1, x2, x3, x4 = (50.0, 0.1, 20.0, 3.5)
 
 root_finder = PegasusPython()  # Use the default parameters
 numerical_approximation = ImplicitEulerPython(root_finder)
 
-interception_filter = InterceptionFilter(id='ir')
+interception_filter = InterceptionFilter(id="ir")
 
-production_store = ProductionStore(parameters={'x1': x1, 'alpha': 2.0,
-                                               'beta': 5.0, 'ni': 4/9},
-                                   states={'S0': 10.0},
-                                   approximation=numerical_approximation,
-                                   id='ps')
+production_store = ProductionStore(
+    parameters={"x1": x1, "alpha": 2.0, "beta": 5.0, "ni": 4 / 9},
+    states={"S0": 10.0},
+    approximation=numerical_approximation,
+    id="ps",
+)
 
-splitter = Splitter(weight=[[0.9], [0.1]],
-                    direction=[[0], [0]],
-                    id='spl')
+splitter = Splitter(weight=[[0.9], [0.1]], direction=[[0], [0]], id="spl")
 
-unit_hydrograph_1 = UnitHydrograph1(parameters={'lag-time': x4},
-                                    states={'lag': None},
-                                    id='uh1')
+unit_hydrograph_1 = UnitHydrograph1(parameters={"lag-time": x4}, states={"lag": None}, id="uh1")
 
-unit_hydrograph_2 = UnitHydrograph2(parameters={'lag-time': 2*x4},
-                                    states={'lag': None},
-                                    id='uh2')
+unit_hydrograph_2 = UnitHydrograph2(parameters={"lag-time": 2 * x4}, states={"lag": None}, id="uh2")
 
-routing_store = RoutingStore(parameters={'x2': x2, 'x3': x3,
-                                         'gamma': 5.0, 'omega': 3.5},
-                             states={'S0': 10.0},
-                             approximation=numerical_approximation,
-                             id='rs')
+routing_store = RoutingStore(
+    parameters={"x2": x2, "x3": x3, "gamma": 5.0, "omega": 3.5},
+    states={"S0": 10.0},
+    approximation=numerical_approximation,
+    id="rs",
+)
 
-transparent = Transparent(id='tr')
+transparent = Transparent(id="tr")
 
-junction = Junction(direction=[[0, None],   # First output
-                               [1, None],   # Second output
-                               [None, 0]],  # Third output
-                    id='jun')
+junction = Junction(
+    direction=[[0, None], [1, None], [None, 0]], id="jun"  # First output  # Second output  # Third output
+)
 
-flux_aggregator = FluxAggregator(id='fa')
+flux_aggregator = FluxAggregator(id="fa")
 
-model = Unit(layers=[[interception_filter],
-                     [production_store],
-                     [splitter],
-                     [unit_hydrograph_1, unit_hydrograph_2],
-                     [routing_store, transparent],
-                     [junction],
-                     [flux_aggregator]],
-             id='model')
+model = Unit(
+    layers=[
+        [interception_filter],
+        [production_store],
+        [splitter],
+        [unit_hydrograph_1, unit_hydrograph_2],
+        [routing_store, transparent],
+        [junction],
+        [flux_aggregator],
+    ],
+    id="model",
+)

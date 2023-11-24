@@ -23,4 +23,6 @@ CODED BY: Marco Dal Molin
 DESIGNED BY: Marco Dal Molin, Fabrizio Fenicia, Dmitri Kavetski
 """
 
-from . import m4_sf_2011, gr4j, hymod, thur_M2
+from . import gr4j, hymod, m4_sf_2011, thur_M2
+
+__all__ = ["gr4j", "hymod", "m4_sf_2011", "thur_M2"]

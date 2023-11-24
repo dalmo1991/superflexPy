@@ -35,14 +35,13 @@ Sci., 24, 1319–1345, https://doi.org/10.5194/hess-24-1319-2020, 2020.
 """
 
 
-from ...framework.element import LagElement, ODEsElement
-from .hbv import PowerReservoir, UnsaturatedReservoir
 import numba as nb
 import numpy as np
 
+from ...framework.element import LagElement, ODEsElement
+
 
 class SnowReservoir(ODEsElement):
-
     def __init__(self, parameters, states, approximation, id):
         """
         This is the initializer of the class SnowReservoir.
@@ -66,16 +65,12 @@ class SnowReservoir(ODEsElement):
             have an id.
         """
 
-        ODEsElement.__init__(self,
-                             parameters=parameters,
-                             states=states,
-                             approximation=approximation,
-                             id=id)
+        ODEsElement.__init__(self, parameters=parameters, states=states, approximation=approximation, id=id)
 
         self._fluxes_python = [self._flux_function_python]
-        if approximation.architecture == 'numba':
+        if approximation.architecture == "numba":
             self._fluxes = [self._flux_function_numba]
-        elif approximation.architecture == 'python':
+        elif approximation.architecture == "python":
             self._fluxes = [self._flux_function_python]
 
     def set_input(self, input):
@@ -91,8 +86,7 @@ class SnowReservoir(ODEsElement):
             2. Temperature
         """
 
-        self.input = {'P': input[0],
-                      'T': input[1]}
+        self.input = {"P": input[0], "T": input[1]}
 
     def get_output(self, solve=True):
         """
@@ -107,37 +101,35 @@ class SnowReservoir(ODEsElement):
         """
 
         # Separate rain from snow
-        t0 = self._parameters[self._prefix_parameters + 't0']
+        t0 = self._parameters[self._prefix_parameters + "t0"]
 
-        rain = np.where(self.input['T'] > t0,  # Condition
-                        self.input['P'],       # True
-                        0.0)                   # False
+        rain = np.where(self.input["T"] > t0, self.input["P"], 0.0)  # Condition  # True  # False
 
-        snow = self.input['P'] - rain
+        snow = self.input["P"] - rain
 
         if solve:
-            self._solver_states = [self._states[self._prefix_states + 'S0']]
+            self._solver_states = [self._states[self._prefix_states + "S0"]]
             self._solve_differential_equation(snow=snow)
 
             # Update the state
-            self.set_states({self._prefix_states + 'S0': self.state_array[-1, 0]})
+            self.set_states({self._prefix_states + "S0": self.state_array[-1, 0]})
 
-        fluxes = self._num_app.get_fluxes(fluxes=self._fluxes_python,
-                                          S=self.state_array,
-                                          S0=self._solver_states,
-                                          snow=snow,
-                                          dt=self._dt,
-                                          **self.input,
-                                          **{k[len(self._prefix_parameters):]: self._parameters[k] for k in self._parameters},
-                                          )
+        fluxes = self._num_app.get_fluxes(
+            fluxes=self._fluxes_python,
+            S=self.state_array,
+            S0=self._solver_states,
+            snow=snow,
+            dt=self._dt,
+            **self.input,
+            **{k[len(self._prefix_parameters) :]: self._parameters[k] for k in self._parameters},
+        )
 
-        actual_melt = - fluxes[0][1]
+        actual_melt = -fluxes[0][1]
 
         return [rain + actual_melt]
 
     @staticmethod
     def _flux_function_python(S, S0, ind, snow, T, t0, k, m, dt):
-
         if S is None:
             S = 0
 
@@ -145,10 +137,10 @@ class SnowReservoir(ODEsElement):
             melt_potential = np.where(T > t0, k * T, 0.0)
             actual_melt = melt_potential * (1 - np.exp(-(S / m)))
 
-            return(
+            return (
                 [
                     snow,
-                    - actual_melt,
+                    -actual_melt,
                 ],
                 0.0,
                 S0 + snow * dt,
@@ -158,46 +150,41 @@ class SnowReservoir(ODEsElement):
             melt_potential = k[ind] * T[ind] if T[ind] > t0[ind] else 0.0
             actual_melt = melt_potential * (1 - np.exp(-(S / m[ind])))
 
-            return(
+            return (
                 [
                     snow[ind],
-                    - actual_melt,
+                    -actual_melt,
                 ],
                 0.0,
                 S0 + snow[ind] * dt[ind],
-                [
-                    0.0,
-                    - melt_potential * np.exp(-(S / m[ind])) / m[ind]
-                ]
+                [0.0, -melt_potential * np.exp(-(S / m[ind])) / m[ind]],
             )
 
     @staticmethod
-    @nb.jit('Tuple((UniTuple(f8, 2), f8, f8, UniTuple(f8, 2)))(optional(f8), f8, i4, f8[:], f8[:], f8[:], f8[:], f8[:], f8[:])',
-            nopython=True)
+    @nb.jit(
+        "Tuple((UniTuple(f8, 2), f8, f8, UniTuple(f8, 2)))"
+        "(optional(f8), f8, i4, f8[:], f8[:], f8[:], f8[:], f8[:], f8[:])",
+        nopython=True,
+    )
     def _flux_function_numba(S, S0, ind, snow, T, t0, k, m, dt):
-
         if S is None:
             S = 0
 
         melt_potential = k[ind] * T[ind] if T[ind] > t0[ind] else 0.0
         actual_melt = melt_potential * (1 - np.exp(-(S / m[ind])))
 
-        return(
+        return (
             (
                 snow[ind],
-                - actual_melt,
+                -actual_melt,
             ),
             0.0,
             S0 + snow[ind] * dt[ind],
-            (
-                0.0,
-                - melt_potential * np.exp(-(S / m[ind])) / m[ind]
-            )
+            (0.0, -melt_potential * np.exp(-(S / m[ind])) / m[ind]),
         )
 
 
 class HalfTriangularLag(LagElement):
-
     def __init__(self, parameters, states, id):
         """
         This is the initializer of the half triangular lag function.
@@ -218,15 +205,13 @@ class HalfTriangularLag(LagElement):
         LagElement.__init__(self, parameters, states, id)
 
     def _build_weight(self, lag_time):
-
         weight = []
 
         for t in lag_time:
             array_length = np.ceil(t)
             w_i = []
             for i in range(int(array_length)):
-                w_i.append(self._calculate_lag_area(i + 1, t)
-                           - self._calculate_lag_area(i, t))
+                w_i.append(self._calculate_lag_area(i + 1, t) - self._calculate_lag_area(i, t))
             weight.append(np.array(w_i))
 
         return weight
@@ -236,7 +221,7 @@ class HalfTriangularLag(LagElement):
         if bin <= 0:
             value = 0
         elif bin < len:
-            value = (bin / len)**2
+            value = (bin / len) ** 2
         else:
             value = 1
 
