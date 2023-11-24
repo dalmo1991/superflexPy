@@ -17,8 +17,5 @@ setuptools.setup(
         "Development Status :: 5 - Production/Stable",  # https://martin-thoma.com/software-development-stages/
         "Topic :: Scientific/Engineering :: Hydrology",
     ],
-    install_requires=[
-        "numpy>=1.19.*",
-        "numba>=0.50.*",
-    ],
+    install_requires=["numba==0.57.1", "numpy==1.24.3"],
 )
