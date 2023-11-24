@@ -15,10 +15,10 @@ jobs:
       uses: actions/checkout@master
       with:
         ref: 'release'  # The default behavior is that it checkouts to the trigger so we don't need this
-    - name: Set up Python 3.7
+    - name: Set up Python 3.11
       uses: actions/setup-python@v1
       with:
-        python-version: 3.7
+        python-version: 3.11
     - name: Build the package
       run: python setup.py sdist
     - name: Publish on PyPI
