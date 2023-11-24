@@ -35,7 +35,7 @@ package_path = join(abspath(dirname(__file__)), '..', '..')
 sys.path.insert(0, package_path)
 
 from superflexpy.implementation.elements.hbv import PowerReservoir, UnsaturatedReservoir
-from superflexpy.implementation.root_finders.pegasussusNumba, PegasusPython
+from superflexpy.implementation.root_finders.pegasus import PegasusPython, PegasusNumba
 from superflexpy.implementation.numerical_approximators.implicit_euler import ImplicitEulerNumba, ImplicitEulerPython
 from superflexpy.implementation.elements.structure_elements import Splitter, Junction
 from superflexpy.framework.unit import Unit
