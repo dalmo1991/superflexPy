@@ -36,6 +36,7 @@ Sci., 24, 1319–1345, https://doi.org/10.5194/hess-24-1319-2020, 2020.
 from superflexpy.framework.network import Network
 from superflexpy.framework.node import Node
 from superflexpy.framework.unit import Unit
+from superflexpy.implementation.elements.hbv import PowerReservoir, UnsaturatedReservoir
 from superflexpy.implementation.elements.structure_elements import (
     Junction,
     Splitter,
@@ -43,9 +44,7 @@ from superflexpy.implementation.elements.structure_elements import (
 )
 from superflexpy.implementation.elements.thur_model_hess import (
     HalfTriangularLag,
-    PowerReservoir,
     SnowReservoir,
-    UnsaturatedReservoir,
 )
 from superflexpy.implementation.numerical_approximators.implicit_euler import (
     ImplicitEulerPython,
