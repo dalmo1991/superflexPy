@@ -18,7 +18,7 @@ setuptools.setup(
         'Topic :: Scientific/Engineering :: Hydrology',
     ],
     install_requires=[
-        'numpy>=1.19.*',
-        'numba>=0.50.*',
+        "numba==0.57.1",
+        "numpy==1.24.3"
     ],
 )
