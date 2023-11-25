@@ -18,11 +18,11 @@ sys.path.insert(0, os.path.abspath('../'))
 # -- Project information -----------------------------------------------------
 
 project = 'SuperflexPy'
-copyright = '2021, Marco Dal Molin, Dmitri Kavetski, Fabrizio Fenicia'
+copyright = '2023, Marco Dal Molin, Dmitri Kavetski, Fabrizio Fenicia'
 author = 'Marco Dal Molin, Dmitri Kavetski, Fabrizio Fenicia'
 
 # The full version, including alpha/beta/rc tags
-release = '1.3.0'
+release = '1.3.2'
 
 
 # -- General configuration ---------------------------------------------------
