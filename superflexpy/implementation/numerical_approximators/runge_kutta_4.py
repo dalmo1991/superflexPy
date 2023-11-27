@@ -26,13 +26,13 @@ This file contains the implementation a class that solved the ODEs using the
 implicit Runge Kutta of 4th order numerical approximation.
 """
 
-import numpy as np
 import numba as nb
+import numpy as np
+
 from ...utils.numerical_approximator import NumericalApproximator
 
 
 class RungeKutta4Python(NumericalApproximator):
-
     def __init__(self, root_finder):
         """
         This class creates an approximation of an ODE using Runge Kutta of 4th
@@ -52,18 +52,18 @@ class RungeKutta4Python(NumericalApproximator):
 
         super().__init__(root_finder=root_finder)
 
-        self.architecture = 'python'
-        self._error_message = 'module : superflexPy, solver : Runge Kutta 4'
-        self._error_message += ' Error message : '
+        self.architecture = "python"
+        self._error_message = "module : superflexPy, solver : Runge Kutta 4"
+        self._error_message += " Error message : "
 
-        if root_finder.architecture != 'python':
-            message = '{}: architecture of the root_finder must be python. Given {}'.format(self._error_message, root_finder.architecture)
+        if root_finder.architecture != "python":
+            message = "{}: architecture of the root_finder must be python. Given {}".format(
+                self._error_message, root_finder.architecture
+            )
             raise ValueError(message)
-
 
     @staticmethod
     def _get_fluxes(fluxes, S, S0, args, dt):
-
         # Calculate the state used to calculate the fluxes
         S = S[:-1]
         S = np.insert(S, 0, S0)  # In the following, S is actually S0
@@ -82,7 +82,6 @@ class RungeKutta4Python(NumericalApproximator):
 
     @staticmethod
     def _differential_equation(fluxes, S, S0, dt, args, ind):
-
         # Specify a state in case None
         if S is None:
             S = S0
@@ -100,14 +99,15 @@ class RungeKutta4Python(NumericalApproximator):
 
         # No need to calculate the derivative since the method is explicit
 
-        return (fun_to_zero,     # Fun to set to zero
-                min_S,           # Min search
-                max_S,           # Max search
-                None)            # Derivative of fun -> don't need it because explicit
+        return (
+            fun_to_zero,  # Fun to set to zero
+            min_S,  # Min search
+            max_S,  # Max search
+            None,
+        )  # Derivative of fun -> don't need it because explicit
 
 
 class RungeKutta4Numba(NumericalApproximator):
-
     def __init__(self, root_finder):
         """
         This class creates an approximation of an ODE using Runge Kutta of 4th
@@ -127,17 +127,18 @@ class RungeKutta4Numba(NumericalApproximator):
 
         super().__init__(root_finder=root_finder)
 
-        self.architecture = 'numba'
-        self._error_message = 'module : superflexPy, solver : Runge Kutta 4'
-        self._error_message += ' Error message : '
+        self.architecture = "numba"
+        self._error_message = "module : superflexPy, solver : Runge Kutta 4"
+        self._error_message += " Error message : "
 
-        if root_finder.architecture != 'numba':
-            message = '{}: architecture of the root_finder must be numba. Given {}'.format(self._error_message, root_finder.architecture)
+        if root_finder.architecture != "numba":
+            message = "{}: architecture of the root_finder must be numba. Given {}".format(
+                self._error_message, root_finder.architecture
+            )
             raise ValueError(message)
 
     @staticmethod
     def _get_fluxes(fluxes, S, S0, args, dt):
-
         # Calculate the state used to calculate the fluxes
         S = S[:-1]
         S = np.insert(S, 0, S0)  # In the following, S is actually S0
@@ -157,7 +158,6 @@ class RungeKutta4Numba(NumericalApproximator):
     @staticmethod
     @nb.jit(nopython=True)
     def _differential_equation(fluxes, S, S0, dt, args, ind):
-
         # Specify a state in case None
         if S is None:
             S = S0
@@ -175,7 +175,9 @@ class RungeKutta4Numba(NumericalApproximator):
 
         # No need to calculate the derivative since the method is explicit
 
-        return (fun_to_zero,     # Fun to set to zero
-                min_S,           # Min search
-                max_S,           # Max search
-                None)            # Derivative of fun -> don't need it because explicit
+        return (
+            fun_to_zero,  # Fun to set to zero
+            min_S,  # Min search
+            max_S,  # Max search
+            None,
+        )  # Derivative of fun -> don't need it because explicit

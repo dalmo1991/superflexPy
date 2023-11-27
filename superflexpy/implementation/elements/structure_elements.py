@@ -26,7 +26,8 @@ This file contains the implementation of some elements that are used to
 complete the structure of the model.
 """
 
-from copy import copy, deepcopy
+from copy import deepcopy
+
 from ...framework.element import BaseElement
 
 
@@ -152,8 +153,7 @@ class Splitter(BaseElement):
             for j in range(len(self._weight[i])):
                 if self._direction[i][j] is None:
                     continue
-                output[-1].append(self.input[self._direction[i][j]]
-                                  * self._weight[i][self._direction[i][j]])
+                output[-1].append(self.input[self._direction[i][j]] * self._weight[i][self._direction[i][j]])
 
         return output
 
@@ -162,19 +162,17 @@ class Splitter(BaseElement):
     def __copy__(self):
         w = deepcopy(self._weight)  # It is a 2D list -> I need to go deep
         d = deepcopy(self._direction)
-        return self.__class__(weight=w,
-                              direction=d,
-                              id=self.id)
+        return self.__class__(weight=w, direction=d, id=self.id)
 
     def __deepcopy__(self, memo):
         return self.__copy__()
 
     def __repr__(self):
-        str = 'Module: superflexPy\nElement: {}\n'.format(self.id)
-        str += 'Weight:\n'
-        str += '\t{}\n'.format(self._weight)
-        str += 'Direction:\n'
-        str += '\t{}\n'.format(self._direction)
+        str = "Module: superflexPy\nElement: {}\n".format(self.id)
+        str += "Weight:\n"
+        str += "\t{}\n".format(self._weight)
+        str += "Direction:\n"
+        str += "\t{}\n".format(self._direction)
 
         return str
 
@@ -274,16 +272,15 @@ class Junction(BaseElement):
 
     def __copy__(self):
         d = deepcopy(self._direction)
-        return self.__class__(direction=d,
-                              id=self.id)
+        return self.__class__(direction=d, id=self.id)
 
     def __deepcopy__(self, memo):
         return self.__copy__()
 
     def __repr__(self):
-        str = 'Module: superflexPy\nElement: {}\n'.format(self.id)
-        str += 'Direction:\n'
-        str += '\t{}\n'.format(self._direction)
+        str = "Module: superflexPy\nElement: {}\n".format(self.id)
+        str += "Direction:\n"
+        str += "\t{}\n".format(self._direction)
 
         return str
 
@@ -377,16 +374,15 @@ class Linker(BaseElement):
 
     def __copy__(self):
         d = deepcopy(self._direction)
-        return self.__class__(direction=d,
-                              id=self.id)
+        return self.__class__(direction=d, id=self.id)
 
     def __deepcopy__(self, memo):
         return self.__copy__()
 
     def __repr__(self):
-        str = 'Module: superflexPy\nElement: {}\n'.format(self.id)
-        str += 'Direction:\n'
-        str += '\t{}\n'.format(self._direction)
+        str = "Module: superflexPy\nElement: {}\n".format(self.id)
+        str += "Direction:\n"
+        str += "\t{}\n".format(self._direction)
 
         return str
 

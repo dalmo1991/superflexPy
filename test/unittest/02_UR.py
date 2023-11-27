@@ -23,20 +23,23 @@ CODED BY: Marco Dal Molin
 DESIGNED BY: Marco Dal Molin, Fabrizio Fenicia, Dmitri Kavetski
 """
 
-import unittest
 import sys
-from os.path import abspath, join, dirname
+import unittest
+from os.path import abspath, dirname, join
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 
 # Package path is 2 levels above this file
-package_path = join(abspath(dirname(__file__)), '..', '..')
+package_path = join(abspath(dirname(__file__)), "..", "..")
 sys.path.insert(0, package_path)
 
 from superflexpy.implementation.elements.hbv import UnsaturatedReservoir
+from superflexpy.implementation.numerical_approximators.implicit_euler import (
+    ImplicitEulerNumba,
+    ImplicitEulerPython,
+)
 from superflexpy.implementation.root_finders.pegasus import PegasusNumba, PegasusPython
-from superflexpy.implementation.numerical_approximators.implicit_euler import ImplicitEulerNumba, ImplicitEulerPython
 
 
 class TestUR(unittest.TestCase):
@@ -48,36 +51,37 @@ class TestUR(unittest.TestCase):
     """
 
     def _init_model(self, solver):
-
-        if solver == 'numba':
+        if solver == "numba":
             solver = PegasusNumba()
             num_app = ImplicitEulerNumba(root_finder=solver)
-        elif solver == 'python':
+        elif solver == "python":
             solver = PegasusPython()
             num_app = ImplicitEulerPython(root_finder=solver)
 
-        ur = UnsaturatedReservoir(parameters={'Smax': 50.0,
-                                              'Ce': 1.5,
-                                              'm': 0.01,
-                                              'beta': 1.5},
-                                  states={'S0': 0.2 * 50.0},
-                                  approximation=num_app,
-                                  id='UR')
+        ur = UnsaturatedReservoir(
+            parameters={"Smax": 50.0, "Ce": 1.5, "m": 0.01, "beta": 1.5},
+            states={"S0": 0.2 * 50.0},
+            approximation=num_app,
+            id="UR",
+        )
 
         ur.set_timestep(1.0)
         self._model = ur
 
     def _read_inputs(self):
-
-        data = pd.read_csv('{}/test/reference_results/02_UR/input.dat'.format(package_path), header=6, sep='\s+|,\s+|,', engine='python')
+        data = pd.read_csv(
+            "{}/test/reference_results/02_UR/input.dat".format(package_path),
+            header=6,
+            sep="\s+|,\s+|,",
+            engine="python",
+        )
         self._precipitation = data.iloc[:, 6].values
         self._pet = data.iloc[:, 7].values
 
     def _read_outputs(self):
-        self._superflex_output = pd.read_csv('{}/test/reference_results/02_UR/Results.csv'.format(package_path))
+        self._superflex_output = pd.read_csv("{}/test/reference_results/02_UR/Results.csv".format(package_path))
 
     def _test_ur_start_stop(self, solver):
-
         self._init_model(solver=solver)
         self._read_outputs()
         self._read_inputs()
@@ -87,7 +91,7 @@ class TestUR(unittest.TestCase):
         out = self._model.get_output()
         aet = self._model.get_AET()
 
-        msg = 'Fail in the first half'
+        msg = "Fail in the first half"
 
         self.assertTrue(np.allclose(out, self._superflex_output.iloc[:5, 0]), msg=msg)
         self.assertTrue(np.allclose(aet, self._superflex_output.iloc[:5, 1]), msg=msg)
@@ -98,22 +102,19 @@ class TestUR(unittest.TestCase):
         out = self._model.get_output()
         aet = self._model.get_AET()
 
-        msg = 'Fail in the second half'
+        msg = "Fail in the second half"
 
         self.assertTrue(np.allclose(out, self._superflex_output.iloc[5:, 0]), msg=msg)
         self.assertTrue(np.allclose(aet, self._superflex_output.iloc[5:, 1]), msg=msg)
         self.assertTrue(np.allclose(self._model.state_array[:, 0], self._superflex_output.iloc[5:, 2]), msg=msg)
 
     def test_ur_start_stop_python(self):
-
-        self._test_ur_start_stop(solver='python')
+        self._test_ur_start_stop(solver="python")
 
     def test_ur_start_stop_numba(self):
-
-        self._test_ur_start_stop(solver='numba')
+        self._test_ur_start_stop(solver="numba")
 
     def _test_2_rounds(self, solver):
-
         self._init_model(solver=solver)
         self._read_outputs()
         self._read_inputs()
@@ -123,7 +124,7 @@ class TestUR(unittest.TestCase):
         out = self._model.get_output()
         aet = self._model.get_AET()
 
-        msg = 'Fail in the first round'
+        msg = "Fail in the first round"
 
         self.assertTrue(np.allclose(out, self._superflex_output.iloc[:, 0]), msg=msg)
         self.assertTrue(np.allclose(aet, self._superflex_output.iloc[:, 1]), msg=msg)
@@ -134,19 +135,17 @@ class TestUR(unittest.TestCase):
         out = self._model.get_output()
         aet = self._model.get_AET()
 
-        msg = 'Fail in the second round'
+        msg = "Fail in the second round"
 
         self.assertTrue(np.allclose(out, self._superflex_output.iloc[:, 0]), msg=msg)
         self.assertTrue(np.allclose(aet, self._superflex_output.iloc[:, 1]), msg=msg)
         self.assertTrue(np.allclose(self._model.state_array[:, 0], self._superflex_output.iloc[:, 2]), msg=msg)
 
     def test_2_rounds_python(self):
-
-        self._test_2_rounds(solver='python')
+        self._test_2_rounds(solver="python")
 
     def test_2_rounds_numba(self):
-
-        self._test_2_rounds(solver='numba')
+        self._test_2_rounds(solver="numba")
 
 
 if __name__ == "__main__":

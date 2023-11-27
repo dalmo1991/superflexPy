@@ -1,32 +1,25 @@
-from superflexpy.implementation.root_finders.pegasus import PegasusPython
-from superflexpy.implementation.numerical_approximators.implicit_euler import ImplicitEulerPython
-from superflexpy.implementation.elements.hbv import UnsaturatedReservoir, PowerReservoir
 from superflexpy.framework.unit import Unit
+from superflexpy.implementation.elements.hbv import PowerReservoir, UnsaturatedReservoir
+from superflexpy.implementation.numerical_approximators.implicit_euler import (
+    ImplicitEulerPython,
+)
+from superflexpy.implementation.root_finders.pegasus import PegasusPython
 
 root_finder = PegasusPython()
 numeric_approximator = ImplicitEulerPython(root_finder=root_finder)
 
 ur = UnsaturatedReservoir(
-    parameters={'Smax': 50.0, 'Ce': 1.0, 'm': 0.01, 'beta': 2.0},
-    states={'S0': 25.0},
+    parameters={"Smax": 50.0, "Ce": 1.0, "m": 0.01, "beta": 2.0},
+    states={"S0": 25.0},
     approximation=numeric_approximator,
-    id='UR'
+    id="UR",
 )
 
 fr = PowerReservoir(
-    parameters={'k': 0.1, 'alpha': 1.0},
-    states={'S0': 10.0},
-    approximation=numeric_approximator,
-    id='FR'
+    parameters={"k": 0.1, "alpha": 1.0}, states={"S0": 10.0}, approximation=numeric_approximator, id="FR"
 )
 
-model = Unit(
-    layers=[
-        [ur],
-        [fr]
-    ],
-    id='M4'
-)
+model = Unit(layers=[[ur], [fr]], id="M4")
 
 from superflexpy.implementation.models.m4_sf_2011 import model
 

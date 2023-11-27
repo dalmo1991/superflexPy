@@ -1,2 +1,1 @@
 superflexpy
-sphinx-rtd-theme

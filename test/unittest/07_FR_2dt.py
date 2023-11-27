@@ -23,20 +23,23 @@ CODED BY: Marco Dal Molin
 DESIGNED BY: Marco Dal Molin, Fabrizio Fenicia, Dmitri Kavetski
 """
 
-import unittest
 import sys
-from os.path import abspath, join, dirname
+import unittest
+from os.path import abspath, dirname, join
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 
 # Package path is 2 levels above this file
-package_path = join(abspath(dirname(__file__)), '..', '..')
+package_path = join(abspath(dirname(__file__)), "..", "..")
 sys.path.insert(0, package_path)
 
 from superflexpy.implementation.elements.hbv import PowerReservoir
+from superflexpy.implementation.numerical_approximators.implicit_euler import (
+    ImplicitEulerNumba,
+    ImplicitEulerPython,
+)
 from superflexpy.implementation.root_finders.pegasus import PegasusNumba, PegasusPython
-from superflexpy.implementation.numerical_approximators.implicit_euler import ImplicitEulerNumba, ImplicitEulerPython
 
 
 class TestFR(unittest.TestCase):
@@ -48,34 +51,32 @@ class TestFR(unittest.TestCase):
     """
 
     def _init_model(self, solver):
-
-        if solver == 'numba':
+        if solver == "numba":
             solver = PegasusNumba()
             num_app = ImplicitEulerNumba(root_finder=solver)
-        elif solver == 'python':
+        elif solver == "python":
             solver = PegasusPython()
             num_app = ImplicitEulerPython(root_finder=solver)
 
-        fr = PowerReservoir(parameters={'k': 0.01,
-                                       'alpha': 2.5},
-                           states={'S0': 0.0},
-                           approximation=num_app,
-                           id='FR')
+        fr = PowerReservoir(parameters={"k": 0.01, "alpha": 2.5}, states={"S0": 0.0}, approximation=num_app, id="FR")
 
         fr.set_timestep(2.0)
         self._model = fr
 
     def _read_inputs(self):
-
-        data = pd.read_csv('{}/test/reference_results/07_FR_2dt/input.dat'.format(package_path), header=6, sep='\s+|,\s+|,', engine='python')
+        data = pd.read_csv(
+            "{}/test/reference_results/07_FR_2dt/input.dat".format(package_path),
+            header=6,
+            sep="\s+|,\s+|,",
+            engine="python",
+        )
         self._precipitation = data.iloc[:, 6].values
         self._pet = data.iloc[:, 7].values
 
     def _read_outputs(self):
-        self._superflex_output = pd.read_csv('{}/test/reference_results/07_FR_2dt/Results.csv'.format(package_path))
+        self._superflex_output = pd.read_csv("{}/test/reference_results/07_FR_2dt/Results.csv".format(package_path))
 
     def _test_fr_start_stop(self, solver):
-
         self._init_model(solver=solver)
         self._read_outputs()
         self._read_inputs()
@@ -84,7 +85,7 @@ class TestFR(unittest.TestCase):
         self._model.set_input([self._precipitation[:5]])
         out = self._model.get_output()
 
-        msg = 'Fail in the first half'
+        msg = "Fail in the first half"
 
         self.assertTrue(np.allclose(out, self._superflex_output.iloc[:5, 0]), msg=msg)
         self.assertTrue(np.allclose(self._model.state_array[:, 0], self._superflex_output.iloc[:5, 1]), msg=msg)
@@ -93,21 +94,18 @@ class TestFR(unittest.TestCase):
         self._model.set_input([self._precipitation[5:]])
         out = self._model.get_output()
 
-        msg = 'Fail in the second half'
+        msg = "Fail in the second half"
 
         self.assertTrue(np.allclose(out, self._superflex_output.iloc[5:, 0]), msg=msg)
         self.assertTrue(np.allclose(self._model.state_array[:, 0], self._superflex_output.iloc[5:, 1]), msg=msg)
 
     def test_fr_start_stop_python(self):
-
-        self._test_fr_start_stop(solver='python')
+        self._test_fr_start_stop(solver="python")
 
     def test_fr_start_stop_numba(self):
-
-        self._test_fr_start_stop(solver='numba')
+        self._test_fr_start_stop(solver="numba")
 
     def _test_2_rounds(self, solver):
-
         self._init_model(solver=solver)
         self._read_outputs()
         self._read_inputs()
@@ -116,7 +114,7 @@ class TestFR(unittest.TestCase):
         self._model.set_input([self._precipitation])
         out = self._model.get_output()
 
-        msg = 'Fail in the first round'
+        msg = "Fail in the first round"
 
         self.assertTrue(np.allclose(out, self._superflex_output.iloc[:, 0]), msg=msg)
         self.assertTrue(np.allclose(self._model.state_array[:, 0], self._superflex_output.iloc[:, 1]), msg=msg)
@@ -125,18 +123,16 @@ class TestFR(unittest.TestCase):
         self._model.reset_states()
         out = self._model.get_output()
 
-        msg = 'Fail in the second round'
+        msg = "Fail in the second round"
 
         self.assertTrue(np.allclose(out, self._superflex_output.iloc[:, 0]), msg=msg)
         self.assertTrue(np.allclose(self._model.state_array[:, 0], self._superflex_output.iloc[:, 1]), msg=msg)
 
     def test_2_rounds_python(self):
-
-        self._test_2_rounds(solver='python')
+        self._test_2_rounds(solver="python")
 
     def test_2_rounds_numba(self):
-
-        self._test_2_rounds(solver='numba')
+        self._test_2_rounds(solver="numba")
 
 
 # if __name__ == "__main__":
