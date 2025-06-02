@@ -217,7 +217,7 @@ In the schematic, element E3 receives 3 input fluxes, which are indexed based
 on their order: red (index 0), black (index 1), and blue (index 2). The red flux
 comes from both upstream elements (index 0 and 1, respectively); the black flux
 comes only from element E1 (index 1); the blue flux comes only from element E2
-(index 2). This information is represented by the direction matrix
+(index 0). This information is represented by the direction matrix
 :math:`\mathbf{D}` as follows:
 
 .. math::
