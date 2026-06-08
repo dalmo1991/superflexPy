@@ -140,19 +140,14 @@ class PowerReservoir(ODEsElement):
     @nb.njit(
         # "Tuple((UniTuple(f8, 2), f8, f8, UniTuple(f8, 2)))(optional(f8), f8, i8, f8[:], f8[:], f8[:], f8[:])",
         # nopython=True,
-        nb.types.Tuple((
-            nb.types.UniTuple(nb.float64, 2),
-            nb.float64,
-            nb.float64,
-            nb.types.UniTuple(nb.float64, 2)
-        ))(
+        nb.types.Tuple((nb.types.UniTuple(nb.float64, 2), nb.float64, nb.float64, nb.types.UniTuple(nb.float64, 2)))(
             nb.types.Optional(nb.float64),
             nb.float64,
             nb.int64,
             nb.types.Array(dtype=nb.float64, ndim=1, layout="C", readonly=True),
             nb.types.Array(dtype=nb.float64, ndim=1, layout="C"),
             nb.types.Array(dtype=nb.float64, ndim=1, layout="C"),
-            nb.types.Array(dtype=nb.float64, ndim=1, layout="C")
+            nb.types.Array(dtype=nb.float64, ndim=1, layout="C"),
         )
     )
     def _fluxes_function_numba(S, S0, ind, P, k, alpha, dt):
@@ -318,12 +313,7 @@ class UnsaturatedReservoir(ODEsElement):
         # "Tuple((UniTuple(f8, 3), f8, f8,UniTuple(f8, 3)))"
         # "(optional(f8), f8, i8, f8[:], f8[:], f8[:], f8[:], f8[:], f8[:], f8[:])",
         # nopython=True,
-        nb.types.Tuple((
-            nb.types.UniTuple(nb.float64, 3),
-            nb.float64,
-            nb.float64,
-            nb.types.UniTuple(nb.float64, 3)
-        ))(
+        nb.types.Tuple((nb.types.UniTuple(nb.float64, 3), nb.float64, nb.float64, nb.types.UniTuple(nb.float64, 3)))(
             nb.types.Optional(nb.float64),
             nb.float64,
             nb.int64,
@@ -333,7 +323,7 @@ class UnsaturatedReservoir(ODEsElement):
             nb.types.Array(dtype=nb.float64, ndim=1, layout="C"),
             nb.types.Array(dtype=nb.float64, ndim=1, layout="C"),
             nb.types.Array(dtype=nb.float64, ndim=1, layout="C", readonly=True),
-            nb.types.Array(dtype=nb.float64, ndim=1, layout="C")
+            nb.types.Array(dtype=nb.float64, ndim=1, layout="C"),
         )
     )
     def _fluxes_function_numba(S, S0, ind, P, Smax, Ce, m, beta, PET, dt):

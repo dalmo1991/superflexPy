@@ -253,12 +253,7 @@ class ProductionStore(ODEsElement):
         # "Tuple((UniTuple(f8, 3), f8, f8, UniTuple(f8, 3)))"
         # "(optional(f8), f8, i8, f8[:], f8[:], f8[:], f8[:], f8[:], f8[:], f8[:])",
         # nopython=True,
-        nb.types.Tuple((
-            nb.types.UniTuple(nb.float64, 3),
-            nb.float64,
-            nb.float64,
-            nb.types.UniTuple(nb.float64, 3)
-        ))(
+        nb.types.Tuple((nb.types.UniTuple(nb.float64, 3), nb.float64, nb.float64, nb.types.UniTuple(nb.float64, 3)))(
             nb.types.Optional(nb.float64),
             nb.float64,
             nb.int64,
@@ -268,7 +263,7 @@ class ProductionStore(ODEsElement):
             nb.types.Array(dtype=nb.float64, ndim=1, layout="C"),
             nb.types.Array(dtype=nb.float64, ndim=1, layout="C"),
             nb.types.Array(dtype=nb.float64, ndim=1, layout="C", readonly=True),
-            nb.types.Array(dtype=nb.float64, ndim=1, layout="C")
+            nb.types.Array(dtype=nb.float64, ndim=1, layout="C"),
         )
     )
     def _flux_function_numba(S, S0, ind, P, x1, alpha, beta, ni, PET, dt):
@@ -413,12 +408,7 @@ class RoutingStore(ODEsElement):
         # "Tuple((UniTuple(f8, 3), f8, f8, UniTuple(f8, 3)))"
         # "(optional(f8), f8, i8, f8[:], f8[:], f8[:], f8[:], f8[:], f8[:])",
         # nopython=True,
-        nb.types.Tuple((
-            nb.types.UniTuple(nb.float64, 3),
-            nb.float64,
-            nb.float64,
-            nb.types.UniTuple(nb.float64, 3)
-        ))(
+        nb.types.Tuple((nb.types.UniTuple(nb.float64, 3), nb.float64, nb.float64, nb.types.UniTuple(nb.float64, 3)))(
             nb.types.Optional(nb.float64),
             nb.float64,
             nb.int64,
@@ -427,7 +417,7 @@ class RoutingStore(ODEsElement):
             nb.types.Array(dtype=nb.float64, ndim=1, layout="C"),
             nb.types.Array(dtype=nb.float64, ndim=1, layout="C"),
             nb.types.Array(dtype=nb.float64, ndim=1, layout="C"),
-            nb.types.Array(dtype=nb.float64, ndim=1, layout="C")
+            nb.types.Array(dtype=nb.float64, ndim=1, layout="C"),
         )
     )
     def _flux_function_numba(S, S0, ind, P, x2, x3, gamma, omega, dt):
