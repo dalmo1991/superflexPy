@@ -67,7 +67,7 @@ class TestFR(unittest.TestCase):
         data = pd.read_csv(
             "{}/test/reference_results/01_FR/input.dat".format(package_path),
             header=6,
-            sep="\s+|,\s+|,",
+            sep=r"\s+|,\s+|,",
             engine="python",
         )
         self._precipitation = data.iloc[:, 6].values

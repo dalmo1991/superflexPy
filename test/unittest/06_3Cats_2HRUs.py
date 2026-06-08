@@ -114,7 +114,7 @@ class TestStructureElements(unittest.TestCase):
         data = pd.read_csv(
             "{}/test/reference_results/06_3Cats_2HRUs/input.dat".format(package_path),
             header=6,
-            sep="\s+|,\s+|,",
+            sep=r"\s+|,\s+|,",
             engine="python",
         )
         self._precipitation_c1 = data.iloc[:, 5].values
