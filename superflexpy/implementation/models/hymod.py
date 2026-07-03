@@ -25,55 +25,58 @@ DESIGNED BY: Marco Dal Molin, Fabrizio Fenicia, Dmitri Kavetski
 This file implements a version of the model Hymod
 """
 
-from superflexpy.implementation.root_finders.pegasus import PegasusPython
-from superflexpy.implementation.numerical_approximators.implicit_euler import ImplicitEulerPython
-from superflexpy.implementation.elements.hymod import UpperZone, LinearReservoir
-from superflexpy.implementation.elements.structure_elements import Junction, Splitter, Transparent
 from superflexpy.framework.unit import Unit
+from superflexpy.implementation.elements.hymod import LinearReservoir, UpperZone
+from superflexpy.implementation.elements.structure_elements import (
+    Junction,
+    Splitter,
+    Transparent,
+)
+from superflexpy.implementation.numerical_approximators.implicit_euler import (
+    ImplicitEulerPython,
+)
+from superflexpy.implementation.root_finders.pegasus import PegasusPython
 
 root_finder = PegasusPython()  # Use the default parameters
 numerical_approximation = ImplicitEulerPython(root_finder)
 
-upper_zone = UpperZone(parameters={'Smax': 50.0, 'm': 0.01, 'beta': 2.0},
-                       states={'S0': 10.0},
-                       approximation=numerical_approximation,
-                       id='uz')
+upper_zone = UpperZone(
+    parameters={"Smax": 50.0, "m": 0.01, "beta": 2.0},
+    states={"S0": 10.0},
+    approximation=numerical_approximation,
+    id="uz",
+)
 
-splitter = Splitter(weight=[[0.6], [0.4]],
-                    direction=[[0], [0]],
-                    id='spl')
+splitter = Splitter(weight=[[0.6], [0.4]], direction=[[0], [0]], id="spl")
 
-channel_routing_1 = LinearReservoir(parameters={'k': 0.1},
-                                    states={'S0': 10.0},
-                                    approximation=numerical_approximation,
-                                    id='cr1')
+channel_routing_1 = LinearReservoir(
+    parameters={"k": 0.1}, states={"S0": 10.0}, approximation=numerical_approximation, id="cr1"
+)
 
-channel_routing_2 = LinearReservoir(parameters={'k': 0.1},
-                                    states={'S0': 10.0},
-                                    approximation=numerical_approximation,
-                                    id='cr2')
+channel_routing_2 = LinearReservoir(
+    parameters={"k": 0.1}, states={"S0": 10.0}, approximation=numerical_approximation, id="cr2"
+)
 
-channel_routing_3 = LinearReservoir(parameters={'k': 0.1},
-                                    states={'S0': 10.0},
-                                    approximation=numerical_approximation,
-                                    id='cr3')
+channel_routing_3 = LinearReservoir(
+    parameters={"k": 0.1}, states={"S0": 10.0}, approximation=numerical_approximation, id="cr3"
+)
 
-lower_zone = LinearReservoir(parameters={'k': 0.1},
-                             states={'S0': 10.0},
-                             approximation=numerical_approximation,
-                             id='lz')
+lower_zone = LinearReservoir(parameters={"k": 0.1}, states={"S0": 10.0}, approximation=numerical_approximation, id="lz")
 
-transparent_1 = Transparent(id='tr1')
+transparent_1 = Transparent(id="tr1")
 
-transparent_2 = Transparent(id='tr2')
+transparent_2 = Transparent(id="tr2")
 
-junction = Junction(direction=[[0, 0]],  # First output
-                    id='jun')
+junction = Junction(direction=[[0, 0]], id="jun")  # First output
 
-model = Unit(layers=[[upper_zone],
-                     [splitter],
-                     [channel_routing_1, lower_zone],
-                     [channel_routing_2, transparent_1],
-                     [channel_routing_3, transparent_2],
-                     [junction]],
-             id='model')
+model = Unit(
+    layers=[
+        [upper_zone],
+        [splitter],
+        [channel_routing_1, lower_zone],
+        [channel_routing_2, transparent_1],
+        [channel_routing_3, transparent_2],
+        [junction],
+    ],
+    id="model",
+)

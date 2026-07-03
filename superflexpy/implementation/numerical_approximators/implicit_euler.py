@@ -27,13 +27,13 @@ implicit Euler numerical approximation.
 """
 
 
-import numpy as np
 import numba as nb
+import numpy as np
+
 from ...utils.numerical_approximator import NumericalApproximator
 
 
 class ImplicitEulerPython(NumericalApproximator):
-
     def __init__(self, root_finder):
         """
         This class creates an approximation of an ODE using implicit Euler and
@@ -48,27 +48,28 @@ class ImplicitEulerPython(NumericalApproximator):
             Solver used to find the root of the differential equation.
         """
 
-        NumericalApproximator.__init__(self,
-                                       root_finder=root_finder)
+        NumericalApproximator.__init__(self, root_finder=root_finder)
 
-        self.architecture = 'python'
-        self._error_message = 'module : superflexPy, solver : implicit Euler'
-        self._error_message += ' Error message : '
+        self.architecture = "python"
+        self._error_message = "module : superflexPy, solver : implicit Euler"
+        self._error_message += " Error message : "
 
-        if root_finder.architecture != 'python':
-            message = '{}: architecture of the root_finder must be python. Given {}'.format(self._error_message, root_finder.architecture)
+        if root_finder.architecture != "python":
+            message = "{}: architecture of the root_finder must be python. Given {}".format(
+                self._error_message, root_finder.architecture
+            )
             raise ValueError(message)
 
     @staticmethod
     def _get_fluxes(fluxes, S, S0, args, dt):
-
-        flux = fluxes(S, S0, None, *args)  # If different method we would provide a different first argument. S0 not used.
+        flux = fluxes(
+            S, S0, None, *args
+        )  # If different method we would provide a different first argument. S0 not used.
 
         return np.array(flux[0])  # It is a list of vectors
 
     @staticmethod
     def _differential_equation(fluxes, S, S0, dt, args, ind):
-
         # Specify a state in case None
         if S is None:
             S = S0
@@ -88,14 +89,15 @@ class ImplicitEulerPython(NumericalApproximator):
             # in case the element does not calculate derivatives
             d_diff_eq = np.nan
 
-        return (diff_eq,           # Fun to set to zero
-                fluxes_out[1],     # Min search
-                fluxes_out[2],     # Max search
-                d_diff_eq)         # Derivative of fun
+        return (
+            diff_eq,  # Fun to set to zero
+            fluxes_out[1],  # Min search
+            fluxes_out[2],  # Max search
+            d_diff_eq,
+        )  # Derivative of fun
 
 
 class ImplicitEulerNumba(NumericalApproximator):
-
     def __init__(self, root_finder):
         """
         This class creates an approximation of an ODE using implicit Euler and
@@ -110,28 +112,29 @@ class ImplicitEulerNumba(NumericalApproximator):
             Solver used to find the root of the differential equation.
         """
 
-        NumericalApproximator.__init__(self,
-                                       root_finder=root_finder)
+        NumericalApproximator.__init__(self, root_finder=root_finder)
 
-        self.architecture = 'numba'
-        self._error_message = 'module : superflexPy, solver : implicit Euler'
-        self._error_message += ' Error message : '
+        self.architecture = "numba"
+        self._error_message = "module : superflexPy, solver : implicit Euler"
+        self._error_message += " Error message : "
 
-        if root_finder.architecture != 'numba':
-            message = '{}: architecture of the root_finder must be numba. Given {}'.format(self._error_message, root_finder.architecture)
+        if root_finder.architecture != "numba":
+            message = "{}: architecture of the root_finder must be numba. Given {}".format(
+                self._error_message, root_finder.architecture
+            )
             raise ValueError(message)
 
     @staticmethod  # I do not use numba. Do not need it
     def _get_fluxes(fluxes, S, S0, args, dt):
-
-        flux = fluxes(S, S0, None, *args)  # If different method we would provide a different first argument. S0 not used.
+        flux = fluxes(
+            S, S0, None, *args
+        )  # If different method we would provide a different first argument. S0 not used.
 
         return np.array(flux[0])  # It is a list of vectors
 
     @staticmethod
     @nb.jit(nopython=True)
     def _differential_equation(fluxes, S, S0, dt, ind, args):
-
         # Specify a state in case None
         if S is None:
             S = S0
@@ -155,7 +158,9 @@ class ImplicitEulerNumba(NumericalApproximator):
 
         d_diff_eq = (1 / dt[ind]) - sum_d_flux
 
-        return (diff_eq,           # Fun to set to zero
-                fluxes_out[1],     # Min search
-                fluxes_out[2],     # Max search
-                d_diff_eq)         # Derivative of fun
+        return (
+            diff_eq,  # Fun to set to zero
+            fluxes_out[1],  # Min search
+            fluxes_out[2],  # Max search
+            d_diff_eq,
+        )  # Derivative of fun

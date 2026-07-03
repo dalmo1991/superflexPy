@@ -20,4 +20,4 @@ DATA_SPEX_FILE_V1.3
 0,0             ! quality code columns for observed input data (relative to indxQC)
 0               ! quality code columns for observed other data (relative to indxQC)
 
-1, 1, 10        ! iStartWarmInfern, iStartInfern, iEndInfern 1, 27, 679 / 1, 680, 1331 / 1, 27, 353 / 1, 27, 1331 / 1, 27, 6549 
+1, 1, 10        ! iStartWarmInfern, iStartInfern, iEndInfern 1, 27, 679 / 1, 680, 1331 / 1, 27, 353 / 1, 27, 1331 / 1, 27, 6549

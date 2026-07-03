@@ -1,6 +1,7 @@
 name: unittest on push
 
 on:
+  pull_request:
   push:
     branches:
       - master
@@ -9,13 +10,16 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
     steps:
       - name: Prepare the repo
-        uses: actions/checkout@master
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v1
+        uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
         with:
-          python-version: 3.11
+          python-version: ${{ matrix.python-version }}
       - name: Install packages
         run: pip install -r test/unittest/test_requirements.txt
       - name: Test

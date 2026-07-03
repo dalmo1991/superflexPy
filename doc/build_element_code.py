@@ -1,8 +1,7 @@
 import numba as nb
 import numpy as np
-from superflexpy.framework.element import ODEsElement
-from superflexpy.framework.element import LagElement
-from superflexpy.framework.element import ParameterizedElement
+
+from superflexpy.framework.element import LagElement, ODEsElement, ParameterizedElement
 
 # Implement a linear reservoir
 
@@ -27,22 +26,18 @@ class LinearReservoir(ODEsElement):
     """
 
     def __init__(self, parameters, states, approximation, id):
-
-        ODEsElement.__init__(self,
-                             parameters=parameters,
-                             states=states,
-                             approximation=approximation,
-                             id=id)
+        ODEsElement.__init__(self, parameters=parameters, states=states, approximation=approximation, id=id)
 
         self._fluxes_python = [self._fluxes_function_python]  # Used by get fluxes, regardless of the architecture
 
-        if approximation.architecture == 'numba':
+        if approximation.architecture == "numba":
             self._fluxes = [self._fluxes_function_numba]
-        elif approximation.architecture == 'python':
+        elif approximation.architecture == "python":
             self._fluxes = [self._fluxes_function_python]
         else:
-            message = '{}The architecture ({}) of the approximation is not correct'.format(self._error_message,
-                                                                                           approximation.architecture)
+            message = "{}The architecture ({}) of the approximation is not correct".format(
+                self._error_message, approximation.architecture
+            )
             raise ValueError(message)
 
     def set_input(self, input):
@@ -57,7 +52,7 @@ class LinearReservoir(ODEsElement):
             1. Rainfall
         """
 
-        self.input = {'P': input[0]}
+        self.input = {"P": input[0]}
 
     def get_output(self, solve=True):
         """
@@ -72,64 +67,57 @@ class LinearReservoir(ODEsElement):
         """
 
         if solve:
-            self._solver_states = [self._states[self._prefix_states + 'S0']]
+            self._solver_states = [self._states[self._prefix_states + "S0"]]
             self._solve_differential_equation()
 
             # Update the state
-            self.set_states({self._prefix_states + 'S0': self.state_array[-1, 0]})
+            self.set_states({self._prefix_states + "S0": self.state_array[-1, 0]})
 
-        fluxes = self._num_app.get_fluxes(fluxes=self._fluxes_python,
-                                          S=self.state_array,
-                                          S0=self._solver_states,
-                                          dt=self._dt,
-                                          **self.input,
-                                          **{k[len(self._prefix_parameters):]: self._parameters[k] for k in self._parameters},
-                                          )
-        return [- fluxes[0][1]]
+        fluxes = self._num_app.get_fluxes(
+            fluxes=self._fluxes_python,
+            S=self.state_array,
+            S0=self._solver_states,
+            dt=self._dt,
+            **self.input,
+            **{k[len(self._prefix_parameters) :]: self._parameters[k] for k in self._parameters},
+        )
+        return [-fluxes[0][1]]
 
     @staticmethod
     def _fluxes_function_python(S, S0, ind, P, k, dt):
-
         if ind is None:
             return (
                 [
                     P,
-                    - k * S,
+                    -k * S,
                 ],
                 0.0,
-                S0 + P * dt
+                S0 + P * dt,
             )
         else:
             return (
                 [
                     P[ind],
-                    - k[ind] * S,
+                    -k[ind] * S,
                 ],
                 0.0,
                 S0 + P[ind] * dt[ind],
-                [
-                    0.0,
-                    - k[ind]
-                ]
+                [0.0, -k[ind]],
             )
 
     @staticmethod
-    @nb.jit('Tuple((UniTuple(f8, 2), f8, f8))(optional(f8), f8, i4, f8[:], f8[:], f8[:])',
-            nopython=True)
+    @nb.jit("Tuple((UniTuple(f8, 2), f8, f8))(optional(f8), f8, i4, f8[:], f8[:], f8[:])", nopython=True)
     def _fluxes_function_numba(S, S0, ind, P, k, dt):
-
         return (
             (
                 P[ind],
-                - k[ind] * S,
+                -k[ind] * S,
             ),
             0.0,
             S0 + P[ind] * dt[ind],
-            (
-                0.0,
-                - k[ind]
-            )
+            (0.0, -k[ind]),
         )
+
 
 # Implement lag function
 
@@ -152,7 +140,6 @@ class TriangularLag(LagElement):
     """
 
     def _build_weight(self, lag_time):
-
         weight = []
 
         for t in lag_time:
@@ -160,8 +147,7 @@ class TriangularLag(LagElement):
             w_i = []
 
             for i in range(int(array_length)):
-                w_i.append(self._calculate_lag_area(i + 1, t)
-                           - self._calculate_lag_area(i, t))
+                w_i.append(self._calculate_lag_area(i + 1, t) - self._calculate_lag_area(i, t))
 
             weight.append(np.array(w_i))
 
@@ -169,15 +155,15 @@ class TriangularLag(LagElement):
 
     @staticmethod
     def _calculate_lag_area(bin, len):
-
         if bin <= 0:
             value = 0
         elif bin < len:
-            value = (bin / len)**2
+            value = (bin / len) ** 2
         else:
             value = 1
 
         return value
+
 
 # Implement a parametrized splitter
 
@@ -214,7 +200,7 @@ class ParameterizedSingleFluxSplitter(ParameterizedElement):
             1. Incoming flow
         """
 
-        self.input = {'Q_in': input[0]}
+        self.input = {"Q_in": input[0]}
 
     def get_output(self, solve=True):
         """
@@ -233,9 +219,6 @@ class ParameterizedSingleFluxSplitter(ParameterizedElement):
 
         # solve is not needed but kept in the interface
 
-        split_par = self._parameters[self._prefix_parameters + 'split-par']
+        split_par = self._parameters[self._prefix_parameters + "split-par"]
 
-        return [
-            self.input['Q_in'] * split_par,
-            self.input['Q_in'] * (1 - split_par)
-        ]
+        return [self.input["Q_in"] * split_par, self.input["Q_in"] * (1 - split_par)]

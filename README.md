@@ -12,3 +12,8 @@ Refer to the [documentation](https://superflexpy.readthedocs.io/) to learn to
 use the SuperflexPy, [install](https://pypi.org/project/superflexpy/) the
 package from here. [Examples](examples/) showing the basic usage of SuperflexPy
 are available.
+
+## Development
+
+Please install all packages listed in the [requirements_dev.txt](requirements_dev.txt) file,
+the run `pre-commit install` to install the git hooks. This will enable code formatting and linting on every git commit.

@@ -29,6 +29,7 @@ iteration (e.g., with Explicit Euler or Runge Kutta).
 
 
 import numba as nb
+
 from ...utils.root_finder import RootFinder
 
 
@@ -45,14 +46,12 @@ class ExplicitPython(RootFinder):
         needed.
         """
 
-        super().__init__(tol_F=None,
-                         tol_x=None,
-                         iter_max=None)
+        super().__init__(tol_F=None, tol_x=None, iter_max=None)
 
-        self._name = 'ExplicitRootFinderPython'
-        self.architecture = 'python'
-        self._error_message = 'module : superflexPy, solver : {},'.format(self._name)
-        self._error_message += ' Error message : '
+        self._name = "ExplicitRootFinderPython"
+        self.architecture = "python"
+        self._error_message = "module : superflexPy, solver : {},".format(self._name)
+        self._error_message += " Error message : "
 
     def solve(self, diff_eq, fluxes, S0, dt, ind, args):
         """
@@ -88,7 +87,7 @@ class ExplicitPython(RootFinder):
             Root of the function
         """
 
-        return - diff_eq(fluxes=fluxes, S=0, S0=S0, dt=dt, args=args, ind=ind)[0]
+        return -diff_eq(fluxes=fluxes, S=0, S0=S0, dt=dt, args=args, ind=ind)[0]
 
 
 class ExplicitNumba(RootFinder):
@@ -104,17 +103,14 @@ class ExplicitNumba(RootFinder):
         needed.
         """
 
-        super().__init__(tol_F=None,
-                         tol_x=None,
-                         iter_max=None)
+        super().__init__(tol_F=None, tol_x=None, iter_max=None)
 
-        self._name = 'ExplicitRootFinderPython'
-        self.architecture = 'python'
-        self._error_message = 'module : superflexPy, solver : {},'.format(self._name)
-        self._error_message += ' Error message : '
+        self._name = "ExplicitRootFinderPython"
+        self.architecture = "python"
+        self._error_message = "module : superflexPy, solver : {},".format(self._name)
+        self._error_message += " Error message : "
 
     @staticmethod
     @nb.jit(nopython=True)
     def solve(diff_eq, fluxes, S0, dt, ind, args, tol_F, tol_x, iter_max):
-
-        return - diff_eq(fluxes=fluxes, S=0, S0=S0, dt=dt, args=args, ind=ind)[0]
+        return -diff_eq(fluxes=fluxes, S=0, S0=S0, dt=dt, args=args, ind=ind)[0]

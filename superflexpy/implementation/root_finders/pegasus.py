@@ -30,8 +30,9 @@ References
 Dowell, M. & Jarratt, P. BIT (1972) 12: 503. https://doi.org/10.1007/BF01932959
 """
 
-import numpy as np
 import numba as nb
+import numpy as np
+
 from ...utils.root_finder import RootFinder
 
 
@@ -56,13 +57,11 @@ class PegasusPython(RootFinder):
             Maximum number of iteration of the solver. After this value it
             raises a runtime error
         """
-        super().__init__(tol_F=tol_F,
-                         tol_x=tol_x,
-                         iter_max=iter_max)
-        self._name = 'PegasusPython'
-        self.architecture = 'python'
-        self._error_message = 'module : superflexPy, solver : {},'.format(self._name)
-        self._error_message += ' Error message : '
+        super().__init__(tol_F=tol_F, tol_x=tol_x, iter_max=iter_max)
+        self._name = "PegasusPython"
+        self.architecture = "python"
+        self._error_message = "module : superflexPy, solver : {},".format(self._name)
+        self._error_message += " Error message : "
 
     def solve(self, diff_eq, fluxes, S0, dt, ind, args):
         """
@@ -113,14 +112,12 @@ class PegasusPython(RootFinder):
             need_solve = False
 
         if fa * fb > 0 and need_solve:
-            message = '{}fa and fb have the same sign: {} vs {}'.format(self._error_message, fa, fb)
+            message = "{}fa and fb have the same sign: {} vs {}".format(self._error_message, fa, fb)
             raise ValueError(message)
 
         if need_solve:
-
             # Iterate the solver
             for j in range(self._iter_max):
-
                 xmin = min(a, b)
                 xmax = max(a, b)
 
@@ -155,7 +152,7 @@ class PegasusPython(RootFinder):
                     break
 
                 if j + 1 == self._iter_max:
-                    message = '{}not converged. iter_max : {}'.format(self._error_message, self._iter_max)
+                    message = "{}not converged. iter_max : {}".format(self._error_message, self._iter_max)
                     raise RuntimeError(message)
 
         return output
@@ -182,18 +179,15 @@ class PegasusNumba(RootFinder):
             Maximum number of iteration of the solver. After this value it
             raises a runtime error
         """
-        super().__init__(tol_F=tol_F,
-                         tol_x=tol_x,
-                         iter_max=iter_max)
-        self._name = 'PegasusNumba'
-        self.architecture = 'numba'
-        self._error_message = 'module : superflexPy, solver : {},'.format(self._name)
-        self._error_message += ' Error message : '
+        super().__init__(tol_F=tol_F, tol_x=tol_x, iter_max=iter_max)
+        self._name = "PegasusNumba"
+        self.architecture = "numba"
+        self._error_message = "module : superflexPy, solver : {},".format(self._name)
+        self._error_message += " Error message : "
 
     @staticmethod
     @nb.jit(nopython=True)
     def solve(diff_eq, fluxes, S0, dt, ind, args, tol_F, tol_x, iter_max):
-
         a, b = diff_eq(fluxes=fluxes, S=None, S0=S0, dt=dt, ind=ind, args=args)[1:3]
         fa = diff_eq(fluxes=fluxes, S=a, S0=S0, dt=dt, ind=ind, args=args)[0]
         fb = diff_eq(fluxes=fluxes, S=b, S0=S0, dt=dt, ind=ind, args=args)[0]
@@ -214,10 +208,8 @@ class PegasusNumba(RootFinder):
             need_solve = False
 
         if need_solve:
-
             # Iterate the solver
             for j in range(iter_max):
-
                 xmin = min(a, b)
                 xmax = max(a, b)
 

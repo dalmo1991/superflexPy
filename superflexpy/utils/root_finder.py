@@ -27,7 +27,7 @@ case of elements governed by ODEs
 """
 
 
-class RootFinder():
+class RootFinder:
     """
     This is the abstract class for the creation of a RootFinder. It defines how
     the solver of the differential equation must be implemented.
@@ -58,7 +58,7 @@ class RootFinder():
         self._tol_F = tol_F
         self._tol_x = tol_x
         self._iter_max = iter_max
-        self._name = 'Solver'
+        self._name = "Solver"
 
     def get_settings(self):
         """
@@ -81,11 +81,11 @@ class RootFinder():
         )
 
     def __repr__(self):
-        str = 'Module: superflexPy\nClass: {}\n'.format(self._name)
-        str += 'Parameters:\n'
-        str += '\ttol_F = {}\n'.format(self._tol_F)
-        str += '\ttol_x = {}\n'.format(self._tol_x)
-        str += '\titer_max = {}'.format(self._iter_max)
+        str = "Module: superflexPy\nClass: {}\n".format(self._name)
+        str += "Parameters:\n"
+        str += "\ttol_F = {}\n".format(self._tol_F)
+        str += "\ttol_x = {}\n".format(self._tol_x)
+        str += "\titer_max = {}".format(self._iter_max)
 
         return str
 
@@ -96,4 +96,4 @@ class RootFinder():
         over the whole time series.
         """
 
-        raise NotImplementedError('The method solve must be implemented')
+        raise NotImplementedError("The method solve must be implemented")

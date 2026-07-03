@@ -1,17 +1,7 @@
-.. note:: Last update 25/11/2023
+.. note:: Last update 29/11/2021
 
 Change log
 ==========
-
-Version 1.3.2
--------------
-
-Minor changes
-.............
-
-- `Pull request <https://github.com/dalmo1991/superflexPy/pull/9>`_ from
-  `alessandro-mariotti-zupit <https://github.com/alessandro-mariotti-zupit>`_
-  that upgrades python and packages versions.
 
 Version 1.3.1
 -------------

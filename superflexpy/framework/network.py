@@ -51,12 +51,12 @@ class Network(GenericComponent):
             be a tree, each key has only one downstream element
         """
 
-        self._error_message = 'module : superflexPy, Network ,'
-        self._error_message += ' Error message : '
+        self._error_message = "module : superflexPy, Network ,"
+        self._error_message += " Error message : "
 
         for n in nodes:
             if not isinstance(n, Node):
-                message = '{}units must be instance of the Unit class'.format(self._error_message)
+                message = "{}units must be instance of the Unit class".format(self._error_message)
                 raise TypeError(message)
 
         self._content = nodes
@@ -115,9 +115,9 @@ class Network(GenericComponent):
                         for cat_up in self._upstream[cat]:
                             routed_out = self._content[self._content_pointer[cat_up]].external_routing(output[cat_up])
                             if len(loc_out) != len(routed_out):
-                                message = '{}Upstream and downstream catchment have '.format(self._error_message)
-                                message += 'different number of fluxed. '
-                                message += 'Upstream: {}, Local: {}'.format(len(routed_out), len(loc_out))
+                                message = "{}Upstream and downstream catchment have ".format(self._error_message)
+                                message += "different number of fluxed. "
+                                message += "Upstream: {}, Local: {}".format(len(routed_out), len(loc_out))
                                 raise RuntimeError(message)
                             for i in range(len(loc_out)):
                                 loc_out[i] += routed_out[i] * self._total_area[cat_up]
@@ -155,9 +155,9 @@ class Network(GenericComponent):
         cat_num, ele = self._find_attribute_from_name(id)
 
         if ele:
-            splitted = id.split('_')
+            splitted = id.split("_")
             if len(splitted) == 3:  # element
-                ele_id = splitted[1] + '_' + splitted[2]
+                ele_id = splitted[1] + "_" + splitted[2]
             else:  # unit
                 ele_id = splitted[1]
             return self._content[cat_num].get_internal(ele_id, attribute)
@@ -166,7 +166,7 @@ class Network(GenericComponent):
                 method = getattr(self._content[cat_num], attribute)
                 return method
             except AttributeError:
-                message = '{}the attribute {} does not exist.'.format(self._error_message, attribute)
+                message = "{}the attribute {} does not exist.".format(self._error_message, attribute)
                 raise AttributeError(message)
 
     def call_internal(self, id, method, **kwargs):
@@ -192,9 +192,9 @@ class Network(GenericComponent):
         cat_num, ele = self._find_attribute_from_name(id)
 
         if ele:
-            splitted = id.split('_')
+            splitted = id.split("_")
             if len(splitted) == 3:  # element
-                ele_id = splitted[1] + '_' + splitted[2]
+                ele_id = splitted[1] + "_" + splitted[2]
             else:  # unit
                 ele_id = splitted[1]
             return self._content[cat_num].call_internal(ele_id, method, **kwargs)
@@ -203,7 +203,7 @@ class Network(GenericComponent):
                 method = getattr(self._content[cat_num], method)
                 return method(**kwargs)
             except AttributeError:
-                message = '{}the method {} does not exist.'.format(self._error_message, method)
+                message = "{}the method {} does not exist.".format(self._error_message, method)
                 raise AttributeError(message)
 
     # PROTECTED METHODS
@@ -281,7 +281,7 @@ class Network(GenericComponent):
             element or a unit (True) or not.
         """
 
-        splitted = id.split('_')
+        splitted = id.split("_")
 
         cat_num = self._find_content_from_name(id)  # Options: None if cat_id not in id, number otherwise
 
@@ -293,26 +293,26 @@ class Network(GenericComponent):
     # MAGIC METHODS
 
     def __copy__(self):
-        message = '{}A Network cannot be copied'.format(self._error_message)
+        message = "{}A Network cannot be copied".format(self._error_message)
         raise AttributeError(message)
 
     def __deepcopy__(self, memo):
-        message = '{}A Network cannot be copied'.format(self._error_message)
+        message = "{}A Network cannot be copied".format(self._error_message)
         raise AttributeError(message)
 
     def __repr__(self):
-        str = 'Module: superflexPy\nNetwork class\n'
-        str += 'Nodes:\n'
-        str += '\t{}\n'.format(list(self._content_pointer.keys()))
-        str += 'Network:\n'
-        str += '\t{}\n'.format(self._downstream)
+        str = "Module: superflexPy\nNetwork class\n"
+        str += "Nodes:\n"
+        str += "\t{}\n".format(list(self._content_pointer.keys()))
+        str += "Network:\n"
+        str += "\t{}\n".format(self._downstream)
 
         for cat in self._content:
-            str += '********************\n'
-            str += '********************\n'
-            str += '********************\n'
+            str += "********************\n"
+            str += "********************\n"
+            str += "********************\n"
             str += cat.__repr__()
-            str += '\n'
-            str += '\n'
+            str += "\n"
+            str += "\n"
 
         return str

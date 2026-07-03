@@ -21,21 +21,21 @@ HRU CHARACTERISTICS FILE NAME
 UNITS FILE NAME
 "*/flexConfig_ML01.dat"
 !========
-UNITS PRESENCE MATRIX                                                                                   
+UNITS PRESENCE MATRIX
  FC_01(Lumped)		! ID
 .true.				!
 !========
-INPUTS DESCRIPTION                                                                                   
+INPUTS DESCRIPTION
 2 ! precipitation input (1=lumped,2=perSubcatchment(ID),3=perFied)
 0 ! tracer input (0=absent,1=lumped,2=perSubcatchment(ID),3=perFied)
 2 ! etp input (1=lumped,2=perSubcatchment(ID),3=perFied)
 0 ! temperature input (0=absent,1=lumped,2=perSubcatchment(ID),3=perFied)
 !========
-DRAINAGE DISTANCES                                                                                    
+DRAINAGE DISTANCES
 riverScaleInc       riverScaleOut       riverSlopeInc       riverSlopeOut
 1.0                     1.0                  1.0                 1.0
 !========
-DEPENDENCIES      
+DEPENDENCIES
 DrainsInto
 0
 !========

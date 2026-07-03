@@ -26,11 +26,12 @@ This file contains the implementation of Element classes with different levels
 of specialization.
 """
 
-from copy import deepcopy, copy
+from copy import copy, deepcopy
+
 import numpy as np
 
 
-class BaseElement():
+class BaseElement:
     """
     This is the abstract class for the creation of a BaseElement. A BaseElement
     does not have parameters or states.
@@ -63,8 +64,8 @@ class BaseElement():
         """
 
         self.id = id
-        self._error_message = 'module : superflexPy, Element : {},'.format(id)
-        self._error_message += ' Error message : '
+        self._error_message = "module : superflexPy, Element : {},".format(id)
+        self._error_message += " Error message : "
 
     def set_input(self, input):
         """
@@ -77,7 +78,7 @@ class BaseElement():
             List of input fluxes to the element.
         """
 
-        raise NotImplementedError('The set_input method must be implemented')
+        raise NotImplementedError("The set_input method must be implemented")
 
     def get_output(self, solve=True):
         """
@@ -95,7 +96,7 @@ class BaseElement():
             List of output fluxes.
         """
 
-        raise NotImplementedError('The get_output method must be implemented')
+        raise NotImplementedError("The get_output method must be implemented")
 
     @property
     def num_downstream(self):
@@ -114,8 +115,7 @@ class BaseElement():
         return self._num_upstream
 
     def __repr__(self):
-
-        str = 'Module: superflexPy\nElement: {}\n'.format(self.id)
+        str = "Module: superflexPy\nElement: {}\n".format(self.id)
         return str
 
     def __copy__(self):
@@ -133,7 +133,7 @@ class ParameterizedElement(BaseElement):
     ParameterizedElement has parameters but not states.
     """
 
-    _prefix_parameters = ''
+    _prefix_parameters = ""
     """
     Prefix applied to the original names of the parameters
     """
@@ -206,7 +206,7 @@ class ParameterizedElement(BaseElement):
 
         for k in parameters.keys():
             if k not in self._parameters.keys():
-                message = '{}The parameter {} does not exist'.format(self._error_message, k)
+                message = "{}The parameter {} does not exist".format(self._error_message, k)
                 raise KeyError(message)
             self._parameters[k] = parameters[k]
 
@@ -220,42 +220,39 @@ class ParameterizedElement(BaseElement):
             Prefix to be added. It cannot contain '_'.
         """
 
-        if '_' in prefix:
-            message = '{}The prefix cannot contain \'_\''.format(self._error_message)
+        if "_" in prefix:
+            message = "{}The prefix cannot contain '_'".format(self._error_message)
             raise ValueError(message)
 
         # Extract the prefixes in the parameters name
-        splitted = list(self._parameters.keys())[0].split('_')
+        splitted = list(self._parameters.keys())[0].split("_")
 
         if prefix not in splitted:
             # Apply the prefix
             for k in list(self._parameters.keys()):
                 value = self._parameters.pop(k)
-                self._parameters['{}_{}'.format(prefix, k)] = value
+                self._parameters["{}_{}".format(prefix, k)] = value
 
             # Save the prefix for furure uses
-            self._prefix_parameters = '{}_{}'.format(prefix, self._prefix_parameters)
+            self._prefix_parameters = "{}_{}".format(prefix, self._prefix_parameters)
 
     def __repr__(self):
-
-        str = 'Module: superflexPy\nElement: {}\n'.format(self.id)
-        str += 'Parameters:\n'
+        str = "Module: superflexPy\nElement: {}\n".format(self.id)
+        str += "Parameters:\n"
         for k in self._parameters:
-            str += '\t{} : {}\n'.format(k, self._parameters[k])
+            str += "\t{} : {}\n".format(k, self._parameters[k])
 
         return str
 
     def __copy__(self):
         p = self._parameters  # Only the reference
-        ele = self.__class__(parameters=p,
-                             id=self.id)
+        ele = self.__class__(parameters=p, id=self.id)
         ele._prefix_parameters = self._prefix_parameters
         return ele
 
     def __deepcopy__(self, memo):
         p = deepcopy(self._parameters)  # Create a new dictionary
-        ele = self.__class__(parameters=p,
-                             id=self.id)
+        ele = self.__class__(parameters=p, id=self.id)
         ele._prefix_parameters = self._prefix_parameters
         return ele
 
@@ -266,7 +263,7 @@ class StateElement(BaseElement):
     StateElement has states but not parameters.
     """
 
-    _prefix_states = ''
+    _prefix_states = ""
     """
     Prefix applied to the original names of the parameters
     """
@@ -338,7 +335,7 @@ class StateElement(BaseElement):
 
         for k in states.keys():
             if k not in self._states.keys():
-                message = '{}The state {} does not exist'.format(self._error_message, k)
+                message = "{}The state {} does not exist".format(self._error_message, k)
                 raise KeyError(message)
             self._states[k] = states[k]
 
@@ -349,7 +346,7 @@ class StateElement(BaseElement):
         """
 
         for k in self._init_states.keys():
-            k_no_prefix = k.split('_')[-1]
+            k_no_prefix = k.split("_")[-1]
             if self._init_states[k] is not None:
                 self._states[self._prefix_states + k_no_prefix] = deepcopy(self._init_states[k])  # I have to isolate
 
@@ -363,42 +360,39 @@ class StateElement(BaseElement):
             Prefix to be added. It cannot contain '_'.
         """
 
-        if '_' in prefix:
-            message = '{}The prefix cannot contain \'_\''.format(self._error_message)
+        if "_" in prefix:
+            message = "{}The prefix cannot contain '_'".format(self._error_message)
             raise ValueError(message)
 
         # Extract the prefixes in the parameters name
-        splitted = list(self._states.keys())[0].split('_')
+        splitted = list(self._states.keys())[0].split("_")
 
         if prefix not in splitted:
             # Apply the prefix
             for k in list(self._states.keys()):
                 value = self._states.pop(k)
-                self._states['{}_{}'.format(prefix, k)] = value
+                self._states["{}_{}".format(prefix, k)] = value
 
             # Save the prefix for furure uses
-            self._prefix_states = '{}_{}'.format(prefix, self._prefix_states)
+            self._prefix_states = "{}_{}".format(prefix, self._prefix_states)
 
     def __repr__(self):
-
-        str = 'Module: superflexPy\nElement: {}\n'.format(self.id)
-        str += 'States:\n'
+        str = "Module: superflexPy\nElement: {}\n".format(self.id)
+        str += "States:\n"
         for k in self._states:
-            str += '\t{} : {}\n'.format(k, self._states[k])
+            str += "\t{} : {}\n".format(k, self._states[k])
 
         return str
 
     def __copy__(self):
         s = deepcopy(self._states)  # Create a new dictionary
-        ele = self.__class__(states=s,
-                             id=self.id)
+        ele = self.__class__(states=s, id=self.id)
         ele._prefix_states = self._prefix_states
         return ele
 
     def __deepcopy__(self, memo):
         s = deepcopy(self._states)  # Create a new dictionary
-        ele = self.__class__(states=s,
-                             id=self.id)
+        ele = self.__class__(states=s, id=self.id)
         ele._prefix_states = self._prefix_states
         return ele
 
@@ -432,23 +426,20 @@ class StateParameterizedElement(StateElement, ParameterizedElement):
         ParameterizedElement.__init__(self, parameters, id)
 
     def __repr__(self):
-
-        str = 'Module: superflexPy\nElement: {}\n'.format(self.id)
-        str += 'Parameters:\n'
+        str = "Module: superflexPy\nElement: {}\n".format(self.id)
+        str += "Parameters:\n"
         for k in self._parameters:
-            str += '\t{} : {}\n'.format(k, self._parameters[k])
-        str += 'States:\n'
+            str += "\t{} : {}\n".format(k, self._parameters[k])
+        str += "States:\n"
         for k in self._states:
-            str += '\t{} : {}\n'.format(k, self._states[k])
+            str += "\t{} : {}\n".format(k, self._states[k])
 
         return str
 
     def __copy__(self):
         p = self._parameters  # Only the reference
         s = deepcopy(self._states)  # Create a new dictionary
-        ele = self.__class__(parameters=p,
-                             states=s,
-                             id=self.id)
+        ele = self.__class__(parameters=p, states=s, id=self.id)
         ele._prefix_states = self._prefix_states
         ele._prefix_parameters = self._prefix_parameters
         return ele
@@ -456,9 +447,7 @@ class StateParameterizedElement(StateElement, ParameterizedElement):
     def __deepcopy__(self, memo):
         p = deepcopy(self._parameters)  # Create a new dictionary
         s = deepcopy(self._states)  # Create a new dictionary
-        ele = self.__class__(parameters=p,
-                             states=s,
-                             id=self.id)
+        ele = self.__class__(parameters=p, states=s, id=self.id)
         ele._prefix_states = self._prefix_states
         ele._prefix_parameters = self._prefix_parameters
         return ele
@@ -528,8 +517,7 @@ class ODEsElement(StateParameterizedElement):
             have an id.
         """
 
-        StateParameterizedElement.__init__(self, parameters=parameters,
-                                           states=states, id=id)
+        StateParameterizedElement.__init__(self, parameters=parameters, states=states, id=id)
 
         self._num_app = approximation
 
@@ -577,23 +565,22 @@ class ODEsElement(StateParameterizedElement):
         """
 
         if len(self._solver_states) == 0:
-            message = '{}the attribute _solver_states must be filled'.format(self._error_message)
+            message = "{}the attribute _solver_states must be filled".format(self._error_message)
             raise ValueError(message)
 
-        self.state_array = self._num_app.solve(fun=self._fluxes,
-                                               S0=self._solver_states,
-                                               dt=self._dt,
-                                               **self.input,
-                                               **{k[len(self._prefix_parameters):]: self._parameters[k] for k in self._parameters},
-                                               **kwargs)
+        self.state_array = self._num_app.solve(
+            fun=self._fluxes,
+            S0=self._solver_states,
+            dt=self._dt,
+            **self.input,
+            **{k[len(self._prefix_parameters) :]: self._parameters[k] for k in self._parameters},
+            **kwargs
+        )
 
     def __copy__(self):
         p = self._parameters  # Only the reference
         s = deepcopy(self._states)  # Create a new dictionary
-        ele = self.__class__(parameters=p,
-                             states=s,
-                             id=self.id,
-                             approximation=self._num_app)
+        ele = self.__class__(parameters=p, states=s, id=self.id, approximation=self._num_app)
         ele._prefix_states = self._prefix_states
         ele._prefix_parameters = self._prefix_parameters
         return ele
@@ -601,10 +588,7 @@ class ODEsElement(StateParameterizedElement):
     def __deepcopy__(self, memo):
         p = deepcopy(self._parameters)  # Create a new dictionary
         s = deepcopy(self._states)  # Create a new dictionary
-        ele = self.__class__(parameters=p,
-                             states=s,
-                             id=self.id,
-                             approximation=self._num_app)
+        ele = self.__class__(parameters=p, states=s, id=self.id, approximation=self._num_app)
         ele._prefix_states = self._prefix_states
         ele._prefix_parameters = self._prefix_parameters
         return ele
@@ -656,7 +640,7 @@ class LagElement(StateParameterizedElement):
             List of weight array(s).
         """
 
-        raise NotImplementedError('The _build_weight method must be implemented')
+        raise NotImplementedError("The _build_weight method must be implemented")
 
     def set_input(self, input):
         """
@@ -688,27 +672,26 @@ class LagElement(StateParameterizedElement):
         """
 
         if solve:
-
             # Create lists if we are dealing with scalars
-            if isinstance(self._parameters[self._prefix_parameters + 'lag-time'], float):
-                lag_time = [self._parameters[self._prefix_parameters + 'lag-time']] * len(self.input)
-            elif isinstance(self._parameters[self._prefix_parameters + 'lag-time'], list):
-                lag_time = self._parameters[self._prefix_parameters + 'lag-time']
+            if isinstance(self._parameters[self._prefix_parameters + "lag-time"], float):
+                lag_time = [self._parameters[self._prefix_parameters + "lag-time"]] * len(self.input)
+            elif isinstance(self._parameters[self._prefix_parameters + "lag-time"], list):
+                lag_time = self._parameters[self._prefix_parameters + "lag-time"]
             else:
-                par_type = type(self._parameters[self._prefix_parameters + 'lag-time'])
-                message = '{}lag_time parameter of type {}'.format(self._error_message, par_type)
+                par_type = type(self._parameters[self._prefix_parameters + "lag-time"])
+                message = "{}lag_time parameter of type {}".format(self._error_message, par_type)
                 raise TypeError(message)
 
-            if self._states[self._prefix_states + 'lag'] is None:
+            if self._states[self._prefix_states + "lag"] is None:
                 lag_state = self._init_lag_state(lag_time)
             else:
-                if isinstance(self._states[self._prefix_states + 'lag'], np.ndarray):
-                    lag_state = [copy(self._states[self._prefix_states + 'lag'])] * len(self.input)
-                elif isinstance(self._states[self._prefix_states + 'lag'], list):
-                    lag_state = self._states[self._prefix_states + 'lag']
+                if isinstance(self._states[self._prefix_states + "lag"], np.ndarray):
+                    lag_state = [copy(self._states[self._prefix_states + "lag"])] * len(self.input)
+                elif isinstance(self._states[self._prefix_states + "lag"], list):
+                    lag_state = self._states[self._prefix_states + "lag"]
                 else:
-                    state_type = type(self._states[self._prefix_states + 'lag'])
-                    message = '{}lag state of type {}'.format(self._error_message, state_type)
+                    state_type = type(self._states[self._prefix_states + "lag"])
+                    message = "{}lag state of type {}".format(self._error_message, state_type)
                     raise TypeError(message)
 
             self._weight = self._build_weight(lag_time)
@@ -720,7 +703,9 @@ class LagElement(StateParameterizedElement):
             final_states[:, :-1] = final_states[:, 1:]
             final_states[:, -1] = 0
 
-            self.set_states({self._prefix_states + 'lag': [final_states[i, :len(w)] for i, w in enumerate(self._weight)]})
+            self.set_states(
+                {self._prefix_states + "lag": [final_states[i, : len(w)] for i, w in enumerate(self._weight)]}
+            )
 
         return [self.state_array[:, i, 0] for i in range(len(self.input))]
 
@@ -732,7 +717,7 @@ class LagElement(StateParameterizedElement):
         """
 
         for k in self._init_states.keys():
-            k_no_prefix = k.split('_')[-1]
+            k_no_prefix = k.split("_")[-1]
             self._states[self._prefix_states + k_no_prefix] = deepcopy(self._init_states[k])  # I have to isolate
 
     @staticmethod
@@ -764,7 +749,7 @@ class LagElement(StateParameterizedElement):
         for flux_num, (w, ls, i) in enumerate(zip(weight, lag_state, input)):
             for ts in range(len(input[0])):
                 updated_state = ls + i[ts] * w
-                output[ts, flux_num, :len(w)] = updated_state[:]
+                output[ts, flux_num, : len(w)] = updated_state[:]
                 ls = np.append(updated_state[1:], 0)
 
         return output

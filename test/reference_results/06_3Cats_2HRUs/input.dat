@@ -1,9 +1,9 @@
-Maimai data courtesy Jeff McDonnell           
-1.0  ! stepsize (d)            
-ST1: All data in mm/d           
-ST2           
-ST3           
-*  ! list directed format ok here   
+Maimai data courtesy Jeff McDonnell
+1.0  ! stepsize (d)
+ST1: All data in mm/d
+ST2
+ST3
+*  ! list directed format ok here
       Year,     Month,       Day,      Hour,       Min,             P_C1,             P_C2,             P_C3,             E_C1,             E_C2,             E_C3,             Q_C1,        QC_Q_C1,             Q_C2,        QC_Q_C2,             Q_C3,        QC_Q_C3,
        1981          1          1          0          0           2.50000           2.56000           3.81000           0.59700           0.65600           0.64500           1.38891               0           1.44086               0           1.43339               0
        1981          1          2          0          0           8.02000           4.86000           5.39000           0.35900           0.12500           0.08000           1.44721               0           1.34096               0           1.11329               0

@@ -8,8 +8,8 @@ status       max number of reservoirs
 .true.       1                          ! enableUR    ! UR-B-ID: supported= 0,1 (more options easy to add)
 .false.      1                          ! enableCR    ! UR-E-ID: supported= 0,1,2,3,20,21,22,30,31,32
 .false.      1                          ! enableRR    !  UR-D-ID: supported= 0
-.true.       1                          ! enableFR    ! 
-.true.       1                          ! enableSR    ! 
+.true.       1                          ! enableFR    !
+.true.       1                          ! enableSR    !
 !========
 FLEX CONSTITUTIVE RELATIONSHIPS
 2,1,31,0     ! URFunID - {A,B,E,D} [see cpsm_dmsl_kit], 0=zero*, 1=linear*, 2=power, 3=refPow, 10=logistic, 11=quadroid*, 20=exp, 21=hyperExp*, 22=con2lin*, 30=tessier, 31=michMentes*, 32=lin2con*, *=algebraic, D-recommends {21,1,31,0}
@@ -19,8 +19,8 @@ FLEX CONSTITUTIVE RELATIONSHIPS
 !========
 FLEX LAG FUNCTION INFORMATION
 convShape        smthID        max number of conv states    ! convolution function options: "none","halfTri"(tR),"symTri"(tS,tR),"genTri"(tS,rR,tF)
-"none"           -1            1           ! RR 
-"none"           -1            20          ! FR 
+"none"           -1            1           ! RR
+"none"           -1            20          ! FR
 "none"           -1            50          ! SR smthID: -1=original, 0=quadrature, 1=midpoint, 2=trapezoidal (Lag function smoothing)
 !========
 FLEX INITIAL CONDITIONS INFO
@@ -92,7 +92,7 @@ MORTO_PARAMETER_INFO ! (parameters that dont exist for this configuration)
 "BetaQq_uCR, -   "       3.0                0.1          10.0         10.0      -9999.9           1       T      0         CR, runoff coefficient function parameter, (power) Beta->0 gives stronger step-threshold in A(S) function
 "MedQq_uCR, -    "       0.5                0.1          1.0          10.0      -9999.9           0       F      0         CR, runoff coefficient function parameter, center for logistic function (see SF 2011 papers, Table 1 parameter lambda)
 "BetaQq_sCR, -   "       1.e-2              1.e-2        10.0         10.0      -9999.9           1       F      0         CR, (power) Beta->0 gives stronger step-threshold in A(S) function
-"K_Qb_sCR, 1/t   "       1.e-3              1.e-6        0.2          10.0      -9999.9           1       T      0         CR, K in Q=K*S for matrix flow 
+"K_Qb_sCR, 1/t   "       1.e-3              1.e-6        0.2          10.0      -9999.9           1       T      0         CR, K in Q=K*S for matrix flow
 "K_Qd_sCR, 1/t   "       0.e-3              1.e-6        2.0          10.0      -9999.9           0       F      0         CR, K in Q=K*S for flow to drainage network
 "Sini_SR, mm     "       1.0                1.0          1.e4         10.0      -9999.9           1       F      0         SR, initial state
 "MsmtQqSb_FR, mm "       0.5                1.e-2        2.0          10.0      -9999.9           1       F      0         FR, (line2line) smoothing factor for piecewise linear Q-S relation (with KmQq_FR and KpQq_FR)
@@ -102,9 +102,9 @@ MORTO_PARAMETER_INFO ! (parameters that dont exist for this configuration)
 "Dspl_ID, -      "       0.0                0.0          1.0          10.0      -9999.9           0       T      0         IR, Dspl_ID->1 diverts input from IR to UR (e.g. to represent throughfall)
 "Smax_IR, mm     "       10.0               1.e-2        20.0         10.0      -9999.9           1       T      0         IR, store capacity
 "MsmtQE_S0_IR, - "       1.e-1              1.e-3        1.0          10.0      -9999.9           1       T      0         IR, smoothing parameter in interception reservoir, controls IR smoothness when odeSolverIRR={0,1,2}: MsmtQE_S0_IR->0 yields stronger threshold in IR reservoir. DK-NB1: probably should be kept fixed; DK-NB2: must be MORTO when odeSolverIRR={-1,-2}. For power smoothing IRsmth~0.3-0.5 is sufficient
-!========                                     
+!========
 ACTIVE_STATE_INFO
-stateName        stateDef         stateLo       stateHi    stateScal  
+stateName        stateDef         stateLo       stateHi    stateScal
 "Qstrm "           0.0               0.0          1.e4         10.0
 "Qpcor "           0.0               0.0          1.e4         10.0
 "Eact  "           0.0               0.0          1.e4         10.0

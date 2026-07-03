@@ -25,12 +25,13 @@ DESIGNED BY: Marco Dal Molin, Fabrizio Fenicia, Dmitri Kavetski
 This file contains the implementation of the base class for the numerical
 approximator to be used to solve the elements governed by ODEs.
 """
-import numpy as np
-import numba as nb
 import inspect
 
+import numba as nb
+import numpy as np
 
-class NumericalApproximator():
+
+class NumericalApproximator:
     """
     This is the abstract class for the creation of a NumericalApproximator. It
     defines how the approximator of the differential equation must be
@@ -43,7 +44,7 @@ class NumericalApproximator():
     (e.g. numba)
     """
 
-    _error_message = ''
+    _error_message = ""
     """
     String to use when displaying errors. It should contain general information
     about the class
@@ -58,7 +59,7 @@ class NumericalApproximator():
         ----------
         root_finder : superflexpy.utils.root_finder.RootFinder
             Solver used to find the root(s) of the differential equation(s).
-         """
+        """
 
         self._root_finder = root_finder
 
@@ -109,8 +110,7 @@ class NumericalApproximator():
             elif isinstance(kwargs[k], float):
                 scalars.append(k)
             else:
-                message = '{}the parameter {} is of type {}'.format(self._error_message,
-                                                                    k, type(kwargs[k]))
+                message = "{}the parameter {} is of type {}".format(self._error_message, k, type(kwargs[k]))
                 raise TypeError(message)
 
         if len(vectors) == 0:
@@ -118,36 +118,36 @@ class NumericalApproximator():
         else:
             num_ts = len(kwargs[vectors[0]])
 
-        if 'dt' not in kwargs:
-            message = '{}\'dt\' must be in kwargs'
+        if "dt" not in kwargs:
+            message = "{}'dt' must be in kwargs"
             raise KeyError(message)
 
         # Transform dt in vector since we always need it
-        if 'dt' not in vectors:
-            kwargs['dt'] = np.array([kwargs['dt']] * num_ts)
+        if "dt" not in vectors:
+            kwargs["dt"] = np.array([kwargs["dt"]] * num_ts)
 
         # Construct the output array
         output = []
 
         # Set architecture
-        if self.architecture == 'python':
+        if self.architecture == "python":
             self._solve = self._solve_python
-        elif self.architecture == 'numba':
+        elif self.architecture == "numba":
             self._solve = self._solve_numba
 
         for f, s_zero in zip(fun, S0):
             # Find which parameters the function needs
-            if self.architecture == 'python':
+            if self.architecture == "python":
                 fun_pars = list(inspect.signature(f).parameters)
-            elif self.architecture == 'numba':
+            elif self.architecture == "numba":
                 # fun_pars = list(inspect.signature(f).parameters)
                 fun_pars = list(inspect.signature(f.py_func).parameters)
 
             args = []
             for arg in fun_pars:
-                if arg in ['S', 'S0', 'ind']:
+                if arg in ["S", "S0", "ind"]:
                     continue
-                elif arg == 'dt':
+                elif arg == "dt":
                     args.append(kwargs[arg])  # We want to treat it differently
                 elif arg in vectors:
                     args.append(kwargs[arg])
@@ -158,58 +158,53 @@ class NumericalApproximator():
 
             root_settings = self._root_finder.get_settings()
 
-            output.append(self._solve(root_finder=self._root_finder.solve,  # Passing just the method
-                                      diff_eq=self._differential_equation,
-                                      fun=f,
-                                      S0=s_zero,
-                                      dt=kwargs['dt'],
-                                      num_ts=num_ts,
-                                      args=args,
-                                      root_settings=root_settings))
+            output.append(
+                self._solve(
+                    root_finder=self._root_finder.solve,  # Passing just the method
+                    diff_eq=self._differential_equation,
+                    fun=f,
+                    S0=s_zero,
+                    dt=kwargs["dt"],
+                    num_ts=num_ts,
+                    args=args,
+                    root_settings=root_settings,
+                )
+            )
 
         return np.array(output).reshape((-1, len(fun)))
 
     def get_fluxes(self, fluxes, S, S0, **kwargs):
-
         output = []
         for i, (f, s_zero) in enumerate(zip(fluxes, S0)):
-
             # The function is only python. No need of numba in get_fluxes
             fun_pars = list(inspect.signature(f).parameters)
 
             args = []
 
             for arg in fun_pars:
-                if arg in ['S', 'S0', 'ind']:
+                if arg in ["S", "S0", "ind"]:
                     continue
                 else:
                     args.append(kwargs[arg])
 
             args = tuple(args)
 
-            output.append(self._get_fluxes(fluxes=f,
-                                           S=S[:, i],  # S is a 2d np array
-                                           S0=s_zero,
-                                           args=args,
-                                           dt=kwargs['dt']))
+            output.append(
+                self._get_fluxes(fluxes=f, S=S[:, i], S0=s_zero, args=args, dt=kwargs["dt"])  # S is a 2d np array
+            )
 
         return output
 
     @staticmethod
-    def _solve_python(root_finder, diff_eq, fun, S0, dt, num_ts, args, root_settings):  # here args are all vectors of the same lenght
-
+    def _solve_python(
+        root_finder, diff_eq, fun, S0, dt, num_ts, args, root_settings
+    ):  # here args are all vectors of the same lenght
         # Note: root_settings not used. Here only to have uniform interface
         output = np.zeros(num_ts)
 
         for i in range(num_ts):
-
             # Call the root finder
-            root = root_finder(diff_eq=diff_eq,
-                               fluxes=fun,
-                               S0=S0,
-                               dt=dt,
-                               ind=i,
-                               args=args)
+            root = root_finder(diff_eq=diff_eq, fluxes=fun, S0=S0, dt=dt, ind=i, args=args)
 
             output[i] = root
             S0 = output[i]
@@ -218,22 +213,24 @@ class NumericalApproximator():
 
     @staticmethod
     @nb.jit(nopython=True)
-    def _solve_numba(root_finder, diff_eq, fun, S0, dt, num_ts, args, root_settings):  # here args are all vectors of the same lenght
-
+    def _solve_numba(
+        root_finder, diff_eq, fun, S0, dt, num_ts, args, root_settings
+    ):  # here args are all vectors of the same lenght
         output = np.zeros(num_ts)
 
         for i in range(num_ts):
-
             # Call the root finder
-            root = root_finder(diff_eq=diff_eq,
-                               fluxes=fun,
-                               S0=S0,
-                               dt=dt,
-                               ind=i,
-                               args=args,
-                               tol_F=root_settings[0],
-                               tol_x=root_settings[1],
-                               iter_max=root_settings[2])
+            root = root_finder(
+                diff_eq=diff_eq,
+                fluxes=fun,
+                S0=S0,
+                dt=dt,
+                ind=i,
+                args=args,
+                tol_F=root_settings[0],
+                tol_x=root_settings[1],
+                iter_max=root_settings[2],
+            )
 
             output[i] = root
             S0 = output[i]
@@ -242,8 +239,8 @@ class NumericalApproximator():
 
     @staticmethod
     def _differential_equation(fluxes, S, S0, dt, args):
-        raise NotImplementedError('The method _differential_equation must be implemented')
+        raise NotImplementedError("The method _differential_equation must be implemented")
 
     @staticmethod
     def _get_fluxes(fluxes, S, S0, args, dt):
-        raise NotImplementedError('The method _get_fluxes must be implemented')
+        raise NotImplementedError("The method _get_fluxes must be implemented")
