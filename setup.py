@@ -4,7 +4,7 @@ import setuptools
 
 setuptools.setup(
     name="superflexpy",
-    version="1.3.2",
+    version="1.3.3",
     author="Marco Dal Molin, Fabrizio Fenicia, Dmitri Kavetski",
     author_email="marco.dalmolin.1991@gmail.com",
     description="Framework for building hydrological models",
@@ -17,5 +17,5 @@ setuptools.setup(
         "Development Status :: 5 - Production/Stable",  # https://martin-thoma.com/software-development-stages/
         "Topic :: Scientific/Engineering :: Hydrology",
     ],
-    install_requires=["numba==0.57.1", "numpy==1.24.3"],
+    install_requires=["numba>=0.57.1", "numpy>=1.24.3"],
 )
